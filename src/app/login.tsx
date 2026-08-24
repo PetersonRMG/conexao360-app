@@ -38,13 +38,13 @@ export default function Index() {
           {/* form */}
           <View style={loginStyle.conteudoBtns}>
             <Pressable
-              style={[loginStyle.btnEntrar, loginStyle.btn]}
+              style={[loginStyle.btnEntrar]}
               onPress={() => router.navigate("/")}
             >
               <Text style={loginStyle.textBtn}>Entrar</Text>
             </Pressable>
             <Pressable
-              style={[loginStyle.btnCriar, loginStyle.btn]}
+              style={[loginStyle.btnCriar]}
               onPress={() => router.navigate("/")}
             >
               <Text style={[loginStyle.textBtn, loginStyle.textCriar]}>
