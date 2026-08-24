@@ -64,7 +64,6 @@ export default function Index() {
                       style={loginStyle.txtInput}
                     />
                     <Pressable
-                      
                       onPress={() => setVerSenha((current) => !current)}
                     >
                       <Image
@@ -78,6 +77,10 @@ export default function Index() {
                     </Pressable>
                   </View>
                 </View>
+
+                <Pressable onPress={() => router.navigate("/esqueciSenha")}>
+                  <Text style={globalStyle.txtEsqueciSenha}>Esqueci Senha</Text>
+                </Pressable>
 
                 <Pressable
                   style={({ pressed }) => [
