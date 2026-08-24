@@ -14,12 +14,12 @@ export const esqueciSenhaStyle = StyleSheet.create({
   subtitulo: {
     color: cores.douradoPrincipal,
     fontSize: fontes.subtitulo,
-    fontWeight: "normal",
+    fontFamily: fontes.normal,
   },
   titulo: {
     color: cores.branco,
     fontSize: fontes.titulo,
-    fontWeight: "bold",
+    fontFamily: fontes.extraNegrito,
   },
   titulo2: {
     color: cores.douradoPrincipal,
@@ -71,7 +71,7 @@ export const esqueciSenhaStyle = StyleSheet.create({
   txtEnviar: {
     fontSize: fontes.btn,
     color: cores.roxoPrincipal,
-    fontWeight: "bold",
+    fontFamily: fontes.extraNegrito,
   },
   btnVoltar: {
     width: "80%",
@@ -92,6 +92,6 @@ export const esqueciSenhaStyle = StyleSheet.create({
   txtVoltar: {
     fontSize: fontes.btn,
     color: cores.douradoPrincipal,
-    fontWeight: "bold",
+    fontFamily: fontes.extraNegrito,
   },
 });

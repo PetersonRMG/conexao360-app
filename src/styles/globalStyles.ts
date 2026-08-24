@@ -44,43 +44,8 @@ const globalStyle = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  titulo: {
-    fontSize: 30,
-    fontWeight: "bold",
-    marginBottom: 10,
-    color: "#ffff",
-    textTransform: "uppercase",
-  },
-  x: {
-    color: "#D6B26A",
-  },
-  subtitulo: {
-    fontSize: 20,
-    color: "#D6B26A",
-    fontStyle: "normal",
-    textTransform: "uppercase",
-  },
-  btnEntrar: {
-    color: "#2D1B33",
-    backgroundColor: "#D6B26A",
-  },
-  btnCriar: {
-    color: "#D6B26A",
-    backgroundColor: "#2D1B33",
-  },
-  btn: {
-    width: "90%",
-    borderRadius: 10,
-    margin: "auto",
-    textAlign: "center",
-    paddingBlock: 5,
-    marginBlock: 5,
-  },
-
-  txtEsqueciSenha: {
-    color: cores.douradoPrincipal,
-    textDecorationLine: "underline",
-  },
+  
+  
 });
 
 export default globalStyle;

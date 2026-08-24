@@ -49,6 +49,8 @@ export default function Index() {
                       placeholderTextColor={"#D6B26A"}
                       keyboardType="email-address"
                       autoCapitalize="none"
+                      autoComplete="off"
+                      textContentType="none"
                     />
                   </View>
                   <View style={loginStyle.input}>
@@ -61,6 +63,8 @@ export default function Index() {
                       secureTextEntry={!verSenha}
                       placeholderTextColor={"#D6B26A"}
                       keyboardType="visible-password"
+                      autoComplete="off"
+                      textContentType="none"
                       style={loginStyle.txtInput}
                     />
                     <Pressable
@@ -79,7 +83,7 @@ export default function Index() {
                 </View>
 
                 <Pressable onPress={() => router.navigate("/esqueciSenha")}>
-                  <Text style={globalStyle.txtEsqueciSenha}>Esqueci Senha</Text>
+                  <Text style={loginStyle.txtEsqueciSenha}>Esqueci Senha</Text>
                 </Pressable>
 
                 <Pressable
@@ -95,7 +99,7 @@ export default function Index() {
                     loginStyle.btnCriar,
                     pressed && loginStyle.btnCriarPressed,
                   ]}
-                  onPress={() => router.navigate("/login")}
+                  onPress={() => router.navigate("/cad-cliente")}
                 >
                   <Text style={[loginStyle.textBtn, loginStyle.textCriar]}>
                     Criar Conta

@@ -18,14 +18,14 @@ export const enviarLinkStyle = StyleSheet.create({
   subtitulo: {
     color: cores.douradoPrincipal,
     fontSize: fontes.subtitulo,
-    fontWeight: "normal",
+    fontFamily: fontes.normal,
     marginBottom: 6,
   },
 
   titulo: {
     color: cores.branco,
     fontSize: fontes.titulo,
-    fontWeight: "bold",
+    fontFamily: fontes.extraNegrito,
     marginBottom: 12,
   },
 
@@ -57,7 +57,7 @@ export const enviarLinkStyle = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.15)",
     color: cores.branco,
     fontSize: 20,
-    fontWeight: "bold",
+    fontFamily: fontes.extraNegrito,
   },
 
   btnEnviar: {
@@ -78,7 +78,7 @@ export const enviarLinkStyle = StyleSheet.create({
   txtEnviar: {
     fontSize: fontes.btn,
     color: cores.roxoPrincipal,
-    fontWeight: "bold",
+    fontFamily: fontes.extraNegrito,
   },
 
   btnVoltar: {
@@ -104,6 +104,6 @@ export const enviarLinkStyle = StyleSheet.create({
   txtVoltar: {
     fontSize: fontes.btn,
     color: cores.douradoPrincipal,
-    fontWeight: "bold",
+    fontFamily: fontes.extraNegrito,
   },
 });

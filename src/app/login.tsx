@@ -45,7 +45,7 @@ export default function Index() {
             </Pressable>
             <Pressable
               style={[loginStyle.btnCriar]}
-              onPress={() => router.navigate("/")}
+              onPress={() => router.navigate("/cad-cliente")}
             >
               <Text style={[loginStyle.textBtn, loginStyle.textCriar]}>
                 Criar Conta

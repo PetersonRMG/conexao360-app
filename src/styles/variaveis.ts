@@ -11,4 +11,20 @@ export const fontes = {
   titulo: 30,
   subtitulo: 15,
   btn: 18,
+  // Pesos
+  fina: "Lato_300Light",
+  normal: "Lato_400Regular",
+  media: "Lato_500Medium",
+  semiNegrito: "Lato_600SemiBold",
+  negrito: "Lato_700Bold",
+  extraNegrito: "Lato_900Black",
+
+  // Itálico
+  finaItalico: "Lato_300Light_Italic",
+  normalItalico: "Lato_400Regular_Italic",
+  semiNegritoItalico: "Lato_600SemiBold_Italic",
+  negritoItalico: "Lato_700Bold_Italic",
+  extraNegritoItalico: "Lato_900Black_Italic",
 };
+// baixar a fonte
+/**npx expo install @expo-google-fonts/lato expo-font */

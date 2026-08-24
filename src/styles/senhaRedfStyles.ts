@@ -18,14 +18,14 @@ export const senhaRedfStyle = StyleSheet.create({
   subtitulo: {
     color: cores.douradoPrincipal,
     fontSize: fontes.subtitulo,
-    fontWeight: "normal",
+    fontFamily: fontes.normal,
     marginBottom: 6,
   },
 
   titulo: {
     color: cores.branco,
     fontSize: fontes.titulo,
-    fontWeight: "bold",
+    fontFamily: fontes.extraNegrito,
     marginBottom: 12,
   },
 
@@ -61,7 +61,7 @@ export const senhaRedfStyle = StyleSheet.create({
   txtEnviar: {
     fontSize: fontes.btn,
     color: cores.roxoPrincipal,
-    fontWeight: "bold",
+    fontFamily: fontes.extraNegrito,
   },
 
   /*
@@ -88,6 +88,6 @@ export const senhaRedfStyle = StyleSheet.create({
   txtVoltar: {
     fontSize: fontes.btn,
     color: cores.douradoPrincipal,
-    fontWeight: "bold",
+    fontFamily: fontes.extraNegrito,
   },
 });

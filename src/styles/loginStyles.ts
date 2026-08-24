@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+import { cores,fontes } from "./variaveis";
 
 const loginStyle = StyleSheet.create({
   container: {
@@ -37,23 +38,23 @@ const loginStyle = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     borderColor: "#00000000",
-    borderBottomColor: "#D6B26A",
-    backgroundColor: "#ffffff00",
+    borderBottomColor: cores.douradoPrincipal,
+    backgroundColor: cores.bgPreto80,
     borderWidth: 2,
     padding: 10,
     marginVertical: 10,
   },
   txtInput: {
     width: "100%",
-    backgroundColor: "#00000004",
-    color: "#D6B26A",
+    backgroundColor: "transparent",
+    color: cores.douradoPrincipal,
   },
   form: {
-    backgroundColor: "#00000096",
+    backgroundColor: cores.bgPreto80,
     width: "100%",
-    padding:15,
-    borderRadius:10,
-    marginVertical:5,
+    padding: 15,
+    borderRadius: 10,
+    marginVertical: 5,
   },
 
   conteudoBtns: {
@@ -63,23 +64,23 @@ const loginStyle = StyleSheet.create({
   },
   titulo: {
     fontSize: 30,
-    fontWeight: "bold",
+    fontFamily: fontes.extraNegrito,
     marginBottom: 10,
     color: "#ffff",
     textTransform: "uppercase",
   },
   x: {
-    color: "#D6B26A",
+    color: cores.douradoPrincipal,
   },
   subtitulo: {
     fontSize: 20,
-    color: "#D6B26A",
-    fontStyle: "normal",
+    color: cores.douradoPrincipal,
+    fontFamily: fontes.normal,
     textTransform: "uppercase",
   },
   btnEntrar: {
-    color: "#2D1B33",
-    backgroundColor: "#D6B26A",
+    color: cores.roxoPrincipal,
+    backgroundColor: cores.douradoPrincipal,
     width: "90%",
     height: 50,
     borderRadius: 10,
@@ -89,40 +90,40 @@ const loginStyle = StyleSheet.create({
     marginBlock: 5,
   },
   btnCriar: {
-    color: "#D6B26A",
-    backgroundColor: "#2d1b33b7",
     width: "90%",
     height: 50,
+    backgroundColor: cores.bgPreto80,
+    alignItems: "center",
+    justifyContent: "center",
     borderRadius: 10,
-    margin: "auto",
-    textAlign: "center",
-    paddingBlock: 5,
-    marginBlock: 5,
+    marginTop: 20,
+    borderWidth: 1,
+    borderColor: cores.douradoPrincipal,
   },
   btnCriarPressed: {
-    backgroundColor: "#2d1b33",
+    backgroundColor: cores.roxoPrincipal,
     alignItems: "center",
-    transform: " scale(1.1)",
+    transform: " scale(0.9)",
   },
 
   btnEntrarPressed: {
-    backgroundColor: "#bb9c5d",
+    backgroundColor: cores.douradoPrincipalPressed,
     alignItems: "center",
-    transform: " scale(1.1)",
+    transform: " scale(0.9)",
   },
 
   textBtn: {
     margin: "auto",
     fontSize: 15,
     textTransform: "uppercase",
-    fontWeight: "bold",
+    fontFamily: fontes.extraNegrito,
   },
   textCriar: {
-    color: "#D6B26A",
+    color: cores.douradoPrincipal,
   },
   sloganTitulo: {
-    color: "#D6B26A",
-    fontWeight: "normal",
+    color: cores.douradoPrincipal,
+    fontFamily: fontes.normal,
     textTransform: "uppercase",
     fontSize: 15,
     marginTop: 30,
@@ -130,8 +131,12 @@ const loginStyle = StyleSheet.create({
   sloganSubtitulo: {
     color: "#ffffff",
     fontSize: 25,
-    fontWeight: "bold",
+    fontFamily: fontes.extraNegrito,
   },
+  txtEsqueciSenha:{
+    color:cores.douradoPrincipal,
+  
+  }
 });
 
 export default loginStyle;
