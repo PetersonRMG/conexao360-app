@@ -10,7 +10,7 @@ import {
 import globalStyle from "@/styles/globalStyles";
 import { esqueciSenhaStyle } from "@/styles/esqueciSenhaStyles";
 
-export default function EsqueciSenha() {
+export default function EsqueciSenhaScreen() {
   return (
     <View style={globalStyle.container}>
       <ImageBackground

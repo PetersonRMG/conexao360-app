@@ -91,6 +91,7 @@ export default function Index() {
                     loginStyle.btnEntrar,
                     pressed && loginStyle.btnEntrarPressed,
                   ]}
+                  onPress={()=>router.navigate('/home')}
                 >
                   <Text style={loginStyle.textBtn}>Entrar</Text>
                 </Pressable>
