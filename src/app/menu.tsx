@@ -1,3 +1,5 @@
+import { useState } from "react";
+import { router } from "expo-router";
 import {
     View,
     Text,
@@ -6,26 +8,29 @@ import {
     Pressable,
     ScrollView,
 } from "react-native";
+import PublicarModalScreen from "@/components/publicarModal";
 
 import { menuStyles } from "@/styles/menuStyles";
+import globalStyle from "@/styles/globalStyles";
 
 
 export default function MenuSreen() {
     const iconePadrao = require("@/assets/images/img/e-mail.png");
+    const [modalPublicar, setModalPublicar] = useState(false);
     return (
 
         <View style={menuStyles.menuInferior}>
 
             {/* HOME */}
             <Pressable
-                style={menuStyles.itemMenu}
+                style={({ pressed }) => [menuStyles.itemMenu, pressed && globalStyle.pressBtn]}
                 onPress={() => {
-                    // Home
+                    router.navigate('/home')
                 }}
             >
 
                 <Image
-                    source={iconePadrao}
+                    source={require('@/assets/images/img/home.png')}
                     style={[
                         menuStyles.iconeMenu,
                         menuStyles.iconeMenuAtivo,
@@ -41,14 +46,14 @@ export default function MenuSreen() {
 
             {/* CHAT */}
             <Pressable
-                style={menuStyles.itemMenu}
+                style={({ pressed }) => [menuStyles.itemMenu, pressed && globalStyle.pressBtn]}
                 onPress={() => {
-                    // rota do chat futuramente
+                    router.navigate('/chat')
                 }}
             >
 
                 <Image
-                    source={iconePadrao}
+                    source={require('@/assets/images/img/chat.png')}
                     style={menuStyles.iconeMenu}
                 />
 
@@ -61,8 +66,9 @@ export default function MenuSreen() {
 
             {/* PUBLICAR */}
             <Pressable
-                style={menuStyles.itemMenu}
+                style={({ pressed }) => [menuStyles.itemMenu, pressed && globalStyle.pressBtn]}
                 onPress={() => {
+                    setModalPublicar(true)
                     // rota de publicação futuramente
                 }}
             >
@@ -84,14 +90,14 @@ export default function MenuSreen() {
 
             {/* EVENTOS */}
             <Pressable
-                style={menuStyles.itemMenu}
+                style={({ pressed }) => [menuStyles.itemMenu, pressed && globalStyle.pressBtn]}
                 onPress={() => {
                     // rota de eventos futuramente
                 }}
             >
 
                 <Image
-                    source={iconePadrao}
+                    source={require('@/assets/images/img/evento.png')}
                     style={menuStyles.iconeMenu}
                 />
 
@@ -104,14 +110,15 @@ export default function MenuSreen() {
 
             {/* GALERIA */}
             <Pressable
-                style={menuStyles.itemMenu}
+               
+                style={({ pressed }) => [menuStyles.itemMenu, pressed && globalStyle.pressBtn]}
                 onPress={() => {
-                    // rota da galeria futuramente
+                    router.navigate('/galeria')
                 }}
             >
 
                 <Image
-                    source={iconePadrao}
+                    source={require('@/assets/images/img/galeria.png')}
                     style={menuStyles.iconeMenu}
                 />
 
@@ -120,6 +127,10 @@ export default function MenuSreen() {
                 </Text>
 
             </Pressable>
+            <PublicarModalScreen
+                visible={modalPublicar}
+                onClose={() => setModalPublicar(false)}
+            />
 
         </View>
     )

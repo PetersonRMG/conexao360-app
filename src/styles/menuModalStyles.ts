@@ -22,6 +22,21 @@ export const menuModalStyles = StyleSheet.create({
         height: 250,
         padding: 15,
         borderRadius: 10,
+        justifyContent:'space-between'
+    },
+    btnMenu: {
+        width: '100%',
+        height:25,
+        flexDirection: 'row',
+        columnGap: 5,
+        marginVertical:3
+         
+    },
+    imagemMenu: {
+        width: 22,
+        height: 22,
+        
+        
     },
     iconesMenu: {
       color: cores.branco  

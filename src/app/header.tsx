@@ -45,7 +45,7 @@ export default function HeaderCreen() {
                 {/* MENU */}
                 <Pressable
                     style={({ pressed }) => [
-                        headerStyles.btnMenu,
+                        headerStyles.btnMenu,   
                         pressed && headerStyles.btnPressed,
                     ]}
                 onPress={() => setModalLinkSenha(true)}

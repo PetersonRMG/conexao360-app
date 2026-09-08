@@ -44,6 +44,12 @@ const globalStyle = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+
+  pressBtn: {
+    transform: 'scale(0.9)',
+
+    
+  },
   
   
 });
