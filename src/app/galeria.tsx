@@ -22,10 +22,10 @@ export default function GaleriaScreen() {
     const [imagens] = useState(IMAGENS_BASE);
 
     return (
-        <View style={globalStyle.container}>
+        <View style={globalStyle.containerG}>
             <HeaderScreen />
 
-            <ScrollView contentContainerStyle={globalStyle.conteudo}>
+            <ScrollView contentContainerStyle={globalStyle.conteudoG}>
                 <Text style={galeriaStyles.titulo}>Galeria</Text>
                 <Text style={galeriaStyles.galeriaTxt}>Compartilhe os melhores </Text>
                 <Text style={galeriaStyles.galeriaTxt}>momentos dos eventos</Text>

@@ -10,7 +10,7 @@ const globalStyle = StyleSheet.create({
   container: {
     alignItems: "center",
     flex: 1,
-    backgroundColor: "#ffff",
+    backgroundColor: "#3b3b3bff",
   },
   background: {
     width: "100%",
@@ -49,6 +49,25 @@ const globalStyle = StyleSheet.create({
     transform: 'scale(0.9)',
 
     
+  },
+  containerG: {
+    flex: 1,
+    backgroundColor: "#0A0909",
+  },
+  conteudoG: {
+    padding: 20,
+    paddingBottom: 90,
+
+  },
+  titulo: {
+    color: "#D6B26A",
+    fontSize: 22,
+    fontWeight: "bold",
+    marginBottom: 10,
+  },
+  texto: {
+    color: "#FFFFFF",
+    fontSize: 16,
   },
   
   
