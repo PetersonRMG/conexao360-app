@@ -1,12 +1,43 @@
 export const cores = {
+
+  // =========================
+  // CORES ATUAIS
+  // =========================
+
   douradoPrincipal: "#D6B26A",
-  douradoPrincipalPressed: "#be9e5eff",
-  roxoPrincipal: "#1D1628",
-  roxoPrincipal80: "#2d1b3362",
-  branco: "#fff",
-  bgPreto80: "rgba(0, 0, 0, 0.25)",
+  douradoPrincipalPressed: "#B99653",
+
+  roxoPrincipal: "#2A172E",
+  roxoPrincipal80: "#2A172ECC",
+
+  preto: "#000000",
+  pretoPrincipal: "#0A0909",
+  bgPreto80: "#00000080",
+
+  branco: "#FFFFFF",
+
+  verdeOnline: "#00D66B",
+
+
+  // =========================
+  // TEMA CLARO
+  // =========================
+
+  fundoClaro: "#F3F0E9",
+
+  cardClaro: "#FFFFFF",
+
+  inputClaro: "#F8F5EE",
+
+  textoClaro: "#24201C",
+
+  textoSecundarioClaro: "#77716A",
+
+  bordaClaro: "#D6B26A",
+
   btnPress: [{ scale: 0.97 }],
 };
+
 export const fontes = {
   titulo: 30,
   subtitulo: 15,

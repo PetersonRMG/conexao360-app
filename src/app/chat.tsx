@@ -10,286 +10,560 @@ import {
     ScrollView,
 } from "react-native";
 
+import { SafeAreaView } from "react-native-safe-area-context";
+
 import { chatStyles } from "@/styles/chatStyles";
+import globalStyle from "@/styles/globalStyles";
+
+import HeaderCreen from "./header";
 import MenuSreen from "./menu";
+
+type FiltroChat =
+    | "Todas"
+    | "Não lidas"
+    | "Grupos"
+    | "Eventos";
+
+type TipoConversa =
+    | "individual"
+    | "grupo"
+    | "evento";
+
+interface Conversa {
+    id: number;
+    nome: string;
+    mensagem: string;
+    horario: string;
+    notificacoes: number;
+    tipo: TipoConversa;
+}
 
 export default function ChatScreen() {
 
     const [busca, setBusca] = useState("");
-    const [filtro, setFiltro] = useState("Todas");
 
-    const conversas = [
+    const [filtro, setFiltro] =
+        useState<FiltroChat>("Todas");
+
+
+    // =========================
+    // CONVERSAS
+    // =========================
+
+    const conversas: Conversa[] = [
+
         {
             id: 1,
             nome: "Dra. Simone Baptista",
-            mensagem: "Obrigada pelo convite. Será um prazer participar!",
+            mensagem:
+                "Obrigada pelo convite. Será um prazer participar!",
             horario: "10:45",
             notificacoes: 2,
+            tipo: "individual",
         },
+
         {
             id: 2,
             nome: "Dr. Carlos Méndez",
-            mensagem: "Obrigada pelo convite. Será um prazer participar!",
-            horario: "10:45",
-            notificacoes: 2,
+            mensagem:
+                "Obrigada pelo convite. Será um prazer participar!",
+            horario: "10:32",
+            notificacoes: 0,
+            tipo: "individual",
         },
+
         {
             id: 3,
             nome: "Comissão jurídica",
-            mensagem: "Obrigada pelo convite. Será um prazer participar!",
-            horario: "10:45",
-            notificacoes: 2,
+            mensagem:
+                "Temos algumas atualizações importantes para o grupo.",
+            horario: "09:50",
+            notificacoes: 1,
+            tipo: "grupo",
         },
+
         {
             id: 4,
-            nome: "Organização conexão 360",
-            mensagem: "Obrigada pelo convite. Será um prazer participar!",
-            horario: "10:45",
-            notificacoes: 2,
+            nome: "Organização Conexão 360",
+            mensagem:
+                "Confira as últimas informações sobre o evento.",
+            horario: "09:30",
+            notificacoes: 0,
+            tipo: "evento",
         },
+
         {
             id: 5,
-            nome: "Organização conexão 360",
-            mensagem: "Obrigada pelo convite. Será um prazer participar!",
-            horario: "10:45",
-            notificacoes: 2,
+            nome: "Grupo Advocacia Exponencial",
+            mensagem:
+                "Nova mensagem enviada no grupo.",
+            horario: "08:45",
+            notificacoes: 3,
+            tipo: "grupo",
         },
+
         {
             id: 6,
-            nome: "Organização conexão 360",
-            mensagem: "Obrigada pelo convite. Será um prazer participar!",
-            horario: "10:45",
-            notificacoes: 2,
+            nome: "Evento Conexão 360",
+            mensagem:
+                "A programação do próximo encontro foi atualizada.",
+            horario: "Ontem",
+            notificacoes: 0,
+            tipo: "evento",
         },
+
     ];
 
-    const conversasFiltradas = conversas.filter((conversa) =>
-        conversa.nome.toLowerCase().includes(busca.toLowerCase())
-    );
+
+    // =========================
+    // NÃO LIDAS
+    // =========================
+
+    const quantidadeNaoLidas =
+        conversas.filter(
+            (conversa) =>
+                conversa.notificacoes > 0
+        ).length;
+
+
+    // =========================
+    // BUSCA + FILTROS
+    // =========================
+
+    const conversasFiltradas =
+        conversas.filter((conversa) => {
+
+            const correspondeBusca =
+                conversa.nome
+                    .toLowerCase()
+                    .includes(
+                        busca.toLowerCase()
+                    );
+
+
+            let correspondeFiltro = true;
+
+
+            if (filtro === "Não lidas") {
+
+                correspondeFiltro =
+                    conversa.notificacoes > 0;
+
+            }
+
+
+            if (filtro === "Grupos") {
+
+                correspondeFiltro =
+                    conversa.tipo === "grupo";
+
+            }
+
+
+            if (filtro === "Eventos") {
+
+                correspondeFiltro =
+                    conversa.tipo === "evento";
+
+            }
+
+
+            return (
+                correspondeBusca &&
+                correspondeFiltro
+            );
+
+        });
+
 
     return (
-        <View style={chatStyles.container}>
 
-            {/* ================= HEADER ================= */}
-            <View style={chatStyles.header}>
+        // =========================================
+        // TELA EXTERNA
+        // =========================================
 
-                <View style={chatStyles.headerTopo}>
-
-                    {/* AVATAR */}
-                    <Image
-                        source={require("@/assets/images/img/avatar.png")}
-                        style={chatStyles.avatarUsuario}
-                    />
+        <View style={globalStyle.container}>
 
 
-                    {/* LOGO */}
-                    <View style={chatStyles.logoArea}>
+            {/* =====================================
+                ÁREA MOBILE - 440px
+            ===================================== */}
 
-                        <Image
-                            source={require("@/assets/images/img/logo.svg")}
-                            style={chatStyles.logo}
-                        />
+            <View
+                style={[
+                    globalStyle.background,
+                    chatStyles.container,
+                ]}
+            >
 
-                        <Text style={chatStyles.logoTexto}>
-                            Conexão 360°
+
+                <SafeAreaView
+                    style={globalStyle.areaConteudo}
+                >
+
+
+                    {/* =========================
+                        HEADER PADRÃO
+                    ========================= */}
+
+                    <HeaderCreen />
+
+
+                    {/* =========================
+                        TÍTULO
+                    ========================= */}
+
+                    <View style={chatStyles.tituloArea}>
+
+                        <Text style={chatStyles.titulo}>
+                            Chat
                         </Text>
+
+
+                        {/* NOVA CONVERSA */}
+
+                        <Pressable
+                            style={({ pressed }) => [
+
+                                chatStyles.btnNovoChat,
+
+                                pressed &&
+                                chatStyles.btnNovoChatPressed,
+
+                            ]}
+                            onPress={() => {
+
+                                // futuramente:
+                                // abrir nova conversa
+
+                            }}
+                        >
+
+                            <Image
+                                source={require(
+                                    "@/assets/images/img/add.png"
+                                )}
+                                style={
+                                    chatStyles.iconeAdicionar
+                                }
+                            />
+
+                        </Pressable>
 
                     </View>
 
 
-                    {/* MENU */}
-                    <Pressable
-                        style={chatStyles.btnHeader}
-                        onPress={() => {
-                            // abrir modal do menu
-                        }}
-                    >
+                    {/* =========================
+                        BUSCA
+                    ========================= */}
 
-                        <Image
-                            source={require("@/assets/images/img/menu.png")}
-                            style={chatStyles.iconeHeader}
-                        />
+                    <View style={chatStyles.areaBusca}>
 
-                    </Pressable>
-
-                </View>
-
-
-                {/* TÍTULO + NOVA CONVERSA */}
-                <View style={chatStyles.tituloArea}>
-
-                    <Text style={chatStyles.titulo}>
-                        Chat
-                    </Text>
-
-                    <Pressable
-                        style={({ pressed }) => [
-                            chatStyles.btnNovoChat,
-                            pressed && chatStyles.btnNovoChatPressed,
-                        ]}
-                        onPress={() => {
-                            // futuramente nova conversa
-                        }}
-                    >
-
-                        <Image
-                            source={require("@/assets/images/img/add.png")}
-                            style={chatStyles.iconeAdicionar}
-                        />
-
-                    </Pressable>
-
-                </View>
-
-            </View>
-
-
-            {/* ================= BUSCA ================= */}
-            <View style={chatStyles.areaBusca}>
-
-                <View style={chatStyles.inputBuscaContainer}>
-
-                    <Image
-                        source={require("@/assets/images/img/search.png")}
-                        style={chatStyles.iconeBusca}
-                    />
-
-                    <TextInput
-                        value={busca}
-                        onChangeText={setBusca}
-                        style={chatStyles.inputBusca}
-                        placeholder="Buscar conversas"
-                        placeholderTextColor="#777777"
-                    />
-
-                </View>
-
-            </View>
-
-
-            {/* ================= FILTROS ================= */}
-            <View style={chatStyles.filtros}>
-
-                {["Todas", "Não lidas", "Grupos", "Eventos"].map((item) => (
-
-                    <Pressable
-                        key={item}
-                        style={[
-                            chatStyles.filtro,
-                            filtro === item && chatStyles.filtroAtivo,
-                        ]}
-                        onPress={() => setFiltro(item)}
-                    >
-
-                        <Text
-                            style={[
-                                chatStyles.txtFiltro,
-                                filtro === item && chatStyles.txtFiltroAtivo,
-                            ]}
+                        <View
+                            style={
+                                chatStyles.inputBuscaContainer
+                            }
                         >
-                            {item}
-                        </Text>
+
+                            <Image
+                                source={require(
+                                    "@/assets/images/img/search.png"
+                                )}
+                                style={
+                                    chatStyles.iconeBusca
+                                }
+                            />
 
 
-                        {item === "Não lidas" && (
+                            <TextInput
+                                value={busca}
 
-                            <View style={chatStyles.badgeFiltro}>
+                                onChangeText={setBusca}
 
-                                <Text style={chatStyles.txtBadgeFiltro}>
-                                    3
+                                style={
+                                    chatStyles.inputBusca
+                                }
+
+                                placeholder="Buscar conversas"
+
+                                placeholderTextColor="#777777"
+
+                                autoCapitalize="none"
+                            />
+
+                        </View>
+
+                    </View>
+
+
+                    {/* =========================
+                        FILTROS
+                    ========================= */}
+
+                    <View style={chatStyles.filtros}>
+
+                        {[
+                            "Todas",
+                            "Não lidas",
+                            "Grupos",
+                            "Eventos",
+
+                        ].map((item) => {
+
+                            const ativo =
+                                filtro === item;
+
+                            return (
+
+                                <Pressable
+                                    key={item}
+
+                                    style={[
+
+                                        chatStyles.filtro,
+
+                                        ativo &&
+                                        chatStyles.filtroAtivo,
+
+                                    ]}
+
+                                    onPress={() =>
+                                        setFiltro(
+                                            item as FiltroChat
+                                        )
+                                    }
+                                >
+
+                                    <Text
+                                        style={[
+
+                                            chatStyles.txtFiltro,
+
+                                            ativo &&
+                                            chatStyles.txtFiltroAtivo,
+
+                                        ]}
+                                    >
+                                        {item}
+                                    </Text>
+
+
+                                    {/* NÃO LIDAS */}
+
+                                    {item === "Não lidas" &&
+                                        quantidadeNaoLidas > 0 && (
+
+                                            <View
+                                                style={
+                                                    chatStyles.badgeFiltro
+                                                }
+                                            >
+
+                                                <Text
+                                                    style={
+                                                        chatStyles.txtBadgeFiltro
+                                                    }
+                                                >
+                                                    {
+                                                        quantidadeNaoLidas
+                                                    }
+                                                </Text>
+
+                                            </View>
+
+                                        )}
+
+                                </Pressable>
+
+                            );
+
+                        })}
+
+                    </View>
+
+
+                    {/* =========================
+                        CONVERSAS
+                    ========================= */}
+
+                    <ScrollView
+                        style={chatStyles.scroll}
+
+                        contentContainerStyle={
+                            chatStyles.scrollConteudo
+                        }
+
+                        showsVerticalScrollIndicator={
+                            false
+                        }
+                    >
+
+                        {conversasFiltradas.map(
+                            (conversa) => (
+
+                                <Pressable
+                                    key={conversa.id}
+
+                                    style={({ pressed }) => [
+
+                                        chatStyles.conversa,
+
+                                        pressed &&
+                                        chatStyles.conversaPressed,
+
+                                    ]}
+
+                                    onPress={() =>
+                                        router.navigate(
+                                            "/conversa"
+                                        )
+                                    }
+                                >
+
+
+                                    {/* AVATAR */}
+
+                                    <View
+                                        style={
+                                            chatStyles.avatarConversaContainer
+                                        }
+                                    >
+
+                                        <Image
+                                            source={require(
+                                                "@/assets/images/img/usuario.png"
+                                            )}
+                                            style={
+                                                chatStyles.avatarConversa
+                                            }
+                                        />
+
+                                    </View>
+
+
+                                    {/* CONTEÚDO */}
+
+                                    <View
+                                        style={
+                                            chatStyles.conversaConteudo
+                                        }
+                                    >
+
+                                        <Text
+                                            style={
+                                                chatStyles.nome
+                                            }
+                                            numberOfLines={1}
+                                        >
+                                            {conversa.nome}
+                                        </Text>
+
+
+                                        <Text
+                                            style={
+                                                chatStyles.mensagem
+                                            }
+                                            numberOfLines={2}
+                                        >
+                                            {
+                                                conversa.mensagem
+                                            }
+                                        </Text>
+
+                                    </View>
+
+
+                                    {/* HORÁRIO */}
+
+                                    <View
+                                        style={
+                                            chatStyles.conversaMeta
+                                        }
+                                    >
+
+                                        <Text
+                                            style={
+                                                chatStyles.horario
+                                            }
+                                        >
+                                            {
+                                                conversa.horario
+                                            }
+                                        </Text>
+
+
+                                        {conversa.notificacoes > 0 && (
+
+                                            <View
+                                                style={
+                                                    chatStyles.badge
+                                                }
+                                            >
+
+                                                <Text
+                                                    style={
+                                                        chatStyles.txtBadge
+                                                    }
+                                                >
+                                                    {
+                                                        conversa.notificacoes
+                                                    }
+                                                </Text>
+
+                                            </View>
+
+                                        )}
+
+                                    </View>
+
+                                </Pressable>
+
+                            )
+                        )}
+
+
+                        {/* =========================
+                            SEM RESULTADOS
+                        ========================= */}
+
+                        {conversasFiltradas.length === 0 && (
+
+                            <View
+                                style={
+                                    chatStyles.semResultados
+                                }
+                            >
+
+                                <Text
+                                    style={
+                                        chatStyles.txtSemResultados
+                                    }
+                                >
+                                    Nenhuma conversa encontrada.
                                 </Text>
 
                             </View>
 
                         )}
 
-                    </Pressable>
+                    </ScrollView>
 
-                ))}
+
+                    {/* =========================
+                        FOOTER
+                    ========================= */}
+
+                    <MenuSreen />
+
+
+                </SafeAreaView>
+
 
             </View>
 
 
-            {/* ================= CONVERSAS ================= */}
-            <ScrollView
-                style={chatStyles.scroll}
-                contentContainerStyle={chatStyles.scrollConteudo}
-                showsVerticalScrollIndicator={false}
-            >
-
-                {conversasFiltradas.map((conversa) => (
-
-                    <Pressable
-                        key={conversa.id}
-                        style={({ pressed }) => [
-                            chatStyles.conversa,
-                            pressed && chatStyles.conversaPressed,
-                        ]}
-                        onPress={() => router.navigate("/conversa")}
-                    >
-
-                        {/* AVATAR */}
-                        <View style={chatStyles.avatarConversaContainer}>
-
-                            <Image
-                                source={require("@/assets/images/img/usuario.png")}
-                                style={chatStyles.avatarConversa}
-                            />
-
-                        </View>
-
-
-                        {/* DADOS */}
-                        <View style={chatStyles.conversaConteudo}>
-
-                            <Text
-                                style={chatStyles.nome}
-                                numberOfLines={1}
-                            >
-                                {conversa.nome}
-                            </Text>
-
-                            <Text
-                                style={chatStyles.mensagem}
-                                numberOfLines={2}
-                            >
-                                {conversa.mensagem}
-                            </Text>
-
-                        </View>
-
-
-                        {/* HORÁRIO / NOTIFICAÇÃO */}
-                        <View style={chatStyles.conversaMeta}>
-
-                            <Text style={chatStyles.horario}>
-                                {conversa.horario}
-                            </Text>
-
-                            {conversa.notificacoes > 0 && (
-
-                                <View style={chatStyles.badge}>
-
-                                    <Text style={chatStyles.txtBadge}>
-                                        {conversa.notificacoes}
-                                    </Text>
-
-                                </View>
-
-                            )}
-
-                        </View>
-
-                    </Pressable>
-
-                ))}
-
-            </ScrollView>
-
-
-            {/* ================= FOOTER ================= */}
-            <MenuSreen />
-
         </View>
+
     );
+
 }

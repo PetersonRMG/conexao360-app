@@ -1,12 +1,22 @@
 import { StyleSheet } from "react-native";
+
 import { cores, fontes } from "./variaveis";
 
+
 export const conversaStyles = StyleSheet.create({
+
+    // =========================
+    // ESTRUTURA
+    // =========================
 
     container: {
         flex: 1,
 
-        backgroundColor: "#110C0C",
+        backgroundColor: cores.pretoPrincipal,
+    },
+
+    keyboard: {
+        flex: 1,
     },
 
 
@@ -23,10 +33,10 @@ export const conversaStyles = StyleSheet.create({
 
         paddingHorizontal: 14,
 
-        backgroundColor: "#0A0909",
+        backgroundColor: cores.pretoPrincipal,
 
         borderBottomWidth: 1,
-        borderBottomColor: "#2B2424",
+        borderBottomColor: cores.roxoPrincipal80,
     },
 
     btnVoltar: {
@@ -37,6 +47,14 @@ export const conversaStyles = StyleSheet.create({
         justifyContent: "center",
 
         marginRight: 8,
+
+        borderRadius: 19,
+    },
+
+    btnVoltarPressed: {
+        backgroundColor: cores.roxoPrincipal80,
+
+        transform: cores.btnPress,
     },
 
     iconeVoltar: {
@@ -87,10 +105,10 @@ export const conversaStyles = StyleSheet.create({
         right: 0,
         bottom: 0,
 
-        backgroundColor: "#00D66B",
+        backgroundColor: cores.verdeOnline,
 
         borderWidth: 1,
-        borderColor: "#0A0909",
+        borderColor: cores.pretoPrincipal,
     },
 
     nome: {
@@ -144,6 +162,7 @@ export const conversaStyles = StyleSheet.create({
         alignItems: "center",
 
         paddingVertical: 16,
+        paddingHorizontal: 16,
     },
 
     avisoSeguranca: {
@@ -171,6 +190,8 @@ export const conversaStyles = StyleSheet.create({
     },
 
     txtSeguranca: {
+        flexShrink: 1,
+
         color: cores.branco,
 
         fontSize: 8,
@@ -201,9 +222,11 @@ export const conversaStyles = StyleSheet.create({
 
     linha: {
         flex: 1,
+
         height: 1,
 
-        backgroundColor: cores.douradoPrincipal,
+        backgroundColor:
+            cores.douradoPrincipal,
 
         opacity: 0.7,
     },
@@ -228,6 +251,8 @@ export const conversaStyles = StyleSheet.create({
 
     scrollConteudo: {
         paddingHorizontal: 20,
+
+        paddingTop: 5,
         paddingBottom: 20,
     },
 
@@ -246,8 +271,7 @@ export const conversaStyles = StyleSheet.create({
     },
 
     balao: {
-        maxWidth: "72%",
-
+        maxWidth: "78%",
         minWidth: 90,
 
         borderRadius: 15,
@@ -257,13 +281,15 @@ export const conversaStyles = StyleSheet.create({
     },
 
     balaoRecebido: {
-        backgroundColor: cores.roxoPrincipal,
+        backgroundColor:
+            cores.roxoPrincipal,
 
         borderBottomLeftRadius: 3,
     },
 
     balaoMeu: {
-        backgroundColor: cores.douradoPrincipal,
+        backgroundColor:
+            cores.douradoPrincipal,
 
         borderBottomRightRadius: 3,
     },
@@ -300,12 +326,11 @@ export const conversaStyles = StyleSheet.create({
 
 
     // =========================
-    // ENVIO
+    // ÁREA DE ENVIO
     // =========================
 
     areaEnviar: {
         width: "100%",
-
         minHeight: 70,
 
         flexDirection: "row",
@@ -316,8 +341,18 @@ export const conversaStyles = StyleSheet.create({
         paddingHorizontal: 12,
         paddingVertical: 10,
 
-        backgroundColor: "#0A0909",
+        backgroundColor:
+            cores.pretoPrincipal,
+
+        borderTopWidth: 1,
+        borderTopColor:
+            cores.roxoPrincipal80,
     },
+
+
+    // =========================
+    // ANEXO
+    // =========================
 
     btnAnexo: {
         width: 38,
@@ -328,7 +363,15 @@ export const conversaStyles = StyleSheet.create({
 
         borderRadius: 19,
 
-        backgroundColor: cores.roxoPrincipal,
+        backgroundColor:
+            cores.roxoPrincipal,
+    },
+
+    btnAnexoPressed: {
+        backgroundColor:
+            cores.roxoPrincipal80,
+
+        transform: cores.btnPress,
     },
 
     iconeAnexo: {
@@ -352,10 +395,12 @@ export const conversaStyles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
 
-        backgroundColor: cores.roxoPrincipal,
+        backgroundColor:
+            cores.roxoPrincipal,
 
         borderWidth: 1,
-        borderColor: cores.douradoPrincipal,
+        borderColor:
+            cores.douradoPrincipal,
 
         borderRadius: 22,
 

@@ -9,7 +9,7 @@ export const editarPerfilStyles = StyleSheet.create({
 
     container: {
         flex: 1,
-        backgroundColor: "#080808",
+        backgroundColor: cores.bgPreto80,
     },
 
     background: {
@@ -20,7 +20,7 @@ export const editarPerfilStyles = StyleSheet.create({
 
     overlay: {
         flex: 1,
-        backgroundColor: "rgba(0, 0, 0, 0.35)",
+        backgroundColor: cores.bgPreto80,
     },
 
     keyboard: {
@@ -105,7 +105,7 @@ export const editarPerfilStyles = StyleSheet.create({
     titulo: {
         color: cores.branco,
 
-        fontSize: 28,
+        fontSize: fontes.titulo,
         fontFamily: fontes.negrito,
     },
 
@@ -116,7 +116,7 @@ export const editarPerfilStyles = StyleSheet.create({
     aviso: {
         color: cores.douradoPrincipal,
 
-        fontSize: 10,
+        fontSize: fontes.subtitulo,
         fontFamily: fontes.normal,
 
         marginTop: 4,
@@ -193,7 +193,7 @@ export const editarPerfilStyles = StyleSheet.create({
 
         color: cores.branco,
 
-        fontSize: 15,
+        fontSize: fontes.subtitulo,
         fontFamily: fontes.negrito,
 
         marginTop: 6,
@@ -202,7 +202,7 @@ export const editarPerfilStyles = StyleSheet.create({
 
 
     // =========================
-    // CARD INDIVIDUAL DE INPUT
+    // CARD INDIVIDUAL
     // =========================
 
     cardCampo: {
@@ -231,7 +231,7 @@ export const editarPerfilStyles = StyleSheet.create({
     label: {
         color: cores.branco,
 
-        fontSize: 16,
+        fontSize: fontes.subtitulo,
         fontFamily: fontes.negrito,
     },
 
@@ -242,7 +242,6 @@ export const editarPerfilStyles = StyleSheet.create({
 
     status: {
         minWidth: 72,
-
         height: 20,
 
         paddingHorizontal: 10,
@@ -280,7 +279,7 @@ export const editarPerfilStyles = StyleSheet.create({
         fontSize: 13,
         fontFamily: fontes.normal,
 
-        opacity: 0.65,
+        opacity: 0.8,
 
         paddingHorizontal: 0,
         paddingVertical: 4,
@@ -317,7 +316,7 @@ export const editarPerfilStyles = StyleSheet.create({
         fontSize: 13,
         fontFamily: fontes.normal,
 
-        opacity: 0.7,
+        opacity: 0.8,
 
         paddingHorizontal: 0,
         paddingTop: 8,
@@ -353,7 +352,7 @@ export const editarPerfilStyles = StyleSheet.create({
         fontSize: 12,
         fontFamily: fontes.normal,
 
-        opacity: 0.6,
+        opacity: 0.8,
 
         marginTop: 4,
     },

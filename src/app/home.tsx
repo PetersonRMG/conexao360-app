@@ -1,3 +1,6 @@
+import { useState } from "react";
+import { router } from "expo-router";
+
 import {
     View,
     Text,
@@ -5,277 +8,605 @@ import {
     TextInput,
     Pressable,
     ScrollView,
+    Share,
 } from "react-native";
 
+import { SafeAreaView } from "react-native-safe-area-context";
+
 import globalStyle from "@/styles/globalStyles";
+
 import MenuSreen from "./menu";
 import HeaderCreen from "./header";
+
 import { homeStyle } from "@/styles/homeStyles";
+
+
+type Filtro = "Todas" | "Recentes" | "Em alta" | "Meus posts";
+
+
+interface Post {
+    id: number;
+    autor: string;
+    tempo: string;
+    texto?: string;
+    imagem?: boolean;
+
+    recente: boolean;
+    emAlta: boolean;
+    meu: boolean;
+
+    curtidas: number;
+    comentarios: number;
+}
+
 
 export default function HomeScreen() {
 
-   
+    // =====================================
+    // FILTRO ATIVO
+    // =====================================
+    const [filtro, setFiltro] = useState<Filtro>("Todas");
+
+
+    // =====================================
+    // POSTS
+    // =====================================
+    const [posts, setPosts] = useState<Post[]>([
+        {
+            id: 1,
+            autor: "Dr. Simone Baptista",
+            tempo: "2h",
+
+            texto:
+                "Compartilhando conhecimento, experiências e conexões que fazem parte da nossa rede.",
+
+            recente: true,
+            emAlta: false,
+            meu: false,
+
+            curtidas: 12,
+            comentarios: 3,
+        },
+
+        {
+            id: 2,
+            autor: "Dr. Simone Baptista",
+            tempo: "3h",
+
+            imagem: true,
+
+            recente: false,
+            emAlta: true,
+            meu: false,
+
+            curtidas: 27,
+            comentarios: 8,
+        },
+
+        {
+            id: 3,
+            autor: "Fernanda Silva",
+            tempo: "5h",
+
+            texto:
+                "Muito feliz em participar da comunidade Conexão 360.",
+
+            recente: false,
+            emAlta: false,
+            meu: true,
+
+            curtidas: 5,
+            comentarios: 1,
+        },
+    ]);
+
+
+    // =====================================
+    // POSTS CURTIDOS
+    // =====================================
+    const [curtidos, setCurtidos] = useState<number[]>([]);
+
+
+    // =====================================
+    // POST COM COMENTÁRIO ABERTO
+    // =====================================
+    const [comentarioAberto, setComentarioAberto] =
+        useState<number | null>(null);
+
+
+    const [comentario, setComentario] = useState("");
+
+
+    // =====================================
+    // FILTRAR POSTS
+    // =====================================
+    const postsFiltrados = posts.filter((post) => {
+
+        if (filtro === "Recentes") {
+            return post.recente;
+        }
+
+        if (filtro === "Em alta") {
+            return post.emAlta;
+        }
+
+        if (filtro === "Meus posts") {
+            return post.meu;
+        }
+
+        return true;
+
+    });
+
+
+    // =====================================
+    // CURTIR
+    // =====================================
+    const curtirPost = (id: number) => {
+
+        const jaCurtiu = curtidos.includes(id);
+
+
+        setCurtidos((current) => {
+
+            if (jaCurtiu) {
+
+                return current.filter(
+                    (postId) => postId !== id
+                );
+
+            }
+
+            return [...current, id];
+
+        });
+
+
+        setPosts((current) =>
+            current.map((post) => {
+
+                if (post.id !== id) {
+                    return post;
+                }
+
+                return {
+                    ...post,
+
+                    curtidas:
+                        jaCurtiu
+                            ? post.curtidas - 1
+                            : post.curtidas + 1,
+                };
+
+            })
+        );
+
+    };
+
+
+    // =====================================
+    // ABRIR COMENTÁRIO
+    // =====================================
+    const abrirComentario = (id: number) => {
+
+        if (comentarioAberto === id) {
+
+            setComentarioAberto(null);
+
+            return;
+
+        }
+
+        setComentarioAberto(id);
+        setComentario("");
+
+    };
+
+
+    // =====================================
+    // ENVIAR COMENTÁRIO
+    // =====================================
+    const enviarComentario = (id: number) => {
+
+        if (!comentario.trim()) {
+            return;
+        }
+
+
+        setPosts((current) =>
+            current.map((post) => {
+
+                if (post.id !== id) {
+                    return post;
+                }
+
+                return {
+                    ...post,
+                    comentarios: post.comentarios + 1,
+                };
+
+            })
+        );
+
+
+        setComentario("");
+        setComentarioAberto(null);
+
+    };
+
+
+    // =====================================
+    // COMPARTILHAR
+    // =====================================
+    const compartilharPost = async (post: Post) => {
+
+        await Share.share({
+            message:
+                post.texto ??
+                "Confira esta publicação no Conexão 360°.",
+        });
+
+    };
+
 
     return (
-        <View style={[globalStyle.container, homeStyle.container]}>
+
+        // =====================================
+        // FUNDO EXTERNO
+        // =====================================
+        <View style={globalStyle.container}>
 
 
-            <HeaderCreen/>
-
-            {/* ================= BUSCA ================= */}
-            <View style={homeStyle.areaBusca}>
-
-                <View style={homeStyle.inputBusca}>
-
-                    <Image
-                        source={require("@/assets/images/img/search.png")}
-                        style={homeStyle.iconeBusca}
-                    />
-
-                    <TextInput
-                        style={homeStyle.txtBusca}
-                        placeholder="Buscar"
-                        placeholderTextColor="#888888"
-                    />
-
-                </View>
-
-            </View>
-
-
-            {/* ================= FILTROS ================= */}
-            <View style={homeStyle.filtros}>
-
-                <Pressable style={homeStyle.filtroAtivo}>
-                    <Text style={homeStyle.txtFiltroAtivo}>
-                        Todas
-                    </Text>
-                </Pressable>
-
-                <Pressable style={homeStyle.filtro}>
-                    <Text style={homeStyle.txtFiltro}>
-                        Recentes
-                    </Text>
-                </Pressable>
-
-                <Pressable style={homeStyle.filtro}>
-                    <Text style={homeStyle.txtFiltro}>
-                        Em alta
-                    </Text>
-                </Pressable>
-
-                <Pressable style={homeStyle.filtro}>
-                    <Text style={homeStyle.txtFiltro}>
-                        Meus posts
-                    </Text>
-                </Pressable>
-
-            </View>
-
-
-            {/* ================= CONTEÚDO ================= */}
-            <ScrollView
-                style={homeStyle.scroll}
-                contentContainerStyle={homeStyle.scrollConteudo}
-                showsVerticalScrollIndicator={false}
+            {/* =================================
+                LIMITE 440px
+            ================================= */}
+            <View
+                style={[
+                    globalStyle.background,
+                    homeStyle.container,
+                ]}
             >
 
-                {/* ================= BANNER ================= */}
-                <View style={homeStyle.bannerContainer}>
 
-                    <Image
-                        source={require("@/assets/images/img/banner 1.png")}
-                        style={homeStyle.banner}
-                    />
-
-                </View>
+                <SafeAreaView style={globalStyle.areaConteudo}>
 
 
-                {/* INDICADORES DO BANNER */}
-                <View style={homeStyle.indicadores}>
-
-                    <View style={homeStyle.indicadorAtivo} />
-                    <View style={homeStyle.indicador} />
-                    <View style={homeStyle.indicador} />
-
-                </View>
+                    {/* ================= HEADER ================= */}
+                    <HeaderCreen />
 
 
-                {/* ================= TÍTULO ================= */}
-                <Text style={homeStyle.tituloSecao}>
-                    Publicações
-                </Text>
+                    {/* ================= BUSCA ================= */}
+                    <View style={homeStyle.areaBusca}>
 
+                        <View style={homeStyle.inputBusca}>
 
-                {/* ================= PUBLICAÇÃO 1 ================= */}
-                <View style={homeStyle.cardPublicacao}>
+                            <Image
+                                source={require("@/assets/images/img/search.png")}
+                                style={homeStyle.iconeBusca}
+                            />
 
-                    {/* CABEÇALHO */}
-                    <View style={homeStyle.publicacaoHeader}>
-
-                        <Image
-                            source={require("@/assets/images/img/avatar.png")}
-                            style={homeStyle.avatarPublicacao}
-                        />
-
-                        <View style={homeStyle.autorContainer}>
-
-                            <Text style={homeStyle.nomeAutor}>
-                                Dr. Simone Baptista
-                            </Text>
-
-                            <Text style={homeStyle.tempoPublicacao}>
-                                2h
-                            </Text>
+                            <TextInput
+                                style={homeStyle.txtBusca}
+                                placeholder="Buscar"
+                                placeholderTextColor="#888888"
+                            />
 
                         </View>
 
                     </View>
 
 
-                    {/* TEXTO */}
-                    <Text style={homeStyle.textoPublicacao}>
-                        Compartilhando conhecimento, experiências e conexões
-                        que fazem parte da nossa rede.
-                    </Text>
+                    {/* ================= FILTROS ================= */}
+                    <View style={homeStyle.filtros}>
 
+                        {[
+                            "Todas",
+                            "Recentes",
+                            "Em alta",
+                            "Meus posts",
+                        ].map((item) => {
 
-                    {/* AÇÕES */}
-                    <View style={homeStyle.acoesPublicacao}>
+                            const ativo = filtro === item;
 
-                        <Pressable style={homeStyle.acao}>
+                            return (
 
-                            <Image
-                                source={require("@/assets/images/img/heart.png")}
-                                style={homeStyle.iconeAcao}
-                            />
+                                <Pressable
+                                    key={item}
 
-                            <Text style={homeStyle.txtAcao}>
-                                Curtir
-                            </Text>
+                                    style={[
+                                        homeStyle.filtro,
 
-                        </Pressable>
+                                        ativo &&
+                                        homeStyle.filtroAtivo,
+                                    ]}
 
+                                    onPress={() =>
+                                        setFiltro(item as Filtro)
+                                    }
+                                >
 
-                        <Pressable style={homeStyle.acao}>
+                                    <Text
+                                        style={[
+                                            homeStyle.txtFiltro,
 
-                            <Image
-                                source={require("@/assets/images/img/coment.png")}
-                                style={homeStyle.iconeAcao}
-                            />
+                                            ativo &&
+                                            homeStyle.txtFiltroAtivo,
+                                        ]}
+                                    >
+                                        {item}
+                                    </Text>
 
-                            <Text style={homeStyle.txtAcao}>
-                                Comentar
-                            </Text>
+                                </Pressable>
 
-                        </Pressable>
+                            );
 
-
-                        <Pressable style={homeStyle.acao}>
-
-                            <Image
-                                source={require("@/assets/images/img/share.png")}
-                                style={homeStyle.iconeAcao}
-                            />
-
-                            <Text style={homeStyle.txtAcao}>
-                                Compartilhar
-                            </Text>
-
-                        </Pressable>
+                        })}
 
                     </View>
 
-                </View>
+
+                    {/* ================= CONTEÚDO ================= */}
+                    <ScrollView
+                        style={homeStyle.scroll}
+                        contentContainerStyle={homeStyle.scrollConteudo}
+                        showsVerticalScrollIndicator={false}
+                        keyboardShouldPersistTaps="handled"
+                    >
 
 
-                {/* ================= PUBLICAÇÃO 2 ================= */}
-                <View style={homeStyle.cardPublicacao}>
+                        {/* ================= BANNER ================= */}
+                        <View style={homeStyle.bannerContainer}>
 
-                    {/* CABEÇALHO */}
-                    <View style={homeStyle.publicacaoHeader}>
-
-                        <Image
-                            source={require("@/assets/images/img/avatar.png")}
-                            style={homeStyle.avatarPublicacao}
-                        />
-
-                        <View style={homeStyle.autorContainer}>
-
-                            <Text style={homeStyle.nomeAutor}>
-                                Dr. Simone Baptista
-                            </Text>
-
-                            <Text style={homeStyle.tempoPublicacao}>
-                                3h
-                            </Text>
+                            <Image
+                                source={require("@/assets/images/img/banner 1.png")}
+                                style={homeStyle.banner}
+                            />
 
                         </View>
 
-                    </View>
+
+                        {/* INDICADORES */}
+                        <View style={homeStyle.indicadores}>
+
+                            <View style={homeStyle.indicadorAtivo} />
+                            <View style={homeStyle.indicador} />
+                            <View style={homeStyle.indicador} />
+
+                        </View>
 
 
-                    {/* IMAGEM */}
-                    <Image
-                        source={require("@/assets/images/img/banner 1.png")}
-                        style={homeStyle.imagemPublicacao}
-                    />
+                        {/* ================= TÍTULO ================= */}
+                        <Text style={homeStyle.tituloSecao}>
+                            Publicações
+                        </Text>
 
 
-                    {/* AÇÕES */}
-                    <View style={homeStyle.acoesPublicacao}>
+                        {/* ================= POSTS ================= */}
+                        {postsFiltrados.map((post) => {
 
-                        <Pressable style={homeStyle.acao}>
+                            const curtido =
+                                curtidos.includes(post.id);
 
-                            <Image
-                                source={require("@/assets/images/img/heart.png")}
-                                style={homeStyle.iconeAcao}
-                            />
 
-                            <Text style={homeStyle.txtAcao}>
-                                Curtir
+                            return (
+
+                                <View
+                                    key={post.id}
+                                    style={homeStyle.cardPublicacao}
+                                >
+
+
+                                    {/* ================= AUTOR ================= */}
+                                    <View style={homeStyle.publicacaoHeader}>
+
+                                        <Image
+                                            source={require("@/assets/images/img/avatar.png")}
+                                            style={homeStyle.avatarPublicacao}
+                                        />
+
+
+                                        <View style={homeStyle.autorContainer}>
+
+                                            <Text style={homeStyle.nomeAutor}>
+                                                {post.autor}
+                                            </Text>
+
+                                            <Text style={homeStyle.tempoPublicacao}>
+                                                {post.tempo}
+                                            </Text>
+
+                                        </View>
+
+                                    </View>
+
+
+                                    {/* ================= TEXTO ================= */}
+                                    {post.texto && (
+
+                                        <Text style={homeStyle.textoPublicacao}>
+                                            {post.texto}
+                                        </Text>
+
+                                    )}
+
+
+                                    {/* ================= IMAGEM ================= */}
+                                    {post.imagem && (
+
+                                        <Image
+                                            source={require("@/assets/images/img/banner 1.png")}
+                                            style={homeStyle.imagemPublicacao}
+                                        />
+
+                                    )}
+
+
+                                    {/* ================= NÚMEROS ================= */}
+                                    <View style={homeStyle.areaContadores}>
+
+                                        <Text style={homeStyle.txtContador}>
+                                            {post.curtidas} curtidas
+                                        </Text>
+
+                                        <Text style={homeStyle.txtContador}>
+                                            {post.comentarios} comentários
+                                        </Text>
+
+                                    </View>
+
+
+                                    {/* ================= AÇÕES ================= */}
+                                    <View style={homeStyle.acoesPublicacao}>
+
+
+                                        {/* CURTIR */}
+                                        <Pressable
+                                            style={homeStyle.acao}
+                                            onPress={() =>
+                                                curtirPost(post.id)
+                                            }
+                                        >
+
+                                            <Image
+                                                source={require("@/assets/images/img/heart.png")}
+                                                style={[
+                                                    homeStyle.iconeAcao,
+
+                                                    curtido &&
+                                                    homeStyle.iconeAcaoAtivo,
+                                                ]}
+                                            />
+
+                                            <Text
+                                                style={[
+                                                    homeStyle.txtAcao,
+
+                                                    curtido &&
+                                                    homeStyle.txtAcaoAtivo,
+                                                ]}
+                                            >
+                                                {curtido
+                                                    ? "Curtido"
+                                                    : "Curtir"
+                                                }
+                                            </Text>
+
+                                        </Pressable>
+
+
+                                        {/* COMENTAR */}
+                                        <Pressable
+                                            style={homeStyle.acao}
+                                            onPress={() =>
+                                                router.push({
+                                                    pathname: "/comentarios",
+
+                                                    params: {
+                                                        postId: post.id,
+                                                    },
+                                                })
+                                            }
+                                        >
+
+                                            <Image
+                                                source={require("@/assets/images/img/coment.png")}
+                                                style={homeStyle.iconeAcao}
+                                            />
+
+                                            <Text style={homeStyle.txtAcao}>
+                                                Comentar
+                                            </Text>
+
+                                        </Pressable>
+
+
+                                        {/* COMPARTILHAR */}
+                                        <Pressable
+                                            style={homeStyle.acao}
+                                            onPress={() =>
+                                                compartilharPost(post)
+                                            }
+                                        >
+
+                                            <Image
+                                                source={require("@/assets/images/img/share.png")}
+                                                style={homeStyle.iconeAcao}
+                                            />
+
+                                            <Text style={homeStyle.txtAcao}>
+                                                Compartilhar
+                                            </Text>
+
+                                        </Pressable>
+
+
+                                    </View>
+
+
+                                    {/* ================= COMENTÁRIO ================= */}
+                                    {comentarioAberto === post.id && (
+
+                                        <View style={homeStyle.areaComentario}>
+
+                                            <TextInput
+                                                value={comentario}
+                                                onChangeText={setComentario}
+                                                style={homeStyle.inputComentario}
+                                                placeholder="Escreva um comentário..."
+                                                placeholderTextColor="#888888"
+                                            />
+
+
+                                            <Pressable
+                                                style={homeStyle.btnEnviarComentario}
+                                                onPress={() =>
+                                                    enviarComentario(post.id)
+                                                }
+                                            >
+
+                                                <Image
+                                                    source={require("@/assets/images/img/send.png")}
+                                                    style={homeStyle.iconeEnviarComentario}
+                                                />
+
+                                            </Pressable>
+
+                                        </View>
+
+                                    )}
+
+
+                                </View>
+
+                            );
+
+                        })}
+
+
+                        {/* SEM RESULTADOS */}
+                        {postsFiltrados.length === 0 && (
+
+                            <Text style={homeStyle.semPublicacoes}>
+                                Nenhuma publicação encontrada.
                             </Text>
 
-                        </Pressable>
+                        )}
 
 
-                        <Pressable style={homeStyle.acao}>
-
-                            <Image
-                                source={require("@/assets/images/img/coment.png")}
-                                style={homeStyle.iconeAcao}
-                            />
-
-                            <Text style={homeStyle.txtAcao}>
-                                Comentar
-                            </Text>
-
-                        </Pressable>
+                    </ScrollView>
 
 
-                        <Pressable style={homeStyle.acao}>
-
-                            <Image
-                                source={require("@/assets/images/img/share.png")}
-                                style={homeStyle.iconeAcao}
-                            />
-
-                            <Text style={homeStyle.txtAcao}>
-                                Compartilhar
-                            </Text>
-
-                        </Pressable>
-
-                    </View>
-
-                </View>
-
-            </ScrollView>
+                    {/* ================= FOOTER ================= */}
+                    <MenuSreen />
 
 
-            {/* ================= MENU INFERIOR ================= */}
-            <MenuSreen/>
+                </SafeAreaView>
+
+
+            </View>
+
 
         </View>
+
     );
 }

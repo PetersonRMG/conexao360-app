@@ -3,9 +3,14 @@ import { cores, fontes } from "./variaveis";
 
 export const chatStyles = StyleSheet.create({
 
+    // =========================
+    // ESTRUTURA
+    // =========================
+
     container: {
         flex: 1,
-        backgroundColor: "#0A0909",
+
+        backgroundColor: cores.pretoPrincipal,
     },
 
 
@@ -14,7 +19,9 @@ export const chatStyles = StyleSheet.create({
     // =========================
 
     header: {
-        backgroundColor: "#0A0909",
+        width: "100%",
+
+        backgroundColor: cores.bgPreto80,
 
         borderBottomWidth: 1,
         borderBottomColor: cores.roxoPrincipal80,
@@ -27,6 +34,7 @@ export const chatStyles = StyleSheet.create({
         width: "100%",
 
         flexDirection: "row",
+
         alignItems: "center",
         justifyContent: "space-between",
     },
@@ -91,7 +99,9 @@ export const chatStyles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "space-between",
 
-        marginTop: 10,
+        paddingHorizontal: 16,
+
+        marginTop: 12,
         marginBottom: 10,
     },
 
@@ -117,6 +127,7 @@ export const chatStyles = StyleSheet.create({
 
     btnNovoChatPressed: {
         backgroundColor: cores.roxoPrincipal80,
+
         transform: cores.btnPress,
     },
 
@@ -135,39 +146,45 @@ export const chatStyles = StyleSheet.create({
     areaBusca: {
         width: "100%",
 
-        backgroundColor: cores.roxoPrincipal,
-
         paddingHorizontal: 16,
-        paddingVertical: 10,
+        paddingTop: 12,
+        paddingBottom: 10,
+
+        // removido o fundo roxo
+        backgroundColor: cores.bgPreto80,
     },
 
     inputBuscaContainer: {
         width: "100%",
-        height: 38,
+        height: 44,
 
         flexDirection: "row",
         alignItems: "center",
 
-        backgroundColor: cores.roxoPrincipal80,
+        backgroundColor: cores.bgPreto80,
 
-        borderRadius: 20,
+        borderWidth: 1,
+        borderColor: cores.douradoPrincipal,
 
-        paddingHorizontal: 12,
+        borderRadius: 22,
+
+        paddingHorizontal: 14,
     },
 
     iconeBusca: {
-        width: 20,
-        height: 20,
+        width: 19,
+        height: 19,
 
         resizeMode: "contain",
 
-        marginRight: 8,
+        marginRight: 10,
 
-        opacity: 0.6,
+        opacity: 0.7,
     },
 
     inputBusca: {
         flex: 1,
+
         height: "100%",
 
         color: cores.branco,
@@ -189,7 +206,7 @@ export const chatStyles = StyleSheet.create({
 
         flexDirection: "row",
 
-        backgroundColor: "#0A0909",
+        backgroundColor: cores.bgPreto80,
 
         borderBottomWidth: 1,
         borderBottomColor: cores.roxoPrincipal80,
@@ -224,23 +241,31 @@ export const chatStyles = StyleSheet.create({
 
     txtFiltroAtivo: {
         color: cores.douradoPrincipal,
+
         opacity: 1,
     },
 
-    badgeFiltro: {
-        width: 16,
-        height: 16,
 
-        borderRadius: 8,
+    // =========================
+    // BADGE FILTRO
+    // =========================
+
+    badgeFiltro: {
+        minWidth: 17,
+        height: 17,
+
+        paddingHorizontal: 4,
+
+        borderRadius: 9,
 
         alignItems: "center",
         justifyContent: "center",
 
-        backgroundColor: "#A500CC",
+        backgroundColor: cores.douradoPrincipal,
     },
 
     txtBadgeFiltro: {
-        color: cores.branco,
+        color: cores.roxoPrincipal,
 
         fontSize: 8,
         fontFamily: fontes.negrito,
@@ -275,12 +300,17 @@ export const chatStyles = StyleSheet.create({
         paddingVertical: 10,
 
         borderBottomWidth: 1,
-        borderBottomColor: "#292323",
+        borderBottomColor: cores.roxoPrincipal80,
     },
 
     conversaPressed: {
         backgroundColor: cores.roxoPrincipal80,
     },
+
+
+    // =========================
+    // AVATAR CONVERSA
+    // =========================
 
     avatarConversaContainer: {
         width: 47,
@@ -302,6 +332,11 @@ export const chatStyles = StyleSheet.create({
 
         resizeMode: "contain",
     },
+
+
+    // =========================
+    // DADOS CONVERSA
+    // =========================
 
     conversaConteudo: {
         flex: 1,
@@ -329,6 +364,11 @@ export const chatStyles = StyleSheet.create({
         opacity: 0.85,
     },
 
+
+    // =========================
+    // META
+    // =========================
+
     conversaMeta: {
         height: 55,
 
@@ -346,22 +386,47 @@ export const chatStyles = StyleSheet.create({
     },
 
     badge: {
-        width: 19,
+        minWidth: 19,
         height: 19,
+
+        paddingHorizontal: 5,
 
         borderRadius: 10,
 
         alignItems: "center",
         justifyContent: "center",
 
-        backgroundColor: "#A500CC",
+        backgroundColor: cores.douradoPrincipal,
     },
 
     txtBadge: {
-        color: cores.branco,
+        color: cores.roxoPrincipal,
 
         fontSize: 9,
         fontFamily: fontes.negrito,
+    },
+
+
+    // =========================
+    // SEM RESULTADOS
+    // =========================
+
+    semResultados: {
+        width: "100%",
+
+        alignItems: "center",
+        justifyContent: "center",
+
+        paddingVertical: 40,
+    },
+
+    txtSemResultados: {
+        color: cores.branco,
+
+        fontSize: 12,
+        fontFamily: fontes.normal,
+
+        opacity: 0.6,
     },
 
 });

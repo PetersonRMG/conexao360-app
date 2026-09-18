@@ -2,22 +2,32 @@ import { StyleSheet } from "react-native";
 
 import { cores, fontes } from "./variaveis";
 
+
 export const criarPostStyles = StyleSheet.create({
+
+    // =========================
+    // ESTRUTURA
+    // =========================
 
     container: {
         flex: 1,
-        backgroundColor: "#080808",
+
+        backgroundColor:
+            cores.pretoPrincipal,
     },
 
     background: {
         flex: 1,
+
         width: "100%",
         height: "100%",
     },
 
     overlay: {
         flex: 1,
-        backgroundColor: "rgba(0,0,0,0.35)",
+
+        backgroundColor:
+            cores.bgPreto80,
     },
 
     keyboard: {
@@ -30,6 +40,7 @@ export const criarPostStyles = StyleSheet.create({
 
     scrollConteudo: {
         paddingHorizontal: 16,
+
         paddingBottom: 110,
     },
 
@@ -58,12 +69,16 @@ export const criarPostStyles = StyleSheet.create({
 
         borderRadius: 23,
 
-        backgroundColor: cores.bgPreto80,
+        backgroundColor:
+            cores.bgPreto80,
     },
 
     btnVoltarPressed: {
-        backgroundColor: cores.roxoPrincipal80,
-        transform: cores.btnPress,
+        backgroundColor:
+            cores.roxoPrincipal80,
+
+        transform:
+            cores.btnPress,
     },
 
     voltarImagem: {
@@ -101,19 +116,25 @@ export const criarPostStyles = StyleSheet.create({
     tituloPagina: {
         color: cores.branco,
 
-        fontSize: 28,
-        fontFamily: fontes.negrito,
+        fontSize: fontes.titulo,
+
+        fontFamily:
+            fontes.negrito,
     },
 
     tituloDourado: {
-        color: cores.douradoPrincipal,
+        color:
+            cores.douradoPrincipal,
     },
 
     aviso: {
-        color: cores.douradoPrincipal,
+        color:
+            cores.douradoPrincipal,
 
         fontSize: 10,
-        fontFamily: fontes.normal,
+
+        fontFamily:
+            fontes.normal,
 
         marginTop: 4,
 
@@ -128,7 +149,8 @@ export const criarPostStyles = StyleSheet.create({
     card: {
         width: "100%",
 
-        backgroundColor: cores.roxoPrincipal,
+        backgroundColor:
+            cores.roxoPrincipal,
 
         borderRadius: 12,
 
@@ -141,7 +163,9 @@ export const criarPostStyles = StyleSheet.create({
         color: cores.branco,
 
         fontSize: 16,
-        fontFamily: fontes.negrito,
+
+        fontFamily:
+            fontes.negrito,
 
         marginBottom: 8,
     },
@@ -158,12 +182,17 @@ export const criarPostStyles = StyleSheet.create({
         color: cores.branco,
 
         fontSize: 13,
-        fontFamily: fontes.normal,
 
-        backgroundColor: cores.roxoPrincipal80,
+        fontFamily:
+            fontes.normal,
+
+        backgroundColor:
+            cores.roxoPrincipal80,
 
         borderWidth: 1,
-        borderColor: cores.douradoPrincipal,
+
+        borderColor:
+            cores.douradoPrincipal,
 
         borderRadius: 10,
 
@@ -173,14 +202,18 @@ export const criarPostStyles = StyleSheet.create({
 
     inputDescricao: {
         width: "100%",
+
         minHeight: 70,
 
         color: cores.branco,
 
         fontSize: 13,
-        fontFamily: fontes.normal,
 
-        backgroundColor: cores.roxoPrincipal80,
+        fontFamily:
+            fontes.normal,
+
+        backgroundColor:
+            cores.roxoPrincipal80,
 
         borderRadius: 10,
 
@@ -194,7 +227,9 @@ export const criarPostStyles = StyleSheet.create({
         color: cores.branco,
 
         fontSize: 9,
-        fontFamily: fontes.normal,
+
+        fontFamily:
+            fontes.normal,
 
         opacity: 0.5,
 
@@ -210,7 +245,8 @@ export const criarPostStyles = StyleSheet.create({
         width: "100%",
         height: 125,
 
-        backgroundColor: cores.roxoPrincipal80,
+        backgroundColor:
+            cores.roxoPrincipal80,
 
         borderRadius: 12,
 
@@ -219,7 +255,8 @@ export const criarPostStyles = StyleSheet.create({
     },
 
     areaImagemPressed: {
-        transform: cores.btnPress,
+        transform:
+            cores.btnPress,
     },
 
     iconeImagem: {
@@ -235,7 +272,9 @@ export const criarPostStyles = StyleSheet.create({
         color: cores.branco,
 
         fontSize: 10,
-        fontFamily: fontes.normal,
+
+        fontFamily:
+            fontes.normal,
 
         opacity: 0.7,
     },
@@ -262,7 +301,8 @@ export const criarPostStyles = StyleSheet.create({
 
         paddingHorizontal: 12,
 
-        backgroundColor: cores.roxoPrincipal80,
+        backgroundColor:
+            cores.roxoPrincipal80,
 
         borderRadius: 15,
 
@@ -274,9 +314,11 @@ export const criarPostStyles = StyleSheet.create({
         color: cores.branco,
 
         fontSize: 10,
-        fontFamily: fontes.normal,
 
-        opacity: 0.7,
+        fontFamily:
+            fontes.normal,
+
+        opacity: 0.8,
     },
 
     btnNovaTag: {
@@ -285,7 +327,9 @@ export const criarPostStyles = StyleSheet.create({
         paddingHorizontal: 14,
 
         borderWidth: 1,
-        borderColor: cores.douradoPrincipal,
+
+        borderColor:
+            cores.douradoPrincipal,
 
         borderRadius: 15,
 
@@ -294,10 +338,86 @@ export const criarPostStyles = StyleSheet.create({
     },
 
     txtNovaTag: {
-        color: cores.douradoPrincipal,
+        color:
+            cores.douradoPrincipal,
 
         fontSize: 10,
-        fontFamily: fontes.negrito,
+
+        fontFamily:
+            fontes.negrito,
+    },
+
+
+    // =========================
+    // NOVA TAG
+    // =========================
+
+    areaNovaTag: {
+        width: "100%",
+
+        flexDirection: "row",
+        alignItems: "center",
+
+        gap: 8,
+
+        marginTop: 12,
+    },
+
+    inputNovaTag: {
+        flex: 1,
+
+        height: 40,
+
+        color: cores.branco,
+
+        backgroundColor:
+            cores.roxoPrincipal80,
+
+        borderWidth: 1,
+
+        borderColor:
+            cores.douradoPrincipal,
+
+        borderRadius: 10,
+
+        paddingHorizontal: 12,
+
+        fontSize: 12,
+
+        fontFamily:
+            fontes.normal,
+    },
+
+    btnAdicionarTag: {
+        height: 40,
+
+        paddingHorizontal: 12,
+
+        alignItems: "center",
+        justifyContent: "center",
+
+        backgroundColor:
+            cores.douradoPrincipal,
+
+        borderRadius: 10,
+    },
+
+    btnAdicionarTagPressed: {
+        backgroundColor:
+            cores.douradoPrincipalPressed,
+
+        transform:
+            cores.btnPress,
+    },
+
+    txtAdicionarTag: {
+        color:
+            cores.roxoPrincipal,
+
+        fontSize: 10,
+
+        fontFamily:
+            fontes.negrito,
     },
 
 
@@ -309,7 +429,9 @@ export const criarPostStyles = StyleSheet.create({
         width: "100%",
 
         flexDirection: "row",
-        justifyContent: "space-between",
+
+        justifyContent:
+            "space-between",
 
         gap: 20,
 
@@ -318,9 +440,11 @@ export const criarPostStyles = StyleSheet.create({
 
     btnPublicar: {
         flex: 1,
+
         height: 45,
 
-        backgroundColor: cores.douradoPrincipal,
+        backgroundColor:
+            cores.douradoPrincipal,
 
         borderRadius: 22,
 
@@ -329,25 +453,36 @@ export const criarPostStyles = StyleSheet.create({
     },
 
     btnPublicarPressed: {
-        backgroundColor: cores.douradoPrincipalPressed,
-        transform: cores.btnPress,
+        backgroundColor:
+            cores.douradoPrincipalPressed,
+
+        transform:
+            cores.btnPress,
     },
 
     txtPublicar: {
-        color: cores.roxoPrincipal,
+        color:
+            cores.roxoPrincipal,
 
-        fontSize: fontes.btn,
-        fontFamily: fontes.extraNegrito,
+        fontSize:
+            fontes.btn,
+
+        fontFamily:
+            fontes.extraNegrito,
     },
 
     btnCancelar: {
         flex: 1,
+
         height: 45,
 
-        backgroundColor: cores.bgPreto80,
+        backgroundColor:
+            cores.bgPreto80,
 
         borderWidth: 1,
-        borderColor: cores.douradoPrincipal,
+
+        borderColor:
+            cores.douradoPrincipal,
 
         borderRadius: 22,
 
@@ -356,15 +491,22 @@ export const criarPostStyles = StyleSheet.create({
     },
 
     btnCancelarPressed: {
-        backgroundColor: cores.roxoPrincipal80,
-        transform: cores.btnPress,
+        backgroundColor:
+            cores.roxoPrincipal80,
+
+        transform:
+            cores.btnPress,
     },
 
     txtCancelar: {
-        color: cores.douradoPrincipal,
+        color:
+            cores.douradoPrincipal,
 
-        fontSize: fontes.btn,
-        fontFamily: fontes.extraNegrito,
+        fontSize:
+            fontes.btn,
+
+        fontFamily:
+            fontes.extraNegrito,
     },
 
 });

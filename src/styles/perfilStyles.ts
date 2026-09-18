@@ -63,7 +63,7 @@ export const perfilStyles = StyleSheet.create({
 
         borderRadius: 23,
 
-        
+
         borderColor: cores.douradoPrincipal,
 
         alignItems: "center",
@@ -288,6 +288,13 @@ export const perfilStyles = StyleSheet.create({
 
         borderWidth: 1,
         borderColor: cores.douradoPrincipal,
+    },
+    btnAcaoAtivo: {
+        backgroundColor: cores.douradoPrincipal,
+    },
+
+    txtBtnAcaoAtivo: {
+        color: cores.roxoPrincipal,
     },
 
     btnAcaoPressed: {

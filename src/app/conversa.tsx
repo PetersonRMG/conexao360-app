@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { router } from "expo-router";
 
 import {
@@ -12,307 +12,597 @@ import {
     Platform,
 } from "react-native";
 
+import { SafeAreaView } from "react-native-safe-area-context";
+
 import { conversaStyles } from "@/styles/conversaStyles";
+import globalStyle from "@/styles/globalStyles";
+
+
+interface Mensagem {
+    id: number;
+    texto: string;
+    horario: string;
+    minha: boolean;
+}
+
 
 export default function ConversaScreen() {
 
     const [mensagem, setMensagem] = useState("");
 
-    const [mensagens, setMensagens] = useState([
+    const scrollRef = useRef<ScrollView>(null);
+
+
+    // =========================
+    // MENSAGENS
+    // =========================
+
+    const [mensagens, setMensagens] = useState<Mensagem[]>([
+
         {
             id: 1,
             texto: "Bom dia!!",
             horario: "09:15",
             minha: false,
         },
+
         {
             id: 2,
             texto: "Bom dia!\nTudo certo para o evento?",
             horario: "09:18",
             minha: true,
         },
+
         {
             id: 3,
             texto: "Claro!\nTudo certo, já enviei o material",
-            horario: "09:15",
+            horario: "09:20",
             minha: false,
         },
+
         {
             id: 4,
             texto: "Excelente!\nMuito obrigado",
-            horario: "09:18",
+            horario: "09:21",
             minha: true,
         },
+
         {
             id: 5,
             texto: "Claro!\nTudo certo, já enviei o material",
-            horario: "09:15",
+            horario: "09:23",
             minha: false,
         },
+
         {
             id: 6,
             texto: "Excelente!\nMuito obrigado",
-            horario: "09:18",
+            horario: "09:24",
             minha: true,
         },
+
     ]);
 
 
+    // =========================
+    // ENVIAR MENSAGEM
+    // =========================
+
     const enviarMensagem = () => {
 
-        if (!mensagem.trim()) {
+        const texto = mensagem.trim();
+
+        if (!texto) {
             return;
         }
 
-        const novaMensagem = {
+
+        const agora = new Date();
+
+        const horario = agora.toLocaleTimeString(
+            "pt-BR",
+            {
+                hour: "2-digit",
+                minute: "2-digit",
+            }
+        );
+
+
+        const novaMensagem: Mensagem = {
+
             id: Date.now(),
-            texto: mensagem.trim(),
-            horario: "Agora",
+
+            texto,
+
+            horario,
+
             minha: true,
+
         };
 
-        setMensagens([
-            ...mensagens,
+
+        setMensagens((current) => [
+            ...current,
             novaMensagem,
         ]);
 
+
         setMensagem("");
+
     };
 
 
     return (
-        <KeyboardAvoidingView
-            style={conversaStyles.container}
-            behavior={Platform.OS === "ios" ? "padding" : "height"}
-        >
 
-            {/* ================= HEADER ================= */}
-            <View style={conversaStyles.header}>
+        // =========================================
+        // FUNDO EXTERNO
+        // =========================================
 
-                {/* VOLTAR */}
-                <Pressable
-                    style={conversaStyles.btnVoltar}
-                    onPress={() => router.back()}
-                >
-
-                    <Image
-                        source={require("@/assets/images/img/left.png")}
-                        style={conversaStyles.iconeVoltar}
-                    />
-
-                </Pressable>
+        <View style={globalStyle.container}>
 
 
-                {/* PERFIL */}
-                <View style={conversaStyles.perfil}>
+            {/* =====================================
+                ÁREA MOBILE - MÁXIMO 440px
+            ===================================== */}
 
-                    <View style={conversaStyles.avatarContainer}>
-
-                        <Image
-                            source={require("@/assets/images/img/avatar.png")}
-                            style={conversaStyles.avatar}
-                        />
-
-                        <View style={conversaStyles.online} />
-
-                    </View>
-
-
-                    <View>
-
-                        <Text style={conversaStyles.nome}>
-                            Dra. Simone Baptista
-                        </Text>
-
-                        <Text style={conversaStyles.status}>
-                            Online
-                        </Text>
-
-                    </View>
-
-                </View>
-
-
-                {/* MENU */}
-                <Pressable
-                    style={conversaStyles.btnMais}
-                    onPress={() => {
-                        // opções da conversa futuramente
-                    }}
-                >
-
-                    <Text style={conversaStyles.mais}>
-                        ⋮
-                    </Text>
-
-                </Pressable>
-
-            </View>
-
-
-            {/* ================= SEGURANÇA ================= */}
-            <View style={conversaStyles.areaSeguranca}>
-
-                <View style={conversaStyles.avisoSeguranca}>
-
-                    <Image
-                        source={require("@/assets/images/img/trancar.png")}
-                        style={conversaStyles.iconeSeguranca}
-                    />
-
-                    <Text style={conversaStyles.txtSeguranca}>
-                        Todas as mensagens são protegidas{"\n"}
-                        com criptografia de ponta a ponta
-                    </Text>
-
-                </View>
-
-            </View>
-
-
-            {/* ================= HOJE ================= */}
-            <View style={conversaStyles.divisorData}>
-
-                <View style={conversaStyles.linha} />
-
-                <Text style={conversaStyles.data}>
-                    Hoje
-                </Text>
-
-                <View style={conversaStyles.linha} />
-
-            </View>
-
-
-            {/* ================= MENSAGENS ================= */}
-            <ScrollView
-                style={conversaStyles.scroll}
-                contentContainerStyle={conversaStyles.scrollConteudo}
-                showsVerticalScrollIndicator={false}
-                keyboardShouldPersistTaps="handled"
+            <View
+                style={[
+                    globalStyle.background,
+                    conversaStyles.container,
+                ]}
             >
 
-                {mensagens.map((item) => (
 
-                    <View
-                        key={item.id}
-                        style={[
-                            conversaStyles.linhaMensagem,
+                <SafeAreaView
+                    style={globalStyle.areaConteudo}
+                >
 
-                            item.minha
-                                ? conversaStyles.linhaMinhaMensagem
-                                : conversaStyles.linhaMensagemRecebida,
-                        ]}
+
+                    <KeyboardAvoidingView
+                        style={conversaStyles.keyboard}
+
+                        behavior={
+                            Platform.OS === "ios"
+                                ? "padding"
+                                : "height"
+                        }
                     >
 
-                        <View
-                            style={[
-                                conversaStyles.balao,
 
-                                item.minha
-                                    ? conversaStyles.balaoMeu
-                                    : conversaStyles.balaoRecebido,
-                            ]}
-                        >
+                        {/* =========================
+                            HEADER DA CONVERSA
+                        ========================= */}
 
-                            <Text
-                                style={[
-                                    conversaStyles.txtMensagem,
+                        <View style={conversaStyles.header}>
 
-                                    item.minha &&
-                                    conversaStyles.txtMinhaMensagem,
+
+                            {/* VOLTAR */}
+
+                            <Pressable
+                                style={({ pressed }) => [
+
+                                    conversaStyles.btnVoltar,
+
+                                    pressed &&
+                                    conversaStyles.btnVoltarPressed,
+
                                 ]}
+                                onPress={() => router.back()}
                             >
-                                {item.texto}
-                            </Text>
+
+                                <Image
+                                    source={require(
+                                        "@/assets/images/img/left.png"
+                                    )}
+                                    style={
+                                        conversaStyles.iconeVoltar
+                                    }
+                                />
+
+                            </Pressable>
 
 
-                            <Text
-                                style={[
-                                    conversaStyles.horario,
+                            {/* =====================
+                                PERFIL
+                            ===================== */}
 
-                                    item.minha &&
-                                    conversaStyles.horarioMeu,
-                                ]}
+                            <Pressable
+                                style={conversaStyles.perfil}
+
+                                onPress={() =>
+                                    router.navigate("/perfil")
+                                }
                             >
-                                {item.horario}
-                            </Text>
+
+
+                                <View
+                                    style={
+                                        conversaStyles.avatarContainer
+                                    }
+                                >
+
+                                    <Image
+                                        source={require(
+                                            "@/assets/images/img/avatar.png"
+                                        )}
+                                        style={
+                                            conversaStyles.avatar
+                                        }
+                                    />
+
+
+                                    <View
+                                        style={
+                                            conversaStyles.online
+                                        }
+                                    />
+
+                                </View>
+
+
+                                <View>
+
+                                    <Text
+                                        style={
+                                            conversaStyles.nome
+                                        }
+                                    >
+                                        Dra. Simone Baptista
+                                    </Text>
+
+
+                                    <Text
+                                        style={
+                                            conversaStyles.status
+                                        }
+                                    >
+                                        Online
+                                    </Text>
+
+                                </View>
+
+
+                            </Pressable>
+
+
+                            {/* =====================
+                                MENU DA CONVERSA
+                            ===================== */}
+
+                            <Pressable
+                                style={
+                                    conversaStyles.btnMais
+                                }
+
+                                onPress={() => {
+
+                                    // futuramente:
+                                    // abrir menu específico
+                                    // da conversa
+
+                                }}
+                            >
+
+                                <Text
+                                    style={
+                                        conversaStyles.mais
+                                    }
+                                >
+                                    ⋮
+                                </Text>
+
+                            </Pressable>
+
 
                         </View>
 
-                    </View>
 
-                ))}
+                        {/* =========================
+                            SEGURANÇA
+                        ========================= */}
 
-            </ScrollView>
+                        <View
+                            style={
+                                conversaStyles.areaSeguranca
+                            }
+                        >
 
+                            <View
+                                style={
+                                    conversaStyles.avisoSeguranca
+                                }
+                            >
 
-            {/* ================= ENVIO ================= */}
-            <View style={conversaStyles.areaEnviar}>
-
-                {/* ANEXO */}
-                <Pressable
-                    style={conversaStyles.btnAnexo}
-                    onPress={() => {
-                        // futuramente anexar arquivo
-                    }}
-                >
-
-                    <Image
-                        source={require("@/assets/images/img/paper-clip.png")}
-                        style={conversaStyles.iconeAnexo}
-                    />
-
-                </Pressable>
-
-
-                {/* INPUT */}
-                <View style={conversaStyles.inputContainer}>
-
-                    <TextInput
-                        value={mensagem}
-                        onChangeText={setMensagem}
-                        style={conversaStyles.input}
-                        placeholder="Digite uma mensagem..."
-                        placeholderTextColor="#777777"
-                        multiline
-                    />
+                                <Image
+                                    source={require(
+                                        "@/assets/images/img/trancar.png"
+                                    )}
+                                    style={
+                                        conversaStyles.iconeSeguranca
+                                    }
+                                />
 
 
-                    <Pressable
-                        onPress={() => {
-                            // emojis futuramente
-                        }}
-                    >
+                                <Text
+                                    style={
+                                        conversaStyles.txtSeguranca
+                                    }
+                                >
+                                    Suas mensagens permanecem
+                                    protegidas dentro da plataforma
+                                </Text>
 
-                        <Image
-                            source={require("@/assets/images/img/smile.png")}
-                            style={conversaStyles.iconeEmoji}
-                        />
+                            </View>
 
-                    </Pressable>
-
-                </View>
+                        </View>
 
 
-                {/* ENVIAR */}
-                <Pressable
-                    style={({ pressed }) => [
-                        conversaStyles.btnEnviar,
-                        pressed && conversaStyles.btnEnviarPressed,
-                    ]}
-                    onPress={enviarMensagem}
-                >
+                        {/* =========================
+                            DATA
+                        ========================= */}
 
-                    <Image
-                        source={require("@/assets/images/img/send.png")}
-                        style={conversaStyles.iconeEnviar}
-                    />
+                        <View
+                            style={
+                                conversaStyles.divisorData
+                            }
+                        >
 
-                </Pressable>
+                            <View
+                                style={
+                                    conversaStyles.linha
+                                }
+                            />
+
+
+                            <Text
+                                style={
+                                    conversaStyles.data
+                                }
+                            >
+                                Hoje
+                            </Text>
+
+
+                            <View
+                                style={
+                                    conversaStyles.linha
+                                }
+                            />
+
+                        </View>
+
+
+                        {/* =========================
+                            MENSAGENS
+                        ========================= */}
+
+                        <ScrollView
+                            ref={scrollRef}
+
+                            style={
+                                conversaStyles.scroll
+                            }
+
+                            contentContainerStyle={
+                                conversaStyles.scrollConteudo
+                            }
+
+                            showsVerticalScrollIndicator={
+                                false
+                            }
+
+                            keyboardShouldPersistTaps="handled"
+
+                            onContentSizeChange={() => {
+
+                                scrollRef.current?.scrollToEnd({
+                                    animated: true,
+                                });
+
+                            }}
+                        >
+
+                            {mensagens.map((item) => (
+
+                                <View
+                                    key={item.id}
+
+                                    style={[
+                                        conversaStyles.linhaMensagem,
+
+                                        item.minha
+                                            ? conversaStyles.linhaMinhaMensagem
+                                            : conversaStyles.linhaMensagemRecebida,
+                                    ]}
+                                >
+
+                                    <View
+                                        style={[
+                                            conversaStyles.balao,
+
+                                            item.minha
+                                                ? conversaStyles.balaoMeu
+                                                : conversaStyles.balaoRecebido,
+                                        ]}
+                                    >
+
+                                        <Text
+                                            style={[
+                                                conversaStyles.txtMensagem,
+
+                                                item.minha &&
+                                                conversaStyles.txtMinhaMensagem,
+                                            ]}
+                                        >
+                                            {item.texto}
+                                        </Text>
+
+
+                                        <Text
+                                            style={[
+                                                conversaStyles.horario,
+
+                                                item.minha &&
+                                                conversaStyles.horarioMeu,
+                                            ]}
+                                        >
+                                            {item.horario}
+                                        </Text>
+
+                                    </View>
+
+                                </View>
+
+                            ))}
+
+                        </ScrollView>
+
+
+                        {/* =========================
+                            ENVIO
+                        ========================= */}
+
+                        <View
+                            style={
+                                conversaStyles.areaEnviar
+                            }
+                        >
+
+
+                            {/* ANEXO */}
+
+                            <Pressable
+                                style={({ pressed }) => [
+
+                                    conversaStyles.btnAnexo,
+
+                                    pressed &&
+                                    conversaStyles.btnAnexoPressed,
+
+                                ]}
+                                onPress={() => {
+
+                                    // futuramente:
+                                    // abrir seletor de arquivo
+
+                                }}
+                            >
+
+                                <Image
+                                    source={require(
+                                        "@/assets/images/img/paper-clip.png"
+                                    )}
+                                    style={
+                                        conversaStyles.iconeAnexo
+                                    }
+                                />
+
+                            </Pressable>
+
+
+                            {/* =====================
+                                INPUT
+                            ===================== */}
+
+                            <View
+                                style={
+                                    conversaStyles.inputContainer
+                                }
+                            >
+
+                                <TextInput
+                                    value={mensagem}
+
+                                    onChangeText={
+                                        setMensagem
+                                    }
+
+                                    style={
+                                        conversaStyles.input
+                                    }
+
+                                    placeholder="Digite uma mensagem..."
+
+                                    placeholderTextColor="#777777"
+
+                                    multiline
+
+                                    maxLength={1000}
+
+                                    returnKeyType="default"
+                                />
+
+
+                                {/* EMOJI */}
+
+                                <Pressable
+                                    onPress={() => {
+
+                                        // futuramente:
+                                        // abrir seletor de emoji
+
+                                    }}
+                                >
+
+                                    <Image
+                                        source={require(
+                                            "@/assets/images/img/smile.png"
+                                        )}
+                                        style={
+                                            conversaStyles.iconeEmoji
+                                        }
+                                    />
+
+                                </Pressable>
+
+
+                            </View>
+
+
+                            {/* =====================
+                                ENVIAR
+                            ===================== */}
+
+                            <Pressable
+                                style={({ pressed }) => [
+
+                                    conversaStyles.btnEnviar,
+
+                                    pressed &&
+                                    conversaStyles.btnEnviarPressed,
+
+                                ]}
+                                onPress={
+                                    enviarMensagem
+                                }
+                            >
+
+                                <Image
+                                    source={require(
+                                        "@/assets/images/img/send.png"
+                                    )}
+                                    style={
+                                        conversaStyles.iconeEnviar
+                                    }
+                                />
+
+                            </Pressable>
+
+
+                        </View>
+
+
+                    </KeyboardAvoidingView>
+
+
+                </SafeAreaView>
+
 
             </View>
 
-        </KeyboardAvoidingView>
+
+        </View>
+
     );
+
 }

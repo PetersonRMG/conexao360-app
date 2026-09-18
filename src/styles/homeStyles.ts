@@ -543,5 +543,98 @@ export const homeStyle = StyleSheet.create({
 
         lineHeight: 30,
     },
+    areaContadores: {
+        width: "100%",
+
+        flexDirection: "row",
+        justifyContent: "space-between",
+
+        paddingVertical: 8,
+
+        borderBottomWidth: 1,
+        borderBottomColor: cores.roxoPrincipal80,
+    },
+
+    txtContador: {
+        color: cores.branco,
+
+        fontSize: 9,
+        fontFamily: fontes.normal,
+
+        opacity: 0.6,
+    },
+
+
+    iconeAcaoAtivo: {
+        tintColor: cores.douradoPrincipal,
+        opacity: 1,
+    },
+
+    txtAcaoAtivo: {
+        color: cores.douradoPrincipal,
+        opacity: 1,
+
+        fontFamily: fontes.negrito,
+    },
+
+
+    areaComentario: {
+        width: "100%",
+
+        flexDirection: "row",
+        alignItems: "center",
+
+        marginTop: 10,
+
+        gap: 8,
+    },
+
+    inputComentario: {
+        flex: 1,
+        height: 40,
+
+        backgroundColor: cores.roxoPrincipal80,
+
+        color: cores.branco,
+
+        borderRadius: 20,
+
+        paddingHorizontal: 14,
+
+        fontSize: 11,
+        fontFamily: fontes.normal,
+    },
+
+    btnEnviarComentario: {
+        width: 40,
+        height: 40,
+
+        alignItems: "center",
+        justifyContent: "center",
+
+        borderRadius: 20,
+
+        backgroundColor: cores.douradoPrincipal,
+    },
+
+    iconeEnviarComentario: {
+        width: 21,
+        height: 21,
+
+        resizeMode: "contain",
+    },
+
+    semPublicacoes: {
+        color: cores.branco,
+
+        fontSize: 13,
+        fontFamily: fontes.normal,
+
+        textAlign: "center",
+
+        marginTop: 30,
+
+        opacity: 0.6,
+    },
 
 });

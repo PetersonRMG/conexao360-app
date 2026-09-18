@@ -14,226 +14,586 @@ import globalStyle from "@/styles/globalStyles";
 
 import SairModalScreen from "./modalSair";
 
+import { useTema } from "@/contexts/TemaContext";
+
+
 interface MenuModalProps {
+
     visible: boolean;
+
     onClose: () => void;
+
 }
 
+
 export default function MenuModalScreen({
+
     visible,
     onClose,
+
 }: MenuModalProps) {
 
-    const [btnSair, setBtnSair] = useState(false);
 
+    // =========================================
+    // MODAL SAIR
+    // =========================================
+
+    const [btnSair, setBtnSair] =
+        useState(false);
+
+
+    // =========================================
+    // TEMA
+    // =========================================
+
+    const {
+
+        tema,
+        coresTema,
+        alternarTema,
+
+    } = useTema();
+
+
+    // =========================================
+    // NAVEGA E FECHA O MENU
+    // =========================================
 
     const navegar = (rota: any) => {
+
         onClose();
+
         router.navigate(rota);
+
     };
 
 
-    // ==============================
+    // =========================================
     // CONFIRMAR SAÍDA
-    // ==============================
+    // =========================================
+
     const confirmarSaida = () => {
 
-        // fecha modal "Deseja sair?"
+        // fecha confirmação
         setBtnSair(false);
 
-        // fecha modal do menu
+        // fecha menu
         onClose();
 
         // volta para login
         router.replace("/");
+
     };
 
 
     return (
+
         <>
 
-            {/* ================= MODAL MENU ================= */}
+            {/* =========================================
+                MODAL MENU
+            ========================================= */}
+
             <Modal
+
                 visible={visible}
+
                 transparent
+
                 animationType="fade"
+
                 onRequestClose={onClose}
+
             >
 
+
+                {/* =====================================
+                    FUNDO DA TELA
+                ===================================== */}
+
                 <Pressable
-                    style={menuModalStyles.overlay}
+
+                    style={
+                        menuModalStyles.overlay
+                    }
+
                     onPress={onClose}
+
                 >
 
-                    <Pressable
-                        style={menuModalStyles.caixaMenu}
-                        onPress={(event) => event.stopPropagation()}
+
+                    {/* =================================
+                        ÁREA LIMITADA A 440px
+                    ================================= */}
+
+                    <View
+                        style={
+                            menuModalStyles.areaModal
+                        }
                     >
 
 
-                        {/* ================= PARTE SUPERIOR ================= */}
-                        <View>
+                        {/* =============================
+                            CAIXA DO MENU
+                        ============================= */}
 
-                            {/* MUDAR TEMA */}
-                            <Pressable
-                                onPress={() => {
-                                    onClose();
-                                }}
-                                style={({ pressed }) => [
-                                    menuModalStyles.btnMenu,
-                                    pressed && globalStyle.pressBtn,
-                                ]}
-                            >
+                        <Pressable
 
-                                <Image
-                                    style={menuModalStyles.imagemMenu}
-                                    source={require("@/assets/images/img/tema.png")}
-                                />
+                            style={[
 
-                                <Text style={menuModalStyles.iconesMenu}>
-                                    Mudar tema
-                                </Text>
+                                menuModalStyles.caixaMenu,
 
-                            </Pressable>
+                                {
 
+                                    backgroundColor:
+                                        coresTema.card,
 
-                            {/* VER PERFIL */}
-                            <Pressable
-                                onPress={() => navegar("/perfil")}
-                                style={({ pressed }) => [
-                                    menuModalStyles.btnMenu,
-                                    pressed && globalStyle.pressBtn,
-                                ]}
-                            >
+                                    borderColor:
+                                        coresTema.borda,
 
-                                <Image
-                                    style={menuModalStyles.imagemMenu}
-                                    source={require("@/assets/images/img/usuario.png")}
-                                />
+                                },
 
-                                <Text style={menuModalStyles.iconesMenu}>
-                                    Ver perfil
-                                </Text>
+                            ]}
 
-                            </Pressable>
+                            onPress={(event) =>
+                                event.stopPropagation()
+                            }
+
+                        >
 
 
-                            {/* EDITAR PERFIL */}
-                            <Pressable
-                                onPress={() => navegar("/editarPerfil")}
-                                style={({ pressed }) => [
-                                    menuModalStyles.btnMenu,
-                                    pressed && globalStyle.pressBtn,
-                                ]}
-                            >
+                            {/* =========================
+                                PARTE SUPERIOR
+                            ========================= */}
 
-                                <Image
-                                    style={menuModalStyles.imagemMenu}
-                                    source={require("@/assets/images/img/edit.png")}
-                                />
-
-                                <Text style={menuModalStyles.iconesMenu}>
-                                    Editar perfil
-                                </Text>
-
-                            </Pressable>
-
-                        </View>
+                            <View>
 
 
-                        {/* ================= PARTE INFERIOR ================= */}
-                        <View>
+                                {/* =====================
+                                    MUDAR TEMA
+                                ===================== */}
 
-                            {/* MUDAR SENHA */}
-                            <Pressable
-                                onPress={() => navegar("/alterarSenha")}
-                                style={({ pressed }) => [
-                                    menuModalStyles.btnMenu,
-                                    pressed && globalStyle.pressBtn,
-                                ]}
-                            >
+                                <Pressable
 
-                                <Image
-                                    style={menuModalStyles.imagemMenu}
-                                    source={require("@/assets/images/img/trancar.png")}
-                                />
+                                    onPress={() => {
 
-                                <Text style={menuModalStyles.iconesMenu}>
-                                    Mudar senha
-                                </Text>
+                                        alternarTema();
 
-                            </Pressable>
+                                    }}
 
+                                    style={({ pressed }) => [
 
-                            {/* EXCLUIR CONTA */}
-                            <Pressable
-                                onPress={() => navegar("/excluirConta")}
-                                style={({ pressed }) => [
-                                    menuModalStyles.btnMenu,
-                                    pressed && globalStyle.pressBtn,
-                                ]}
-                            >
+                                        menuModalStyles.btnMenu,
 
-                                <Image
-                                    style={menuModalStyles.imagemMenu}
-                                    source={require("@/assets/images/img/excluir-conta.png")}
-                                />
+                                        pressed &&
+                                        globalStyle.pressBtn,
 
-                                <Text style={menuModalStyles.iconesMenu}>
-                                    Excluir conta
-                                </Text>
+                                    ]}
 
-                            </Pressable>
+                                >
 
 
-                            {/* ================= SAIR ================= */}
-                            <Pressable
-                                onPress={() => {
+                                    <Image
 
-                                    // NÃO FECHA O MENU
-                                    // apenas abre confirmação
-                                    setBtnSair(true);
+                                        style={
+                                            menuModalStyles.imagemMenu
+                                        }
 
-                                }}
-                                style={({ pressed }) => [
-                                    menuModalStyles.btnMenu,
-                                    pressed && globalStyle.pressBtn,
-                                ]}
-                            >
+                                        source={require(
+                                            "@/assets/images/img/tema.png"
+                                        )}
 
-                                <Image
-                                    style={menuModalStyles.imagemMenu}
-                                    source={require("@/assets/images/img/exit.png")}
-                                />
+                                    />
 
-                                <Text style={menuModalStyles.iconesMenu}>
-                                    Sair
-                                </Text>
 
-                            </Pressable>
+                                    <Text
 
-                        </View>
+                                        style={[
 
-                    </Pressable>
+                                            menuModalStyles.iconesMenu,
+
+                                            {
+
+                                                color:
+                                                    coresTema.texto,
+
+                                            },
+
+                                        ]}
+
+                                    >
+
+                                        {tema === "escuro"
+
+                                            ? "Tema claro"
+
+                                            : "Tema escuro"
+
+                                        }
+
+                                    </Text>
+
+
+                                </Pressable>
+
+
+                                {/* =====================
+                                    VER PERFIL
+                                ===================== */}
+
+                                <Pressable
+
+                                    onPress={() =>
+                                        navegar("/perfil")
+                                    }
+
+                                    style={({ pressed }) => [
+
+                                        menuModalStyles.btnMenu,
+
+                                        pressed &&
+                                        globalStyle.pressBtn,
+
+                                    ]}
+
+                                >
+
+
+                                    <Image
+
+                                        style={
+                                            menuModalStyles.imagemMenu
+                                        }
+
+                                        source={require(
+                                            "@/assets/images/img/usuario.png"
+                                        )}
+
+                                    />
+
+
+                                    <Text
+
+                                        style={[
+
+                                            menuModalStyles.iconesMenu,
+
+                                            {
+
+                                                color:
+                                                    coresTema.texto,
+
+                                            },
+
+                                        ]}
+
+                                    >
+
+                                        Ver perfil
+
+                                    </Text>
+
+
+                                </Pressable>
+
+
+                                {/* =====================
+                                    EDITAR PERFIL
+                                ===================== */}
+
+                                <Pressable
+
+                                    onPress={() =>
+                                        navegar(
+                                            "/editarPerfil"
+                                        )
+                                    }
+
+                                    style={({ pressed }) => [
+
+                                        menuModalStyles.btnMenu,
+
+                                        pressed &&
+                                        globalStyle.pressBtn,
+
+                                    ]}
+
+                                >
+
+
+                                    <Image
+
+                                        style={
+                                            menuModalStyles.imagemMenu
+                                        }
+
+                                        source={require(
+                                            "@/assets/images/img/edit.png"
+                                        )}
+
+                                    />
+
+
+                                    <Text
+
+                                        style={[
+
+                                            menuModalStyles.iconesMenu,
+
+                                            {
+
+                                                color:
+                                                    coresTema.texto,
+
+                                            },
+
+                                        ]}
+
+                                    >
+
+                                        Editar perfil
+
+                                    </Text>
+
+
+                                </Pressable>
+
+
+                            </View>
+
+
+                            {/* =========================
+                                PARTE INFERIOR
+                            ========================= */}
+
+                            <View>
+
+
+                                {/* =====================
+                                    MUDAR SENHA
+                                ===================== */}
+
+                                <Pressable
+
+                                    onPress={() =>
+                                        navegar(
+                                            "/alterarSenha"
+                                        )
+                                    }
+
+                                    style={({ pressed }) => [
+
+                                        menuModalStyles.btnMenu,
+
+                                        pressed &&
+                                        globalStyle.pressBtn,
+
+                                    ]}
+
+                                >
+
+
+                                    <Image
+
+                                        style={
+                                            menuModalStyles.imagemMenu
+                                        }
+
+                                        source={require(
+                                            "@/assets/images/img/trancar.png"
+                                        )}
+
+                                    />
+
+
+                                    <Text
+
+                                        style={[
+
+                                            menuModalStyles.iconesMenu,
+
+                                            {
+
+                                                color:
+                                                    coresTema.texto,
+
+                                            },
+
+                                        ]}
+
+                                    >
+
+                                        Mudar senha
+
+                                    </Text>
+
+
+                                </Pressable>
+
+
+                                {/* =====================
+                                    EXCLUIR CONTA
+                                ===================== */}
+
+                                <Pressable
+
+                                    onPress={() =>
+                                        navegar(
+                                            "/excluirConta"
+                                        )
+                                    }
+
+                                    style={({ pressed }) => [
+
+                                        menuModalStyles.btnMenu,
+
+                                        pressed &&
+                                        globalStyle.pressBtn,
+
+                                    ]}
+
+                                >
+
+
+                                    <Image
+
+                                        style={
+                                            menuModalStyles.imagemMenu
+                                        }
+
+                                        source={require(
+                                            "@/assets/images/img/excluir-conta.png"
+                                        )}
+
+                                    />
+
+
+                                    <Text
+
+                                        style={[
+
+                                            menuModalStyles.iconesMenu,
+
+                                            {
+
+                                                color:
+                                                    coresTema.texto,
+
+                                            },
+
+                                        ]}
+
+                                    >
+
+                                        Excluir conta
+
+                                    </Text>
+
+
+                                </Pressable>
+
+
+                                {/* =====================
+                                    SAIR
+                                ===================== */}
+
+                                <Pressable
+
+                                    onPress={() => {
+
+                                        // mantém menu aberto
+                                        // abre modal de confirmação
+
+                                        setBtnSair(true);
+
+                                    }}
+
+                                    style={({ pressed }) => [
+
+                                        menuModalStyles.btnMenu,
+
+                                        pressed &&
+                                        globalStyle.pressBtn,
+
+                                    ]}
+
+                                >
+
+
+                                    <Image
+
+                                        style={
+                                            menuModalStyles.imagemMenu
+                                        }
+
+                                        source={require(
+                                            "@/assets/images/img/exit.png"
+                                        )}
+
+                                    />
+
+
+                                    <Text
+
+                                        style={[
+
+                                            menuModalStyles.iconesMenu,
+
+                                            {
+
+                                                color:
+                                                    coresTema.texto,
+
+                                            },
+
+                                        ]}
+
+                                    >
+
+                                        Sair
+
+                                    </Text>
+
+
+                                </Pressable>
+
+
+                            </View>
+
+
+                        </Pressable>
+
+
+                    </View>
+
 
                 </Pressable>
+
 
             </Modal>
 
 
-            {/* ================= CONFIRMAÇÃO DE SAÍDA ================= */}
+            {/* =========================================
+                MODAL CONFIRMAR SAÍDA
+            ========================================= */}
+
             <SairModalScreen
+
                 visible={btnSair}
 
-                // NÃO:
-                // fecha somente confirmação
-                onClose={() => setBtnSair(false)}
+                onClose={() =>
+                    setBtnSair(false)
+                }
 
-                // SIM:
-                // fecha confirmação + menu + vai para login
-                onConfirm={confirmarSaida}
+                onConfirm={
+                    confirmarSaida
+                }
+
             />
 
+
         </>
+
     );
+
 }

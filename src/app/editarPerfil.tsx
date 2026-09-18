@@ -13,397 +13,844 @@ import {
     Platform,
 } from "react-native";
 
+import { SafeAreaView } from "react-native-safe-area-context";
+
 import { editarPerfilStyles } from "@/styles/editarPerfilStyles";
+import globalStyle from "@/styles/globalStyles";
+
 import MenuSreen from "./menu";
 
 export default function EditarPerfilScreen() {
 
+    // =========================
+    // DADOS DO PERFIL
+    // =========================
+
     const [nome, setNome] = useState("Fernanda Silva");
-    const [usuario, setUsuario] = useState("adv_fernandasilva");
-    const [ocupacao, setOcupacao] = useState("Advogada na area trabalhista");
-    const [cidadeAtual, setCidadeAtual] = useState("São Paulo - SP");
-    const [cidadeNatal, setCidadeNatal] = useState("São Paulo - SP");
-    const [dataNascimento, setDataNascimento] = useState("18/08/1997");
+
+    const [usuario, setUsuario] = useState(
+        "adv_fernandasilva"
+    );
+
+    const [ocupacao, setOcupacao] = useState(
+        "Advogada na area trabalhista"
+    );
+
+    const [cidadeAtual, setCidadeAtual] = useState(
+        "São Paulo - SP"
+    );
+
+    const [cidadeNatal, setCidadeNatal] = useState(
+        "São Paulo - SP"
+    );
+
+    const [dataNascimento, setDataNascimento] = useState(
+        "18/08/1997"
+    );
+
     const [descricao, setDescricao] = useState(
         "A justiça começa com o conhecimento."
     );
 
-    return (
-        <View style={editarPerfilStyles.container}>
 
-            <ImageBackground
-                source={require("@/assets/images/img/fundoLogin.png")}
-                style={editarPerfilStyles.background}
-                resizeMode="cover"
+    return (
+
+        // =================================================
+        // FUNDO EXTERNO
+        // centraliza o app no navegador
+        // =================================================
+        <View style={globalStyle.container}>
+
+
+            {/* =============================================
+                ÁREA MOBILE
+                máximo 440px
+            ============================================= */}
+            <View
+                style={[
+                    globalStyle.background,
+                    editarPerfilStyles.container,
+                ]}
             >
 
-                <View style={editarPerfilStyles.overlay}>
 
-                    <KeyboardAvoidingView
-                        style={editarPerfilStyles.keyboard}
-                        behavior={Platform.OS === "ios" ? "padding" : undefined}
-                    >
+                {/* =========================================
+                    FUNDO DA PÁGINA
+                ========================================= */}
+                <ImageBackground
+                    source={require("@/assets/images/img/fundoLogin.png")}
+                    style={editarPerfilStyles.background}
+                    resizeMode="cover"
+                >
 
-                        <ScrollView
-                            style={editarPerfilStyles.scroll}
-                            contentContainerStyle={editarPerfilStyles.scrollConteudo}
-                            showsVerticalScrollIndicator={false}
-                            keyboardShouldPersistTaps="handled"
-                        >
 
-                            {/* ================= TOPO ================= */}
-                            <View style={editarPerfilStyles.topo}>
+                    {/* =====================================
+                        SAFE AREA
+                    ===================================== */}
+                    <SafeAreaView style={globalStyle.areaConteudo}>
 
-                                <Pressable
-                                    style={({ pressed }) => [
-                                        editarPerfilStyles.btnVoltar,
-                                        pressed && editarPerfilStyles.btnVoltarPressed,
-                                    ]}
-                                    onPress={() => router.back()}
+
+                        {/* =================================
+                            OVERLAY
+                        ================================= */}
+                        <View style={editarPerfilStyles.overlay}>
+
+
+                            {/* =============================
+                                TECLADO
+                            ============================= */}
+                            <KeyboardAvoidingView
+                                style={editarPerfilStyles.keyboard}
+                                behavior={
+                                    Platform.OS === "ios"
+                                        ? "padding"
+                                        : "height"
+                                }
+                            >
+
+
+                                {/* =========================
+                                    CONTEÚDO
+                                ========================= */}
+                                <ScrollView
+                                    style={editarPerfilStyles.scroll}
+                                    contentContainerStyle={
+                                        editarPerfilStyles.scrollConteudo
+                                    }
+                                    showsVerticalScrollIndicator={false}
+                                    keyboardShouldPersistTaps="handled"
                                 >
-                                    <Image
-                                        style={editarPerfilStyles.voltarImagem}
-                                        source={require("@/assets/images/img/left.png")}
-                                    />
-                                </Pressable>
-
-                                <Image
-                                    source={require("@/assets/images/img/logo.svg")}
-                                    style={editarPerfilStyles.logo}
-                                />
-
-                                <View style={editarPerfilStyles.espacoTopo} />
-
-                            </View>
 
 
-                            {/* ================= TÍTULO ================= */}
-                            <View style={editarPerfilStyles.apresentacao}>
-
-                                <Text style={editarPerfilStyles.titulo}>
-                                    Editar{" "}
-                                    <Text style={editarPerfilStyles.tituloDourado}>
-                                        Perfil
-                                    </Text>
-                                </Text>
-
-                                <Text style={editarPerfilStyles.aviso}>
-                                    Nunca compartilhe sua senha com terceiros.
-                                </Text>
-
-                            </View>
+                                    {/* =====================
+                                        TOPO
+                                    ===================== */}
+                                    <View style={editarPerfilStyles.topo}>
 
 
-                            {/* ================= FOTO ================= */}
-                            <View style={editarPerfilStyles.areaAvatar}>
+                                        {/* VOLTAR */}
+                                        <Pressable
+                                            style={({ pressed }) => [
+                                                editarPerfilStyles.btnVoltar,
 
-                                <Pressable style={editarPerfilStyles.avatarContainer}>
+                                                pressed &&
+                                                editarPerfilStyles.btnVoltarPressed,
+                                            ]}
+                                            onPress={() => router.back()}
+                                        >
 
-                                    <Image
-                                        source={require("@/assets/images/img/avatar.png")}
-                                        style={editarPerfilStyles.avatar}
-                                    />
+                                            <Image
+                                                style={
+                                                    editarPerfilStyles.voltarImagem
+                                                }
+                                                source={require(
+                                                    "@/assets/images/img/left.png"
+                                                )}
+                                            />
 
-                                    <View style={editarPerfilStyles.btnEditarFoto}>
+                                        </Pressable>
 
+
+                                        {/* LOGO */}
                                         <Image
-                                            source={require("@/assets/images/img/edit.png")}
-                                            style={editarPerfilStyles.iconeEditarFoto}
+                                            source={require(
+                                                "@/assets/images/img/logo.svg"
+                                            )}
+                                            style={editarPerfilStyles.logo}
+                                        />
+
+
+                                        {/* ESPAÇO PARA CENTRALIZAR LOGO */}
+                                        <View
+                                            style={
+                                                editarPerfilStyles.espacoTopo
+                                            }
+                                        />
+
+
+                                    </View>
+
+
+                                    {/* =====================
+                                        APRESENTAÇÃO
+                                    ===================== */}
+                                    <View
+                                        style={
+                                            editarPerfilStyles.apresentacao
+                                        }
+                                    >
+
+                                        <Text
+                                            style={
+                                                editarPerfilStyles.titulo
+                                            }
+                                        >
+
+                                            Editar{" "}
+
+                                            <Text
+                                                style={
+                                                    editarPerfilStyles.tituloDourado
+                                                }
+                                            >
+                                                Perfil
+                                            </Text>
+
+                                        </Text>
+
+
+                                        <Text
+                                            style={
+                                                editarPerfilStyles.aviso
+                                            }
+                                        >
+                                            Nunca compartilhe sua senha com terceiros.
+                                        </Text>
+
+                                    </View>
+
+
+                                    {/* =====================
+                                        FOTO
+                                    ===================== */}
+                                    <View
+                                        style={
+                                            editarPerfilStyles.areaAvatar
+                                        }
+                                    >
+
+                                        <Pressable
+                                            style={
+                                                editarPerfilStyles.avatarContainer
+                                            }
+                                            onPress={() => {
+
+                                                // futuramente:
+                                                // abrir galeria para trocar foto
+
+                                            }}
+                                        >
+
+                                            <Image
+                                                source={require(
+                                                    "@/assets/images/img/avatar.png"
+                                                )}
+                                                style={
+                                                    editarPerfilStyles.avatar
+                                                }
+                                            />
+
+
+                                            <View
+                                                style={
+                                                    editarPerfilStyles.btnEditarFoto
+                                                }
+                                            >
+
+                                                <Image
+                                                    source={require(
+                                                        "@/assets/images/img/edit.png"
+                                                    )}
+                                                    style={
+                                                        editarPerfilStyles.iconeEditarFoto
+                                                    }
+                                                />
+
+                                            </View>
+
+                                        </Pressable>
+
+                                    </View>
+
+
+                                    {/* =================================
+                                        INFORMAÇÕES PESSOAIS
+                                    ================================= */}
+                                    <Text
+                                        style={
+                                            editarPerfilStyles.tituloGrupo
+                                        }
+                                    >
+                                        Informações pessoais
+                                    </Text>
+
+
+                                    {/* =====================
+                                        NOME
+                                    ===================== */}
+                                    <View
+                                        style={
+                                            editarPerfilStyles.cardCampo
+                                        }
+                                    >
+
+                                        <View
+                                            style={
+                                                editarPerfilStyles.campoTopo
+                                            }
+                                        >
+
+                                            <Text
+                                                style={
+                                                    editarPerfilStyles.label
+                                                }
+                                            >
+                                                Nome
+                                            </Text>
+
+
+                                            <View
+                                                style={
+                                                    editarPerfilStyles.status
+                                                }
+                                            >
+
+                                                <Text
+                                                    style={
+                                                        editarPerfilStyles.txtStatus
+                                                    }
+                                                >
+                                                    Público
+                                                </Text>
+
+                                            </View>
+
+                                        </View>
+
+
+                                        <TextInput
+                                            value={nome}
+                                            onChangeText={setNome}
+                                            style={
+                                                editarPerfilStyles.input
+                                            }
+                                            placeholderTextColor="#888888"
                                         />
 
                                     </View>
 
-                                </Pressable>
 
-                            </View>
+                                    {/* =====================
+                                        NOME DE USUÁRIO
+                                    ===================== */}
+                                    <View
+                                        style={
+                                            editarPerfilStyles.cardCampo
+                                        }
+                                    >
+
+                                        <View
+                                            style={
+                                                editarPerfilStyles.campoTopo
+                                            }
+                                        >
+
+                                            <Text
+                                                style={
+                                                    editarPerfilStyles.label
+                                                }
+                                            >
+                                                Nome de usuário
+                                            </Text>
 
 
-                            {/* ================= INFORMAÇÕES PESSOAIS ================= */}
-                            <Text style={editarPerfilStyles.tituloGrupo}>
-                                Informações pessoais
-                            </Text>
+                                            <View
+                                                style={
+                                                    editarPerfilStyles.status
+                                                }
+                                            >
+
+                                                <Text
+                                                    style={
+                                                        editarPerfilStyles.txtStatus
+                                                    }
+                                                >
+                                                    Público
+                                                </Text>
+
+                                            </View>
+
+                                        </View>
 
 
-                            {/* NOME */}
-                            <View style={editarPerfilStyles.cardCampo}>
+                                        <TextInput
+                                            value={usuario}
+                                            onChangeText={setUsuario}
+                                            style={
+                                                editarPerfilStyles.input
+                                            }
+                                            autoCapitalize="none"
+                                            placeholderTextColor="#888888"
+                                        />
 
-                                <View style={editarPerfilStyles.campoTopo}>
-
-                                    <Text style={editarPerfilStyles.label}>
-                                        Nome
-                                    </Text>
-
-                                    <View style={editarPerfilStyles.status}>
-                                        <Text style={editarPerfilStyles.txtStatus}>
-                                            Público
-                                        </Text>
                                     </View>
 
-                                </View>
 
-                                <TextInput
-                                    value={nome}
-                                    onChangeText={setNome}
-                                    style={editarPerfilStyles.input}
-                                />
+                                    {/* =====================
+                                        OCUPAÇÃO
+                                    ===================== */}
+                                    <View
+                                        style={
+                                            editarPerfilStyles.cardCampo
+                                        }
+                                    >
 
-                            </View>
+                                        <View
+                                            style={
+                                                editarPerfilStyles.campoTopo
+                                            }
+                                        >
+
+                                            <Text
+                                                style={
+                                                    editarPerfilStyles.label
+                                                }
+                                            >
+                                                Ocupação
+                                            </Text>
 
 
-                            {/* USUÁRIO */}
-                            <View style={editarPerfilStyles.cardCampo}>
+                                            <View
+                                                style={
+                                                    editarPerfilStyles.status
+                                                }
+                                            >
 
-                                <View style={editarPerfilStyles.campoTopo}>
+                                                <Text
+                                                    style={
+                                                        editarPerfilStyles.txtStatus
+                                                    }
+                                                >
+                                                    Público
+                                                </Text>
 
-                                    <Text style={editarPerfilStyles.label}>
-                                        Nome de usuário
-                                    </Text>
+                                            </View>
 
-                                    <View style={editarPerfilStyles.status}>
-                                        <Text style={editarPerfilStyles.txtStatus}>
-                                            Público
-                                        </Text>
+                                        </View>
+
+
+                                        <TextInput
+                                            value={ocupacao}
+                                            onChangeText={setOcupacao}
+                                            style={
+                                                editarPerfilStyles.input
+                                            }
+                                            placeholderTextColor="#888888"
+                                        />
+
                                     </View>
 
-                                </View>
 
-                                <TextInput
-                                    value={usuario}
-                                    onChangeText={setUsuario}
-                                    style={editarPerfilStyles.input}
-                                    autoCapitalize="none"
-                                />
+                                    {/* =====================
+                                        CIDADE ATUAL
+                                    ===================== */}
+                                    <View
+                                        style={
+                                            editarPerfilStyles.cardCampo
+                                        }
+                                    >
 
-                            </View>
+                                        <View
+                                            style={
+                                                editarPerfilStyles.campoTopo
+                                            }
+                                        >
+
+                                            <Text
+                                                style={
+                                                    editarPerfilStyles.label
+                                                }
+                                            >
+                                                Cidade atual
+                                            </Text>
 
 
-                            {/* OCUPAÇÃO */}
-                            <View style={editarPerfilStyles.cardCampo}>
+                                            <View
+                                                style={
+                                                    editarPerfilStyles.status
+                                                }
+                                            >
 
-                                <View style={editarPerfilStyles.campoTopo}>
+                                                <Text
+                                                    style={
+                                                        editarPerfilStyles.txtStatus
+                                                    }
+                                                >
+                                                    Privado
+                                                </Text>
 
-                                    <Text style={editarPerfilStyles.label}>
-                                        Ocupação
-                                    </Text>
+                                            </View>
 
-                                    <View style={editarPerfilStyles.status}>
-                                        <Text style={editarPerfilStyles.txtStatus}>
-                                            Público
-                                        </Text>
+                                        </View>
+
+
+                                        <TextInput
+                                            value={cidadeAtual}
+                                            onChangeText={setCidadeAtual}
+                                            style={
+                                                editarPerfilStyles.input
+                                            }
+                                            placeholderTextColor="#888888"
+                                        />
+
                                     </View>
 
-                                </View>
 
-                                <TextInput
-                                    value={ocupacao}
-                                    onChangeText={setOcupacao}
-                                    style={editarPerfilStyles.input}
-                                />
+                                    {/* =====================
+                                        CIDADE NATAL
+                                    ===================== */}
+                                    <View
+                                        style={
+                                            editarPerfilStyles.cardCampo
+                                        }
+                                    >
 
-                            </View>
+                                        <View
+                                            style={
+                                                editarPerfilStyles.campoTopo
+                                            }
+                                        >
+
+                                            <Text
+                                                style={
+                                                    editarPerfilStyles.label
+                                                }
+                                            >
+                                                Cidade natal
+                                            </Text>
 
 
-                            {/* CIDADE ATUAL */}
-                            <View style={editarPerfilStyles.cardCampo}>
+                                            <View
+                                                style={
+                                                    editarPerfilStyles.status
+                                                }
+                                            >
 
-                                <View style={editarPerfilStyles.campoTopo}>
+                                                <Text
+                                                    style={
+                                                        editarPerfilStyles.txtStatus
+                                                    }
+                                                >
+                                                    Privado
+                                                </Text>
 
-                                    <Text style={editarPerfilStyles.label}>
-                                        Cidade atual
-                                    </Text>
+                                            </View>
 
-                                    <View style={editarPerfilStyles.status}>
-                                        <Text style={editarPerfilStyles.txtStatus}>
-                                            Privado
-                                        </Text>
+                                        </View>
+
+
+                                        <TextInput
+                                            value={cidadeNatal}
+                                            onChangeText={setCidadeNatal}
+                                            style={
+                                                editarPerfilStyles.input
+                                            }
+                                            placeholderTextColor="#888888"
+                                        />
+
                                     </View>
 
-                                </View>
 
-                                <TextInput
-                                    value={cidadeAtual}
-                                    onChangeText={setCidadeAtual}
-                                    style={editarPerfilStyles.input}
-                                />
+                                    {/* =====================
+                                        DATA NASCIMENTO
+                                    ===================== */}
+                                    <View
+                                        style={
+                                            editarPerfilStyles.cardCampo
+                                        }
+                                    >
 
-                            </View>
+                                        <View
+                                            style={
+                                                editarPerfilStyles.campoTopo
+                                            }
+                                        >
+
+                                            <Text
+                                                style={
+                                                    editarPerfilStyles.label
+                                                }
+                                            >
+                                                Data de nascimento
+                                            </Text>
 
 
-                            {/* CIDADE NATAL */}
-                            <View style={editarPerfilStyles.cardCampo}>
+                                            <View
+                                                style={
+                                                    editarPerfilStyles.status
+                                                }
+                                            >
 
-                                <View style={editarPerfilStyles.campoTopo}>
+                                                <Text
+                                                    style={
+                                                        editarPerfilStyles.txtStatus
+                                                    }
+                                                >
+                                                    Privado
+                                                </Text>
 
-                                    <Text style={editarPerfilStyles.label}>
-                                        Cidade natal
-                                    </Text>
+                                            </View>
 
-                                    <View style={editarPerfilStyles.status}>
-                                        <Text style={editarPerfilStyles.txtStatus}>
-                                            Privado
-                                        </Text>
+                                        </View>
+
+
+                                        <TextInput
+                                            value={dataNascimento}
+                                            onChangeText={setDataNascimento}
+                                            style={
+                                                editarPerfilStyles.input
+                                            }
+                                            keyboardType="number-pad"
+                                            placeholderTextColor="#888888"
+                                        />
+
                                     </View>
 
-                                </View>
 
-                                <TextInput
-                                    value={cidadeNatal}
-                                    onChangeText={setCidadeNatal}
-                                    style={editarPerfilStyles.input}
-                                />
+                                    {/* =====================
+                                        DESCRIÇÃO
+                                    ===================== */}
+                                    <View
+                                        style={
+                                            editarPerfilStyles.cardDescricao
+                                        }
+                                    >
 
-                            </View>
+                                        <View
+                                            style={
+                                                editarPerfilStyles.campoTopo
+                                            }
+                                        >
+
+                                            <Text
+                                                style={
+                                                    editarPerfilStyles.label
+                                                }
+                                            >
+                                                Descrição
+                                            </Text>
 
 
-                            {/* DATA NASCIMENTO */}
-                            <View style={editarPerfilStyles.cardCampo}>
+                                            <View
+                                                style={
+                                                    editarPerfilStyles.status
+                                                }
+                                            >
 
-                                <View style={editarPerfilStyles.campoTopo}>
+                                                <Text
+                                                    style={
+                                                        editarPerfilStyles.txtStatus
+                                                    }
+                                                >
+                                                    Público
+                                                </Text>
 
-                                    <Text style={editarPerfilStyles.label}>
-                                        Data de nascimento
-                                    </Text>
+                                            </View>
 
-                                    <View style={editarPerfilStyles.status}>
-                                        <Text style={editarPerfilStyles.txtStatus}>
-                                            Privado
-                                        </Text>
+                                        </View>
+
+
+                                        <TextInput
+                                            value={descricao}
+                                            onChangeText={setDescricao}
+                                            style={
+                                                editarPerfilStyles.inputDescricao
+                                            }
+                                            multiline
+                                            textAlignVertical="top"
+                                            placeholderTextColor="#888888"
+                                        />
+
                                     </View>
 
-                                </View>
 
-                                <TextInput
-                                    value={dataNascimento}
-                                    onChangeText={setDataNascimento}
-                                    style={editarPerfilStyles.input}
-                                    keyboardType="number-pad"
-                                />
-
-                            </View>
-
-
-                            {/* ================= DESCRIÇÃO ================= */}
-                            <View style={editarPerfilStyles.cardDescricao}>
-
-                                <View style={editarPerfilStyles.campoTopo}>
-
-                                    <Text style={editarPerfilStyles.label}>
-                                        Descrição
+                                    {/* =================================
+                                        SEGURANÇA
+                                    ================================= */}
+                                    <Text
+                                        style={
+                                            editarPerfilStyles.tituloGrupo
+                                        }
+                                    >
+                                        Segurança e dados pessoais
                                     </Text>
 
-                                    <View style={editarPerfilStyles.status}>
-                                        <Text style={editarPerfilStyles.txtStatus}>
-                                            Público
+
+                                    {/* =====================
+                                        EMAIL
+                                    ===================== */}
+                                    <View
+                                        style={
+                                            editarPerfilStyles.cardSeguranca
+                                        }
+                                    >
+
+                                        <View>
+
+                                            <Text
+                                                style={
+                                                    editarPerfilStyles.label
+                                                }
+                                            >
+                                                E-mail
+                                            </Text>
+
+
+                                            <Text
+                                                style={
+                                                    editarPerfilStyles.txtDadoSeguranca
+                                                }
+                                            >
+                                                fernandasilva@gmail.com
+                                            </Text>
+
+                                        </View>
+
+
+                                        <Text
+                                            style={
+                                                editarPerfilStyles.verificado
+                                            }
+                                        >
+                                            Verificado
                                         </Text>
+
                                     </View>
 
-                                </View>
 
-                                <TextInput
-                                    value={descricao}
-                                    onChangeText={setDescricao}
-                                    style={editarPerfilStyles.inputDescricao}
-                                    multiline
-                                    textAlignVertical="top"
-                                />
+                                    {/* =====================
+                                        TELEFONE
+                                    ===================== */}
+                                    <View
+                                        style={
+                                            editarPerfilStyles.cardSeguranca
+                                        }
+                                    >
 
-                            </View>
+                                        <View>
 
-
-                            {/* ================= SEGURANÇA ================= */}
-                            <Text style={editarPerfilStyles.tituloGrupo}>
-                                Segurança e dados pessoais
-                            </Text>
-
-
-                            {/* EMAIL */}
-                            <View style={editarPerfilStyles.cardSeguranca}>
-
-                                <View>
-                                    <Text style={editarPerfilStyles.label}>
-                                        E-mail
-                                    </Text>
-
-                                    <Text style={editarPerfilStyles.txtDadoSeguranca}>
-                                        fernandasilva@gmail.com
-                                    </Text>
-                                </View>
-
-                                <Text style={editarPerfilStyles.verificado}>
-                                    Verificado
-                                </Text>
-
-                            </View>
+                                            <Text
+                                                style={
+                                                    editarPerfilStyles.label
+                                                }
+                                            >
+                                                Telefone
+                                            </Text>
 
 
-                            {/* TELEFONE */}
-                            <View style={editarPerfilStyles.cardSeguranca}>
+                                            <Text
+                                                style={
+                                                    editarPerfilStyles.txtDadoSeguranca
+                                                }
+                                            >
+                                                (11) 99999-9999
+                                            </Text>
 
-                                <View>
-                                    <Text style={editarPerfilStyles.label}>
-                                        Telefone
-                                    </Text>
-
-                                    <Text style={editarPerfilStyles.txtDadoSeguranca}>
-                                        (11) 99999-9999
-                                    </Text>
-                                </View>
-
-                                <Text style={editarPerfilStyles.verificado}>
-                                    Verificado
-                                </Text>
-
-                            </View>
+                                        </View>
 
 
-                            {/* SENHA */}
-                            <Pressable
-                                style={editarPerfilStyles.cardSeguranca}
-                                onPress={() => {
-                                    // rota futura para alterar senha
-                                }}
-                            >
+                                        <Text
+                                            style={
+                                                editarPerfilStyles.verificado
+                                            }
+                                        >
+                                            Verificado
+                                        </Text>
 
-                                <View>
-
-                                    <Text style={editarPerfilStyles.label}>
-                                        Senha
-                                    </Text>
-
-                                    <Text style={editarPerfilStyles.txtDadoSeguranca}>
-                                        ••••••••
-                                    </Text>
-
-                                </View>
+                                    </View>
 
 
-                                <View style={editarPerfilStyles.alterarSenha}>
+                                    {/* =====================
+                                        SENHA
+                                    ===================== */}
+                                    <Pressable
+                                        style={({ pressed }) => [
+                                            editarPerfilStyles.cardSeguranca,
 
-                                    <Image
-                                        source={require("@/assets/images/img/trancar.png")}
-                                        style={editarPerfilStyles.iconeSenha}
-                                    />
+                                            pressed &&
+                                            editarPerfilStyles.btnVoltarPressed,
+                                        ]}
+                                        onPress={() =>
+                                            router.navigate("/alterarSenha")
+                                        }
+                                    >
 
-                                    <Text style={editarPerfilStyles.txtAlterarSenha}>
-                                        Alterar senha
-                                    </Text>
+                                        <View>
 
-                                </View>
+                                            <Text
+                                                style={
+                                                    editarPerfilStyles.label
+                                                }
+                                            >
+                                                Senha
+                                            </Text>
 
-                            </Pressable>
 
-                        </ScrollView>
+                                            <Text
+                                                style={
+                                                    editarPerfilStyles.txtDadoSeguranca
+                                                }
+                                            >
+                                                ••••••••
+                                            </Text>
+
+                                        </View>
 
 
-                        {/* ================= FOOTER ================= */}
-                        <MenuSreen />
+                                        <View
+                                            style={
+                                                editarPerfilStyles.alterarSenha
+                                            }
+                                        >
 
-                    </KeyboardAvoidingView>
+                                            <Image
+                                                source={require(
+                                                    "@/assets/images/img/trancar.png"
+                                                )}
+                                                style={
+                                                    editarPerfilStyles.iconeSenha
+                                                }
+                                            />
 
-                </View>
 
-            </ImageBackground>
+                                            <Text
+                                                style={
+                                                    editarPerfilStyles.txtAlterarSenha
+                                                }
+                                            >
+                                                Alterar senha
+                                            </Text>
+
+                                        </View>
+
+                                    </Pressable>
+
+
+                                </ScrollView>
+
+
+                                {/* =========================
+                                    FOOTER
+                                ========================= */}
+                                <MenuSreen />
+
+
+                            </KeyboardAvoidingView>
+
+
+                        </View>
+
+
+                    </SafeAreaView>
+
+
+                </ImageBackground>
+
+
+            </View>
+
 
         </View>
+
     );
 }

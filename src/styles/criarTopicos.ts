@@ -2,22 +2,32 @@ import { StyleSheet } from "react-native";
 
 import { cores, fontes } from "./variaveis";
 
+
 export const criarTopicosStyles = StyleSheet.create({
+
+    // =========================
+    // ESTRUTURA
+    // =========================
 
     container: {
         flex: 1,
-        backgroundColor: "#080808",
+
+        backgroundColor:
+            cores.pretoPrincipal,
     },
 
     background: {
         flex: 1,
+
         width: "100%",
         height: "100%",
     },
 
     overlay: {
         flex: 1,
-        backgroundColor: "rgba(0,0,0,0.35)",
+
+        backgroundColor:
+            cores.bgPreto80,
     },
 
     keyboard: {
@@ -30,6 +40,7 @@ export const criarTopicosStyles = StyleSheet.create({
 
     scrollConteudo: {
         paddingHorizontal: 16,
+
         paddingBottom: 110,
     },
 
@@ -58,12 +69,16 @@ export const criarTopicosStyles = StyleSheet.create({
 
         borderRadius: 23,
 
-        backgroundColor: cores.bgPreto80,
+        backgroundColor:
+            cores.bgPreto80,
     },
 
     btnVoltarPressed: {
-        backgroundColor: cores.roxoPrincipal80,
-        transform: cores.btnPress,
+        backgroundColor:
+            cores.roxoPrincipal80,
+
+        transform:
+            cores.btnPress,
     },
 
     voltarImagem: {
@@ -101,19 +116,25 @@ export const criarTopicosStyles = StyleSheet.create({
     tituloPagina: {
         color: cores.branco,
 
-        fontSize: 28,
-        fontFamily: fontes.negrito,
+        fontSize: fontes.titulo,
+
+        fontFamily:
+            fontes.negrito,
     },
 
     tituloDourado: {
-        color: cores.douradoPrincipal,
+        color:
+            cores.douradoPrincipal,
     },
 
     aviso: {
-        color: cores.douradoPrincipal,
+        color:
+            cores.douradoPrincipal,
 
         fontSize: 10,
-        fontFamily: fontes.normal,
+
+        fontFamily:
+            fontes.normal,
 
         marginTop: 4,
 
@@ -128,7 +149,8 @@ export const criarTopicosStyles = StyleSheet.create({
     card: {
         width: "100%",
 
-        backgroundColor: cores.roxoPrincipal,
+        backgroundColor:
+            cores.roxoPrincipal,
 
         borderRadius: 12,
 
@@ -141,7 +163,9 @@ export const criarTopicosStyles = StyleSheet.create({
         color: cores.branco,
 
         fontSize: 16,
-        fontFamily: fontes.negrito,
+
+        fontFamily:
+            fontes.negrito,
 
         marginBottom: 8,
     },
@@ -158,12 +182,17 @@ export const criarTopicosStyles = StyleSheet.create({
         color: cores.branco,
 
         fontSize: 13,
-        fontFamily: fontes.normal,
 
-        backgroundColor: cores.roxoPrincipal80,
+        fontFamily:
+            fontes.normal,
+
+        backgroundColor:
+            cores.roxoPrincipal80,
 
         borderWidth: 1,
-        borderColor: cores.douradoPrincipal,
+
+        borderColor:
+            cores.douradoPrincipal,
 
         borderRadius: 10,
 
@@ -173,14 +202,18 @@ export const criarTopicosStyles = StyleSheet.create({
 
     inputDescricao: {
         width: "100%",
+
         minHeight: 70,
 
         color: cores.branco,
 
         fontSize: 13,
-        fontFamily: fontes.normal,
 
-        backgroundColor: cores.roxoPrincipal80,
+        fontFamily:
+            fontes.normal,
+
+        backgroundColor:
+            cores.roxoPrincipal80,
 
         borderRadius: 10,
 
@@ -194,7 +227,9 @@ export const criarTopicosStyles = StyleSheet.create({
         color: cores.branco,
 
         fontSize: 9,
-        fontFamily: fontes.normal,
+
+        fontFamily:
+            fontes.normal,
 
         opacity: 0.5,
 
@@ -211,10 +246,16 @@ export const criarTopicosStyles = StyleSheet.create({
         height: 48,
 
         flexDirection: "row",
+
         alignItems: "center",
         justifyContent: "space-between",
 
-        backgroundColor: cores.roxoPrincipal80,
+        backgroundColor:
+            cores.roxoPrincipal80,
+
+        borderWidth: 1,
+        borderColor:
+            cores.douradoPrincipal,
 
         borderRadius: 10,
 
@@ -222,16 +263,19 @@ export const criarTopicosStyles = StyleSheet.create({
     },
 
     seletorPressed: {
-        transform: cores.btnPress,
+        transform:
+            cores.btnPress,
     },
 
     txtSeletor: {
         color: cores.branco,
 
         fontSize: 11,
-        fontFamily: fontes.normal,
 
-        opacity: 0.5,
+        fontFamily:
+            fontes.normal,
+
+        opacity: 0.7,
     },
 
     iconeSeletor: {
@@ -240,7 +284,7 @@ export const criarTopicosStyles = StyleSheet.create({
 
         resizeMode: "contain",
 
-        opacity: 0.7,
+        opacity: 0.8,
     },
 
 
@@ -265,7 +309,8 @@ export const criarTopicosStyles = StyleSheet.create({
 
         paddingHorizontal: 12,
 
-        backgroundColor: cores.roxoPrincipal80,
+        backgroundColor:
+            cores.roxoPrincipal80,
 
         borderRadius: 15,
 
@@ -277,9 +322,11 @@ export const criarTopicosStyles = StyleSheet.create({
         color: cores.branco,
 
         fontSize: 10,
-        fontFamily: fontes.normal,
 
-        opacity: 0.7,
+        fontFamily:
+            fontes.normal,
+
+        opacity: 0.8,
     },
 
     btnNovaOpcao: {
@@ -290,17 +337,95 @@ export const criarTopicosStyles = StyleSheet.create({
         borderRadius: 15,
 
         borderWidth: 1,
-        borderColor: cores.douradoPrincipal,
+
+        borderColor:
+            cores.douradoPrincipal,
 
         alignItems: "center",
         justifyContent: "center",
     },
 
     txtNovaOpcao: {
-        color: cores.douradoPrincipal,
+        color:
+            cores.douradoPrincipal,
 
         fontSize: 10,
-        fontFamily: fontes.negrito,
+
+        fontFamily:
+            fontes.negrito,
+    },
+
+
+    // =========================
+    // NOVA OPÇÃO
+    // =========================
+
+    areaNovaOpcao: {
+        width: "100%",
+
+        flexDirection: "row",
+        alignItems: "center",
+
+        gap: 8,
+
+        marginTop: 12,
+    },
+
+    inputNovaOpcao: {
+        flex: 1,
+
+        height: 40,
+
+        color: cores.branco,
+
+        backgroundColor:
+            cores.roxoPrincipal80,
+
+        borderWidth: 1,
+
+        borderColor:
+            cores.douradoPrincipal,
+
+        borderRadius: 10,
+
+        paddingHorizontal: 12,
+
+        fontSize: 12,
+
+        fontFamily:
+            fontes.normal,
+    },
+
+    btnAdicionarOpcao: {
+        height: 40,
+
+        paddingHorizontal: 12,
+
+        alignItems: "center",
+        justifyContent: "center",
+
+        backgroundColor:
+            cores.douradoPrincipal,
+
+        borderRadius: 10,
+    },
+
+    btnAdicionarOpcaoPressed: {
+        backgroundColor:
+            cores.douradoPrincipalPressed,
+
+        transform:
+            cores.btnPress,
+    },
+
+    txtAdicionarOpcao: {
+        color:
+            cores.roxoPrincipal,
+
+        fontSize: 10,
+
+        fontFamily:
+            fontes.negrito,
     },
 
 
@@ -312,7 +437,9 @@ export const criarTopicosStyles = StyleSheet.create({
         width: "100%",
 
         flexDirection: "row",
-        justifyContent: "space-between",
+
+        justifyContent:
+            "space-between",
 
         gap: 20,
 
@@ -321,9 +448,11 @@ export const criarTopicosStyles = StyleSheet.create({
 
     btnPublicar: {
         flex: 1,
+
         height: 45,
 
-        backgroundColor: cores.douradoPrincipal,
+        backgroundColor:
+            cores.douradoPrincipal,
 
         borderRadius: 22,
 
@@ -332,25 +461,36 @@ export const criarTopicosStyles = StyleSheet.create({
     },
 
     btnPublicarPressed: {
-        backgroundColor: cores.douradoPrincipalPressed,
-        transform: cores.btnPress,
+        backgroundColor:
+            cores.douradoPrincipalPressed,
+
+        transform:
+            cores.btnPress,
     },
 
     txtPublicar: {
-        color: cores.roxoPrincipal,
+        color:
+            cores.roxoPrincipal,
 
-        fontSize: fontes.btn,
-        fontFamily: fontes.extraNegrito,
+        fontSize:
+            fontes.btn,
+
+        fontFamily:
+            fontes.extraNegrito,
     },
 
     btnCancelar: {
         flex: 1,
+
         height: 45,
 
-        backgroundColor: cores.bgPreto80,
+        backgroundColor:
+            cores.bgPreto80,
 
         borderWidth: 1,
-        borderColor: cores.douradoPrincipal,
+
+        borderColor:
+            cores.douradoPrincipal,
 
         borderRadius: 22,
 
@@ -359,15 +499,22 @@ export const criarTopicosStyles = StyleSheet.create({
     },
 
     btnCancelarPressed: {
-        backgroundColor: cores.roxoPrincipal80,
-        transform: cores.btnPress,
+        backgroundColor:
+            cores.roxoPrincipal80,
+
+        transform:
+            cores.btnPress,
     },
 
     txtCancelar: {
-        color: cores.douradoPrincipal,
+        color:
+            cores.douradoPrincipal,
 
-        fontSize: fontes.btn,
-        fontFamily: fontes.extraNegrito,
+        fontSize:
+            fontes.btn,
+
+        fontFamily:
+            fontes.extraNegrito,
     },
 
 });

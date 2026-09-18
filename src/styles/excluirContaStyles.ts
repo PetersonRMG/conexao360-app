@@ -3,20 +3,27 @@ import { cores, fontes } from "./variaveis";
 
 export const excluirContaStyles = StyleSheet.create({
 
+    // =========================
+    // ESTRUTURA
+    // =========================
+
     container: {
         flex: 1,
-        backgroundColor: "#080808",
+
+        backgroundColor: cores.bgPreto80,
     },
 
     background: {
         flex: 1,
+
         width: "100%",
         height: "100%",
     },
 
     overlay: {
         flex: 1,
-        backgroundColor: "rgba(0,0,0,0.35)",
+
+        backgroundColor: cores.bgPreto80,
     },
 
     keyboard: {
@@ -29,6 +36,7 @@ export const excluirContaStyles = StyleSheet.create({
 
     scrollConteudo: {
         paddingHorizontal: 16,
+
         paddingBottom: 110,
     },
 
@@ -42,6 +50,7 @@ export const excluirContaStyles = StyleSheet.create({
         height: 75,
 
         flexDirection: "row",
+
         alignItems: "center",
         justifyContent: "space-between",
 
@@ -62,18 +71,21 @@ export const excluirContaStyles = StyleSheet.create({
 
     btnVoltarPressed: {
         backgroundColor: cores.roxoPrincipal80,
+
         transform: cores.btnPress,
     },
 
     voltarImagem: {
         width: 45,
         height: 45,
+
         resizeMode: "contain",
     },
 
     logo: {
         width: 52,
         height: 52,
+
         resizeMode: "contain",
     },
 
@@ -89,12 +101,14 @@ export const excluirContaStyles = StyleSheet.create({
 
     apresentacao: {
         alignItems: "center",
+
         marginBottom: 22,
     },
 
     titulo: {
         color: cores.branco,
-        fontSize: 28,
+
+        fontSize: fontes.titulo,
         fontFamily: fontes.negrito,
     },
 
@@ -104,10 +118,14 @@ export const excluirContaStyles = StyleSheet.create({
 
     aviso: {
         color: cores.douradoPrincipal,
+
         fontSize: 10,
         fontFamily: fontes.normal,
+
         marginTop: 5,
+
         textAlign: "center",
+
         opacity: 0.8,
     },
 
@@ -141,6 +159,7 @@ export const excluirContaStyles = StyleSheet.create({
     iconeAviso: {
         width: 27,
         height: 27,
+
         resizeMode: "contain",
     },
 
@@ -160,6 +179,7 @@ export const excluirContaStyles = StyleSheet.create({
 
     listaAvisos: {
         width: "100%",
+
         marginBottom: 16,
     },
 
@@ -234,6 +254,7 @@ export const excluirContaStyles = StyleSheet.create({
 
     input: {
         flex: 1,
+
         height: "100%",
 
         color: cores.branco,
@@ -255,6 +276,7 @@ export const excluirContaStyles = StyleSheet.create({
 
     esqueciSenha: {
         alignSelf: "flex-end",
+
         marginTop: 8,
     },
 
@@ -282,6 +304,7 @@ export const excluirContaStyles = StyleSheet.create({
 
     btnCancelar: {
         flex: 1,
+
         height: 45,
 
         backgroundColor: cores.douradoPrincipal,
@@ -294,6 +317,7 @@ export const excluirContaStyles = StyleSheet.create({
 
     btnCancelarPressed: {
         backgroundColor: cores.douradoPrincipalPressed,
+
         transform: cores.btnPress,
     },
 
@@ -306,6 +330,7 @@ export const excluirContaStyles = StyleSheet.create({
 
     btnExcluir: {
         flex: 1,
+
         height: 45,
 
         backgroundColor: cores.bgPreto80,
@@ -321,6 +346,7 @@ export const excluirContaStyles = StyleSheet.create({
 
     btnExcluirPressed: {
         backgroundColor: cores.roxoPrincipal80,
+
         transform: cores.btnPress,
     },
 

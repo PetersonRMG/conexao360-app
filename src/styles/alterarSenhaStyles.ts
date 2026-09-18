@@ -3,9 +3,13 @@ import { cores, fontes } from "./variaveis";
 
 export const alterarSenhaStyles = StyleSheet.create({
 
+    // =========================
+    // ESTRUTURA
+    // =========================
+
     container: {
         flex: 1,
-        backgroundColor: "#080808",
+        backgroundColor: cores.bgPreto80,
     },
 
     background: {
@@ -16,7 +20,7 @@ export const alterarSenhaStyles = StyleSheet.create({
 
     overlay: {
         flex: 1,
-        backgroundColor: "rgba(0,0,0,0.35)",
+        backgroundColor: cores.bgPreto80,
     },
 
     keyboard: {
@@ -102,7 +106,7 @@ export const alterarSenhaStyles = StyleSheet.create({
     titulo: {
         color: cores.branco,
 
-        fontSize: 28,
+        fontSize: fontes.titulo,
         fontFamily: fontes.negrito,
     },
 
@@ -113,7 +117,7 @@ export const alterarSenhaStyles = StyleSheet.create({
     aviso: {
         color: cores.douradoPrincipal,
 
-        fontSize: 10,
+        fontSize: fontes.subtitulo,
         fontFamily: fontes.normal,
 
         marginTop: 5,
@@ -201,7 +205,7 @@ export const alterarSenhaStyles = StyleSheet.create({
 
 
     // =========================
-    // INFO
+    // INFORMAÇÃO
     // =========================
 
     cardInfo: {
@@ -253,7 +257,7 @@ export const alterarSenhaStyles = StyleSheet.create({
 
         fontFamily: fontes.normal,
 
-        opacity: 0.7,
+        opacity: 0.8,
     },
 
 
