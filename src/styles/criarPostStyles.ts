@@ -68,7 +68,7 @@ export const criarPostStyle = (tema: CoresTema) => StyleSheet.create({
 
         borderRadius: 23,
 
-        backgroundColor: tema.cardSecundario,
+       
     },
 
     btnVoltarPressed: {

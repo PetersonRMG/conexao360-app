@@ -67,7 +67,7 @@ export const criarExcluirContaStyles = (tema: CoresTema) => StyleSheet.create({
 
         borderRadius: 23,
 
-        backgroundColor: tema.card,
+        
     },
 
     btnVoltarPressed: {

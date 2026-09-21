@@ -1,6 +1,4 @@
 import { useState } from "react";
-import { router } from "expo-router";
-
 import {
     View,
     Text,
@@ -17,6 +15,7 @@ import globalStyle from "@/styles/globalStyles";
 
 import MenuSreen from "./menu";
 import HeaderCreen from "./header";
+import ComentariosModalScreen from "@/components/modalComentarios";
 
 import { criarHomeStyle } from "@/styles/homeStyles";
 import { useTema } from "@/contexts/TemaContext";
@@ -114,13 +113,13 @@ export default function HomeScreen() {
 
 
     // =====================================
-    // POST COM COMENTÁRIO ABERTO
+    // MODAL DE COMENTÁRIOS
     // =====================================
-    const [comentarioAberto, setComentarioAberto] =
+    const [comentariosAberto, setComentariosAberto] =
+        useState(false);
+
+    const [postSelecionado, setPostSelecionado] =
         useState<number | null>(null);
-
-
-    const [comentario, setComentario] = useState("");
 
 
     // =====================================
@@ -191,52 +190,53 @@ export default function HomeScreen() {
 
 
     // =====================================
-    // ABRIR COMENTÁRIO
+    // ABRIR COMENTÁRIOS
     // =====================================
-    const abrirComentario = (id: number) => {
+    const abrirComentarios = (id: number) => {
 
-        if (comentarioAberto === id) {
+        setPostSelecionado(id);
 
-            setComentarioAberto(null);
-
-            return;
-
-        }
-
-        setComentarioAberto(id);
-        setComentario("");
+        setComentariosAberto(true);
 
     };
 
 
     // =====================================
-    // ENVIAR COMENTÁRIO
+    // FECHAR COMENTÁRIOS
     // =====================================
-    const enviarComentario = (id: number) => {
+    const fecharComentarios = () => {
 
-        if (!comentario.trim()) {
+        setComentariosAberto(false);
+
+        setPostSelecionado(null);
+
+    };
+
+
+    // =====================================
+    // ATUALIZAR CONTADOR DE COMENTÁRIOS
+    // =====================================
+    const comentarioEnviado = () => {
+
+        if (postSelecionado === null) {
             return;
         }
-
 
         setPosts((current) =>
             current.map((post) => {
 
-                if (post.id !== id) {
+                if (post.id !== postSelecionado) {
                     return post;
                 }
 
                 return {
                     ...post,
-                    comentarios: post.comentarios + 1,
+                    comentarios:
+                        post.comentarios + 1,
                 };
 
             })
         );
-
-
-        setComentario("");
-        setComentarioAberto(null);
 
     };
 
@@ -504,13 +504,9 @@ export default function HomeScreen() {
                                         <Pressable
                                             style={homeStyle.acao}
                                             onPress={() =>
-                                                router.push({
-                                                    pathname: "/comentarios",
-
-                                                    params: {
-                                                        postId: post.id,
-                                                    },
-                                                })
+                                                abrirComentarios(
+                                                    post.id
+                                                )
                                             }
                                         >
 
@@ -549,39 +545,6 @@ export default function HomeScreen() {
                                     </View>
 
 
-                                    {/* ================= COMENTÁRIO ================= */}
-                                    {comentarioAberto === post.id && (
-
-                                        <View style={homeStyle.areaComentario}>
-
-                                            <TextInput
-                                                value={comentario}
-                                                onChangeText={setComentario}
-                                                style={homeStyle.inputComentario}
-                                                placeholder="Escreva um comentário..."
-                                                placeholderTextColor="#888888"
-                                            />
-
-
-                                            <Pressable
-                                                style={homeStyle.btnEnviarComentario}
-                                                onPress={() =>
-                                                    enviarComentario(post.id)
-                                                }
-                                            >
-
-                                                <Image
-                                                    source={require("@/assets/images/img/send.png")}
-                                                    style={homeStyle.iconeEnviarComentario}
-                                                />
-
-                                            </Pressable>
-
-                                        </View>
-
-                                    )}
-
-
                                 </View>
 
                             );
@@ -604,6 +567,23 @@ export default function HomeScreen() {
 
                     {/* ================= FOOTER ================= */}
                     <MenuSreen />
+
+
+                    {/* ================= MODAL DE COMENTÁRIOS ================= */}
+                    <ComentariosModalScreen
+                        visible={
+                            comentariosAberto
+                        }
+                        postId={
+                            postSelecionado
+                        }
+                        onClose={
+                            fecharComentarios
+                        }
+                        onComentarioEnviado={
+                            comentarioEnviado
+                        }
+                    />
 
 
                 </SafeAreaView>

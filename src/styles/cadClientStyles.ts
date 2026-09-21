@@ -138,7 +138,7 @@ export const criarCadClienteStyles = (tema: CoresTema) => StyleSheet.create({
     width: "75%",
     height: 50,
 
-    backgroundColor: tema.cardSecundario,
+
 
     borderWidth: 1,
     borderColor: cores.douradoPrincipal,

@@ -1,410 +1,340 @@
 import {
-    StyleSheet
+    StyleSheet,
 } from "react-native";
 
 import {
-    fontes
+    cores,
+    fontes,
 } from "./variaveis";
 
 import {
-    CoresTema
+    CoresTema,
 } from "./temas";
 
 
-export const criarComentariosStyles = (
+export const criarComentariosModalStyles = (
     tema: CoresTema
-) => {
+) => StyleSheet.create({
 
-    return StyleSheet.create({
+    keyboard: {
+        flex: 1,
+    },
 
-        container: {
+    // =========================
+    // FUNDO
+    // =========================
 
-            flex: 1,
+    overlay: {
+        flex: 1,
 
-            backgroundColor:
-                tema.fundo,
+        justifyContent: "flex-end",
 
-        },
+        backgroundColor:
+            "rgba(0,0,0,0.55)",
+    },
 
 
-        // =========================
-        // SCROLL
-        // =========================
+    // =========================
+    // BOTTOM SHEET
+    // =========================
 
-        scroll: {
+    sheet: {
+        width: "100%",
+        maxWidth: 440,
+        height: "72%",
 
-            flex: 1,
+        alignSelf: "center",
 
-        },
+        backgroundColor:
+            tema.fundo,
 
-        scrollConteudo: {
+        borderTopLeftRadius: 24,
+        borderTopRightRadius: 24,
 
-            paddingHorizontal: 16,
+        borderWidth: 1,
+        borderBottomWidth: 0,
+        borderColor:
+            tema.cardSecundario,
 
-            paddingTop: 10,
+        overflow: "hidden",
+    },
 
-            paddingBottom: 20,
+    handle: {
+        width: 44,
+        height: 4,
 
-        },
+        alignSelf: "center",
 
+        borderRadius: 2,
 
-        // =========================
-        // POST
-        // =========================
+        backgroundColor:
+            tema.textoSecundario,
 
-        post: {
+        opacity: 0.65,
 
-            width: "100%",
+        marginTop: 8,
+        marginBottom: 5,
+    },
 
-            backgroundColor:
-                tema.card,
 
-            borderWidth: 1,
+    // =========================
+    // HEADER
+    // =========================
 
-            borderColor:
-                tema.borda,
+    header: {
+        width: "100%",
+        height: 58,
 
-            borderRadius: 12,
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent:
+            "space-between",
 
-            padding: 12,
+        paddingHorizontal: 16,
 
-            marginBottom: 20,
+        borderBottomWidth: 1,
+        borderBottomColor:
+            tema.cardSecundario,
+    },
 
-        },
+    titulo: {
+        color: tema.destaque,
 
-        postHeader: {
+        fontSize: 20,
+        fontFamily:
+            fontes.extraNegrito,
+    },
 
-            flexDirection: "row",
+    btnFechar: {
+        width: 38,
+        height: 38,
 
-            alignItems: "center",
+        alignItems: "center",
+        justifyContent: "center",
 
-            marginBottom: 8,
+        borderRadius: 19,
+    },
 
-        },
+    txtFechar: {
+        color: tema.texto,
 
-        avatarPost: {
+        fontSize: 30,
+        lineHeight: 31,
 
-            width: 40,
+        fontFamily:
+            fontes.normal,
+    },
 
-            height: 40,
 
-            borderRadius: 20,
+    // =========================
+    // SCROLL
+    // =========================
 
-            marginRight: 10,
+    scroll: {
+        flex: 1,
+    },
 
-            borderWidth: 1,
+    scrollConteudo: {
+        paddingHorizontal: 14,
+        paddingBottom: 12,
+    },
 
-            borderColor:
-                tema.destaque,
 
-        },
+    // =========================
+    // COMENTÁRIO
+    // =========================
 
-        nomePost: {
+    comentario: {
+        width: "100%",
 
-            color:
-                tema.texto,
+        flexDirection: "row",
 
-            fontSize: 13,
+        paddingVertical: 15,
 
-            fontFamily:
-                fontes.negrito,
+        borderBottomWidth: 1,
+        borderBottomColor:
+            tema.cardSecundario,
+    },
 
-        },
+    avatar: {
+        width: 42,
+        height: 42,
 
-        tempoPost: {
+        borderRadius: 21,
 
-            color:
-                tema.textoSecundario,
+        borderWidth: 1,
+        borderColor:
+            tema.destaque,
 
-            fontSize: 9,
+        resizeMode: "cover",
 
-            fontFamily:
-                fontes.normal,
+        marginRight: 10,
+    },
 
-        },
+    comentarioConteudo: {
+        flex: 1,
+    },
 
-        textoPost: {
+    comentarioTopo: {
+        width: "100%",
 
-            color:
-                tema.texto,
+        flexDirection: "row",
+        justifyContent:
+            "space-between",
+    },
 
-            fontSize: 11,
+    comentarioAutor: {
+        flex: 1,
+    },
 
-            lineHeight: 15,
+    nome: {
+        color: tema.destaque,
 
-            fontFamily:
-                fontes.normal,
+        fontSize: 11,
+        fontFamily:
+            fontes.negrito,
+    },
 
-        },
+    horario: {
+        color:
+            tema.textoSecundario,
 
+        fontSize: 7,
+        fontFamily:
+            fontes.normal,
 
-        // =========================
-        // AÇÕES
-        // =========================
+        marginTop: 2,
+    },
 
-        acoes: {
+    mais: {
+        color:
+            tema.textoSecundario,
 
-            width: "100%",
+        fontSize: 20,
 
-            flexDirection: "row",
+        paddingHorizontal: 6,
+    },
 
-            justifyContent:
-                "space-between",
+    textoComentario: {
+        color: tema.texto,
 
-            borderTopWidth: 1,
+        fontSize: 10,
+        lineHeight: 14,
 
-            borderTopColor:
-                tema.cardSecundario,
+        fontFamily:
+            fontes.normal,
 
-            paddingTop: 10,
+        marginTop: 8,
 
-            marginTop: 10,
+        paddingRight: 8,
+    },
 
-        },
 
-        acao: {
+    // =========================
+    // INPUT FIXO
+    // =========================
 
-            flexDirection: "row",
+    areaEnviar: {
+        width: "100%",
+        minHeight: 66,
 
-            alignItems: "center",
+        flexDirection: "row",
+        alignItems: "center",
 
-            gap: 5,
+        gap: 7,
 
-        },
+        paddingHorizontal: 12,
+        paddingTop: 8,
 
-        iconeAcao: {
+        backgroundColor:
+            tema.fundo,
 
-            width: 17,
+        borderTopWidth: 1,
+        borderTopColor:
+            tema.cardSecundario,
+    },
 
-            height: 17,
+    avatarInput: {
+        width: 36,
+        height: 36,
 
-            resizeMode: "contain",
+        borderRadius: 18,
 
-        },
+        borderWidth: 1,
+        borderColor:
+            tema.destaque,
 
-        txtAcao: {
+        resizeMode: "cover",
+    },
 
-            color:
-                tema.textoSecundario,
+    inputContainer: {
+        flex: 1,
+        minHeight: 40,
+        maxHeight: 78,
 
-            fontSize: 8,
+        flexDirection: "row",
+        alignItems: "center",
 
-            fontFamily:
-                fontes.normal,
+        backgroundColor:
+            tema.input,
 
-        },
+        borderWidth: 1,
+        borderColor:
+            tema.borda,
 
+        borderRadius: 22,
 
-        // =========================
-        // TÍTULO COMENTÁRIOS
-        // =========================
+        paddingLeft: 12,
+        paddingRight: 8,
+    },
 
-        tituloComentarios: {
+    input: {
+        flex: 1,
+        maxHeight: 70,
 
-            color:
-                tema.destaque,
+        color: tema.texto,
 
-            fontSize: 18,
+        fontSize: 10,
+        fontFamily:
+            fontes.normal,
 
-            fontFamily:
-                fontes.negrito,
+        paddingVertical: 8,
+    },
 
-            marginBottom: 15,
+    iconeEmoji: {
+        width: 18,
+        height: 18,
 
-        },
+        resizeMode: "contain",
 
+        opacity: 0.8,
+    },
 
-        // =========================
-        // COMENTÁRIO
-        // =========================
+    btnEnviar: {
+        width: 40,
+        height: 40,
 
-        comentario: {
+        alignItems: "center",
+        justifyContent: "center",
 
-            width: "100%",
+        borderRadius: 20,
 
-            flexDirection: "row",
+        backgroundColor:
+            tema.destaque,
+    },
 
-            paddingVertical: 14,
+    btnEnviarPressed: {
+        opacity: 0.8,
 
-            borderBottomWidth: 1,
+        transform:
+            cores.btnPress,
+    },
 
-            borderBottomColor:
-                tema.cardSecundario,
+    iconeEnviar: {
+        width: 21,
+        height: 21,
 
-        },
+        resizeMode: "contain",
+    },
 
-        avatarComentario: {
-
-            width: 40,
-
-            height: 40,
-
-            borderRadius: 20,
-
-            alignItems: "center",
-
-            justifyContent:
-                "center",
-
-            backgroundColor:
-                tema.destaque,
-
-            marginRight: 10,
-
-        },
-
-        imgComentario: {
-
-            width: 25,
-
-            height: 25,
-
-            resizeMode: "contain",
-
-        },
-
-        comentarioConteudo: {
-
-            flex: 1,
-
-        },
-
-        nomeComentario: {
-
-            color:
-                tema.destaque,
-
-            fontSize: 11,
-
-            fontFamily:
-                fontes.negrito,
-
-        },
-
-        horarioComentario: {
-
-            color:
-                tema.textoSecundario,
-
-            fontSize: 7,
-
-            marginTop: 1,
-
-            fontFamily:
-                fontes.normal,
-
-        },
-
-        textoComentario: {
-
-            color:
-                tema.texto,
-
-            fontSize: 10,
-
-            lineHeight: 14,
-
-            marginTop: 8,
-
-            fontFamily:
-                fontes.normal,
-
-        },
-
-
-        // =========================
-        // INPUT
-        // =========================
-
-        areaEnviar: {
-
-            width: "100%",
-
-            minHeight: 62,
-
-            flexDirection: "row",
-
-            alignItems: "center",
-
-            paddingHorizontal: 12,
-
-            gap: 8,
-
-            backgroundColor:
-                tema.fundo,
-
-            borderTopWidth: 1,
-
-            borderTopColor:
-                tema.cardSecundario,
-
-        },
-
-        avatarInput: {
-
-            width: 34,
-
-            height: 34,
-
-            borderRadius: 17,
-
-            borderWidth: 1,
-
-            borderColor:
-                tema.destaque,
-
-        },
-
-        inputContainer: {
-
-            flex: 1,
-
-            height: 40,
-
-            flexDirection: "row",
-
-            alignItems: "center",
-
-            backgroundColor:
-                tema.card,
-
-            borderWidth: 1,
-
-            borderColor:
-                tema.borda,
-
-            borderRadius: 20,
-
-            paddingHorizontal: 12,
-
-        },
-
-        input: {
-
-            flex: 1,
-
-            height: "100%",
-
-            color:
-                tema.texto,
-
-            fontSize: 10,
-
-            fontFamily:
-                fontes.normal,
-
-        },
-
-        send: {
-
-            width: 20,
-
-            height: 20,
-
-            resizeMode: "contain",
-
-        },
-
-    });
-
-};
+});

@@ -95,9 +95,7 @@ export default function MenuSreen() {
             {/* EVENTOS */}
             <Pressable
                 style={({ pressed }) => [menuStyles.itemMenu, pressed && globalStyle.pressBtn]}
-                onPress={() => {
-                    // rota de eventos futuramente
-                }}
+                onPress={() => router.navigate('/eventos')}
             >
 
                 <Image

@@ -1,45 +1,174 @@
 import { cores } from "./variaveis";
 
+
 export const temaEscuro = {
-    fundo: cores.preto,
-    header: cores.pretoPrincipal,
-    footer: cores.pretoPrincipal,
 
-    card: "#151515",
-    cardSecundario: "#1E1E1E",
-    input: "#1E1E1E",
+    // =========================
+    // ESTRUTURA
+    // =========================
 
-    texto: cores.branco,
-    textoSecundario: "#AFAFAF",
-    textoSobreDestaque: "#0A0909",
+    fundo:
+        cores.fundoEscuro,
 
-    destaque: cores.douradoPrincipal,
-    borda: cores.douradoPrincipal,
-    linha: "#2A2A2A",
+    header:
+        "#0D0D0D",
 
-    overlay: "rgba(10, 9, 9, 0.80)",
-    pressionado: "#2A2A2A",
+    footer:
+        "#0D0D0D",
+
+
+    // =========================
+    // SUPERFÍCIES
+    // =========================
+
+    card:
+        cores.cardEscuro,
+
+    cardSecundario:
+        cores.cardSecundarioEscuro,
+
+    input:
+        cores.inputEscuro,
+
+
+    // =========================
+    // TEXTO
+    // =========================
+
+    texto:
+        cores.textoEscuro,
+
+    textoSecundario:
+        cores.textoSecundarioEscuro,
+
+
+    // =========================
+    // DESTAQUE
+    // =========================
+
+    destaque:
+        cores.douradoPrincipal,
+
+    destaqueTexto:
+        cores.douradoPrincipal,
+
+    textoSobreDestaque:
+        cores.pretoPrincipal,
+
+
+    // =========================
+    // LINHAS / BORDAS
+    // =========================
+    // Borda normal NÃO é mais dourada.
+    // O dourado fica reservado para seleção,
+    // CTA e elementos realmente importantes.
+
+    borda:
+        cores.bordaEscura,
+
+    linha:
+        cores.linhaEscura,
+
+
+    // =========================
+    // ESTADOS
+    // =========================
+
+    sucesso:
+        cores.verdeOnline,
+
+    erro:
+        cores.erro,
+
+    overlay:
+        cores.overlayEscuro,
+
 };
+
 
 export const temaClaro = {
-    fundo: "#F3F0E9",
-    header: "#F6EFE4",
-    footer: "#F6EFE4",
 
-    card: "#FFFFFF",
-    cardSecundario: "#EEEAE2",
-    input: "#F8F5EE",
+    // =========================
+    // ESTRUTURA
+    // =========================
 
-    texto: "#24201C",
-    textoSecundario: "#77716A",
-    textoSobreDestaque: "#0A0909",
+    fundo:
+        cores.fundoClaro,
 
-    destaque: cores.douradoPrincipal,
-    borda: cores.douradoPrincipal,
-    linha: "#D8D1C5",
+    header:
+        cores.headerClaro,
 
-    overlay: "rgba(243, 240, 233, 0.88)",
-    pressionado: "#E2DDD3",
+    footer:
+        cores.footerClaro,
+
+
+    // =========================
+    // SUPERFÍCIES
+    // =========================
+
+    card:
+        cores.cardClaro,
+
+    cardSecundario:
+        cores.cardSecundarioClaro,
+
+    input:
+        cores.inputClaro,
+
+
+    // =========================
+    // TEXTO
+    // =========================
+
+    texto:
+        cores.textoClaro,
+
+    textoSecundario:
+        cores.textoSecundarioClaro,
+
+
+    // =========================
+    // DESTAQUE
+    // =========================
+    // Mais escuro que o dourado do tema dark
+    // para manter contraste em fundo claro.
+
+    destaque:
+        cores.douradoTextoClaro,
+
+    destaqueTexto:
+        cores.douradoTextoClaro,
+
+    textoSobreDestaque:
+        cores.branco,
+
+
+    // =========================
+    // LINHAS / BORDAS
+    // =========================
+
+    borda:
+        cores.bordaClaro,
+
+    linha:
+        cores.linhaClaro,
+
+
+    // =========================
+    // ESTADOS
+    // =========================
+
+    sucesso:
+        cores.verdeOnline,
+
+    erro:
+        cores.erro,
+
+    overlay:
+        "rgba(0,0,0,0.32)",
+
 };
 
-export type CoresTema = typeof temaEscuro;
+
+export type CoresTema =
+    typeof temaEscuro;

@@ -218,7 +218,7 @@ export const criarEditarPerfilStyles = (
         backgroundColor: tema.card,
 
         borderWidth: 1,
-      
+        borderColor: tema.borda,
 
         borderRadius: 12,
 
@@ -249,29 +249,63 @@ export const criarEditarPerfilStyles = (
     // =========================
 
     status: {
-        minWidth: 72,
-        height: 20,
+        minWidth: 88,
+        height: 28,
+
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "center",
+
+        gap: 6,
 
         paddingHorizontal: 10,
 
-        borderRadius: 12,
-
-        alignItems: "center",
-        justifyContent: "center",
+        borderRadius: 14,
 
         backgroundColor: tema.cardSecundario,
 
         borderWidth: 1,
+    },
+
+    statusPublico: {
         borderColor: tema.destaque,
     },
 
+    statusPrivado: {
+        borderColor: tema.borda,
+    },
+
+    statusPressed: {
+        opacity: 0.72,
+        transform: [{ scale: 0.97 }],
+    },
+
+    statusIndicador: {
+        width: 7,
+        height: 7,
+
+        borderRadius: 4,
+    },
+
+    statusIndicadorPublico: {
+        backgroundColor: tema.destaque,
+    },
+
+    statusIndicadorPrivado: {
+        backgroundColor: tema.textoSecundario,
+    },
+
     txtStatus: {
-        color: tema.texto,
+        fontSize: 9,
+        fontFamily: fontes.negrito,
+    },
 
-        fontSize: 8,
-        fontFamily: fontes.normal,
+    txtStatusPublico: {
+        color: tema.destaque,
+    },
 
-        opacity: 0.8,
+    txtStatusPrivado: {
+        color: tema.textoSecundario,
     },
 
 
@@ -308,7 +342,7 @@ export const criarEditarPerfilStyles = (
         backgroundColor: tema.card,
 
         borderWidth: 1,
-        
+        borderColor: tema.borda,
 
         borderRadius: 12,
 
@@ -350,7 +384,7 @@ export const criarEditarPerfilStyles = (
         backgroundColor: tema.card,
 
         borderWidth: 1,
-         
+        borderColor: tema.borda,
 
         borderRadius: 12,
 
