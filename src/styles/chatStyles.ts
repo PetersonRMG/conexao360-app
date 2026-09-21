@@ -1,7 +1,8 @@
 import { StyleSheet } from "react-native";
 import { cores, fontes } from "./variaveis";
 
-export const chatStyles = StyleSheet.create({
+import { CoresTema } from "./temas";
+export const criarChatStyles = (tema: CoresTema) => StyleSheet.create({
 
     // =========================
     // ESTRUTURA
@@ -10,7 +11,7 @@ export const chatStyles = StyleSheet.create({
     container: {
         flex: 1,
 
-        backgroundColor: cores.pretoPrincipal,
+        backgroundColor: tema.fundo,
     },
 
 
@@ -21,10 +22,10 @@ export const chatStyles = StyleSheet.create({
     header: {
         width: "100%",
 
-        backgroundColor: cores.bgPreto80,
+        backgroundColor: tema.header,
 
         borderBottomWidth: 1,
-        borderBottomColor: cores.roxoPrincipal80,
+        borderBottomColor: tema.linha,
 
         paddingHorizontal: 16,
         paddingTop: 12,
@@ -126,7 +127,7 @@ export const chatStyles = StyleSheet.create({
     },
 
     btnNovoChatPressed: {
-        backgroundColor: cores.roxoPrincipal80,
+        backgroundColor: tema.cardSecundario,
 
         transform: cores.btnPress,
     },
@@ -151,7 +152,7 @@ export const chatStyles = StyleSheet.create({
         paddingBottom: 10,
 
         // removido o fundo roxo
-        backgroundColor: cores.bgPreto80,
+        backgroundColor: tema.fundo,
     },
 
     inputBuscaContainer: {
@@ -161,7 +162,7 @@ export const chatStyles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
 
-        backgroundColor: cores.bgPreto80,
+        backgroundColor: tema.input,
 
         borderWidth: 1,
         borderColor: cores.douradoPrincipal,
@@ -187,7 +188,7 @@ export const chatStyles = StyleSheet.create({
 
         height: "100%",
 
-        color: cores.branco,
+        color: tema.texto,
 
         fontSize: 12,
         fontFamily: fontes.normal,
@@ -206,10 +207,10 @@ export const chatStyles = StyleSheet.create({
 
         flexDirection: "row",
 
-        backgroundColor: cores.bgPreto80,
+        backgroundColor: tema.fundo,
 
         borderBottomWidth: 1,
-        borderBottomColor: cores.roxoPrincipal80,
+        borderBottomColor: tema.linha,
 
         paddingHorizontal: 16,
     },
@@ -231,7 +232,7 @@ export const chatStyles = StyleSheet.create({
     },
 
     txtFiltro: {
-        color: cores.branco,
+        color: tema.texto,
 
         fontSize: 10,
         fontFamily: fontes.normal,
@@ -265,7 +266,7 @@ export const chatStyles = StyleSheet.create({
     },
 
     txtBadgeFiltro: {
-        color: cores.roxoPrincipal,
+        color: tema.textoSobreDestaque,
 
         fontSize: 8,
         fontFamily: fontes.negrito,
@@ -300,11 +301,11 @@ export const chatStyles = StyleSheet.create({
         paddingVertical: 10,
 
         borderBottomWidth: 1,
-        borderBottomColor: cores.roxoPrincipal80,
+        borderBottomColor: tema.linha,
     },
 
     conversaPressed: {
-        backgroundColor: cores.roxoPrincipal80,
+        backgroundColor: tema.cardSecundario,
     },
 
 
@@ -354,7 +355,7 @@ export const chatStyles = StyleSheet.create({
     },
 
     mensagem: {
-        color: cores.branco,
+        color: tema.texto,
 
         fontSize: 11,
         lineHeight: 15,
@@ -377,7 +378,7 @@ export const chatStyles = StyleSheet.create({
     },
 
     horario: {
-        color: cores.branco,
+        color: tema.texto,
 
         fontSize: 9,
         fontFamily: fontes.normal,
@@ -400,7 +401,7 @@ export const chatStyles = StyleSheet.create({
     },
 
     txtBadge: {
-        color: cores.roxoPrincipal,
+        color: tema.textoSobreDestaque,
 
         fontSize: 9,
         fontFamily: fontes.negrito,
@@ -421,7 +422,7 @@ export const chatStyles = StyleSheet.create({
     },
 
     txtSemResultados: {
-        color: cores.branco,
+        color: tema.texto,
 
         fontSize: 12,
         fontFamily: fontes.normal,

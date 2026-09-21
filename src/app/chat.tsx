@@ -12,8 +12,9 @@ import {
 
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { chatStyles } from "@/styles/chatStyles";
 import globalStyle from "@/styles/globalStyles";
+import { criarChatStyles } from "@/styles/chatStyles";
+import { useTema } from "@/contexts/TemaContext";
 
 import HeaderCreen from "./header";
 import MenuSreen from "./menu";
@@ -39,6 +40,10 @@ interface Conversa {
 }
 
 export default function ChatScreen() {
+      
+        const { coresTema } = useTema();
+      
+    const chatStyles = criarChatStyles(coresTema);
 
     const [busca, setBusca] = useState("");
 

@@ -14,8 +14,9 @@ import {
 
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { conversaStyles } from "@/styles/conversaStyles";
 import globalStyle from "@/styles/globalStyles";
+import { criarConversaStyles } from "@/styles/conversaStyles";
+import { useTema } from "@/contexts/TemaContext";
 
 
 interface Mensagem {
@@ -27,6 +28,10 @@ interface Mensagem {
 
 
 export default function ConversaScreen() {
+
+        const { coresTema } = useTema();
+    
+    const conversaStyles = criarConversaStyles(coresTema);
 
     const [mensagem, setMensagem] = useState("");
 

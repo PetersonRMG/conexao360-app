@@ -3,7 +3,8 @@ import { StyleSheet } from "react-native";
 import { cores, fontes } from "./variaveis";
 
 
-export const criarTopicosStyles = StyleSheet.create({
+import { CoresTema } from "./temas";
+export const criarTopicosStyle = (tema: CoresTema) => StyleSheet.create({
 
     // =========================
     // ESTRUTURA
@@ -12,8 +13,7 @@ export const criarTopicosStyles = StyleSheet.create({
     container: {
         flex: 1,
 
-        backgroundColor:
-            cores.pretoPrincipal,
+        backgroundColor: tema.fundo,
     },
 
     background: {
@@ -26,8 +26,7 @@ export const criarTopicosStyles = StyleSheet.create({
     overlay: {
         flex: 1,
 
-        backgroundColor:
-            cores.bgPreto80,
+        backgroundColor: tema.overlay,
     },
 
     keyboard: {
@@ -69,13 +68,11 @@ export const criarTopicosStyles = StyleSheet.create({
 
         borderRadius: 23,
 
-        backgroundColor:
-            cores.bgPreto80,
+        backgroundColor: tema.cardSecundario,
     },
 
     btnVoltarPressed: {
-        backgroundColor:
-            cores.roxoPrincipal80,
+        backgroundColor: tema.cardSecundario,
 
         transform:
             cores.btnPress,
@@ -114,7 +111,7 @@ export const criarTopicosStyles = StyleSheet.create({
     },
 
     tituloPagina: {
-        color: cores.branco,
+        color: tema.texto,
 
         fontSize: fontes.titulo,
 
@@ -149,8 +146,7 @@ export const criarTopicosStyles = StyleSheet.create({
     card: {
         width: "100%",
 
-        backgroundColor:
-            cores.roxoPrincipal,
+        backgroundColor: tema.card,
 
         borderRadius: 12,
 
@@ -160,7 +156,7 @@ export const criarTopicosStyles = StyleSheet.create({
     },
 
     label: {
-        color: cores.branco,
+        color: tema.texto,
 
         fontSize: 16,
 
@@ -179,15 +175,14 @@ export const criarTopicosStyles = StyleSheet.create({
         width: "100%",
         height: 44,
 
-        color: cores.branco,
+        color: tema.texto,
 
         fontSize: 13,
 
         fontFamily:
             fontes.normal,
 
-        backgroundColor:
-            cores.roxoPrincipal80,
+        backgroundColor: tema.cardSecundario,
 
         borderWidth: 1,
 
@@ -205,15 +200,14 @@ export const criarTopicosStyles = StyleSheet.create({
 
         minHeight: 70,
 
-        color: cores.branco,
+        color: tema.texto,
 
         fontSize: 13,
 
         fontFamily:
             fontes.normal,
 
-        backgroundColor:
-            cores.roxoPrincipal80,
+        backgroundColor: tema.cardSecundario,
 
         borderRadius: 10,
 
@@ -224,7 +218,7 @@ export const criarTopicosStyles = StyleSheet.create({
     contador: {
         alignSelf: "flex-end",
 
-        color: cores.branco,
+        color: tema.texto,
 
         fontSize: 9,
 
@@ -250,8 +244,7 @@ export const criarTopicosStyles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "space-between",
 
-        backgroundColor:
-            cores.roxoPrincipal80,
+        backgroundColor: tema.cardSecundario,
 
         borderWidth: 1,
         borderColor:
@@ -268,7 +261,7 @@ export const criarTopicosStyles = StyleSheet.create({
     },
 
     txtSeletor: {
-        color: cores.branco,
+        color: tema.texto,
 
         fontSize: 11,
 
@@ -309,8 +302,7 @@ export const criarTopicosStyles = StyleSheet.create({
 
         paddingHorizontal: 12,
 
-        backgroundColor:
-            cores.roxoPrincipal80,
+        backgroundColor: tema.cardSecundario,
 
         borderRadius: 15,
 
@@ -319,7 +311,7 @@ export const criarTopicosStyles = StyleSheet.create({
     },
 
     txtOpcao: {
-        color: cores.branco,
+        color: tema.texto,
 
         fontSize: 10,
 
@@ -376,10 +368,9 @@ export const criarTopicosStyles = StyleSheet.create({
 
         height: 40,
 
-        color: cores.branco,
+        color: tema.texto,
 
-        backgroundColor:
-            cores.roxoPrincipal80,
+        backgroundColor: tema.cardSecundario,
 
         borderWidth: 1,
 
@@ -419,8 +410,7 @@ export const criarTopicosStyles = StyleSheet.create({
     },
 
     txtAdicionarOpcao: {
-        color:
-            cores.roxoPrincipal,
+        color: tema.textoSobreDestaque,
 
         fontSize: 10,
 
@@ -469,8 +459,7 @@ export const criarTopicosStyles = StyleSheet.create({
     },
 
     txtPublicar: {
-        color:
-            cores.roxoPrincipal,
+        color: tema.textoSobreDestaque,
 
         fontSize:
             fontes.btn,
@@ -484,8 +473,7 @@ export const criarTopicosStyles = StyleSheet.create({
 
         height: 45,
 
-        backgroundColor:
-            cores.bgPreto80,
+        backgroundColor: tema.cardSecundario,
 
         borderWidth: 1,
 
@@ -499,8 +487,7 @@ export const criarTopicosStyles = StyleSheet.create({
     },
 
     btnCancelarPressed: {
-        backgroundColor:
-            cores.roxoPrincipal80,
+        backgroundColor: tema.cardSecundario,
 
         transform:
             cores.btnPress,

@@ -3,7 +3,8 @@ import { StyleSheet } from "react-native";
 import { cores, fontes } from "./variaveis";
 
 
-export const criarPostStyles = StyleSheet.create({
+import { CoresTema } from "./temas";
+export const criarPostStyle = (tema: CoresTema) => StyleSheet.create({
 
     // =========================
     // ESTRUTURA
@@ -12,8 +13,7 @@ export const criarPostStyles = StyleSheet.create({
     container: {
         flex: 1,
 
-        backgroundColor:
-            cores.pretoPrincipal,
+        backgroundColor: tema.fundo,
     },
 
     background: {
@@ -26,8 +26,7 @@ export const criarPostStyles = StyleSheet.create({
     overlay: {
         flex: 1,
 
-        backgroundColor:
-            cores.bgPreto80,
+        backgroundColor: tema.overlay,
     },
 
     keyboard: {
@@ -69,13 +68,11 @@ export const criarPostStyles = StyleSheet.create({
 
         borderRadius: 23,
 
-        backgroundColor:
-            cores.bgPreto80,
+        backgroundColor: tema.cardSecundario,
     },
 
     btnVoltarPressed: {
-        backgroundColor:
-            cores.roxoPrincipal80,
+        backgroundColor: tema.cardSecundario,
 
         transform:
             cores.btnPress,
@@ -114,7 +111,7 @@ export const criarPostStyles = StyleSheet.create({
     },
 
     tituloPagina: {
-        color: cores.branco,
+        color: tema.texto,
 
         fontSize: fontes.titulo,
 
@@ -149,8 +146,7 @@ export const criarPostStyles = StyleSheet.create({
     card: {
         width: "100%",
 
-        backgroundColor:
-            cores.roxoPrincipal,
+        backgroundColor: tema.card,
 
         borderRadius: 12,
 
@@ -160,7 +156,7 @@ export const criarPostStyles = StyleSheet.create({
     },
 
     label: {
-        color: cores.branco,
+        color: tema.texto,
 
         fontSize: 16,
 
@@ -179,15 +175,14 @@ export const criarPostStyles = StyleSheet.create({
         width: "100%",
         height: 44,
 
-        color: cores.branco,
+        color: tema.texto,
 
         fontSize: 13,
 
         fontFamily:
             fontes.normal,
 
-        backgroundColor:
-            cores.roxoPrincipal80,
+        backgroundColor: tema.cardSecundario,
 
         borderWidth: 1,
 
@@ -205,15 +200,14 @@ export const criarPostStyles = StyleSheet.create({
 
         minHeight: 70,
 
-        color: cores.branco,
+        color: tema.texto,
 
         fontSize: 13,
 
         fontFamily:
             fontes.normal,
 
-        backgroundColor:
-            cores.roxoPrincipal80,
+        backgroundColor: tema.cardSecundario,
 
         borderRadius: 10,
 
@@ -224,7 +218,7 @@ export const criarPostStyles = StyleSheet.create({
     contador: {
         alignSelf: "flex-end",
 
-        color: cores.branco,
+        color: tema.texto,
 
         fontSize: 9,
 
@@ -245,8 +239,7 @@ export const criarPostStyles = StyleSheet.create({
         width: "100%",
         height: 125,
 
-        backgroundColor:
-            cores.roxoPrincipal80,
+        backgroundColor: tema.cardSecundario,
 
         borderRadius: 12,
 
@@ -269,7 +262,7 @@ export const criarPostStyles = StyleSheet.create({
     },
 
     txtImagem: {
-        color: cores.branco,
+        color: tema.texto,
 
         fontSize: 10,
 
@@ -301,8 +294,7 @@ export const criarPostStyles = StyleSheet.create({
 
         paddingHorizontal: 12,
 
-        backgroundColor:
-            cores.roxoPrincipal80,
+        backgroundColor: tema.cardSecundario,
 
         borderRadius: 15,
 
@@ -311,7 +303,7 @@ export const criarPostStyles = StyleSheet.create({
     },
 
     txtTag: {
-        color: cores.branco,
+        color: tema.texto,
 
         fontSize: 10,
 
@@ -368,10 +360,9 @@ export const criarPostStyles = StyleSheet.create({
 
         height: 40,
 
-        color: cores.branco,
+        color: tema.texto,
 
-        backgroundColor:
-            cores.roxoPrincipal80,
+        backgroundColor: tema.cardSecundario,
 
         borderWidth: 1,
 
@@ -411,8 +402,7 @@ export const criarPostStyles = StyleSheet.create({
     },
 
     txtAdicionarTag: {
-        color:
-            cores.roxoPrincipal,
+        color: tema.textoSobreDestaque,
 
         fontSize: 10,
 
@@ -461,8 +451,7 @@ export const criarPostStyles = StyleSheet.create({
     },
 
     txtPublicar: {
-        color:
-            cores.roxoPrincipal,
+        color: tema.textoSobreDestaque,
 
         fontSize:
             fontes.btn,
@@ -476,8 +465,7 @@ export const criarPostStyles = StyleSheet.create({
 
         height: 45,
 
-        backgroundColor:
-            cores.bgPreto80,
+        backgroundColor: tema.cardSecundario,
 
         borderWidth: 1,
 
@@ -491,8 +479,7 @@ export const criarPostStyles = StyleSheet.create({
     },
 
     btnCancelarPressed: {
-        backgroundColor:
-            cores.roxoPrincipal80,
+        backgroundColor: tema.cardSecundario,
 
         transform:
             cores.btnPress,

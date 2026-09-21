@@ -1,9 +1,10 @@
 import { StyleSheet } from "react-native";
 
 import { cores, fontes } from "./variaveis";
+import { CoresTema, temaEscuro } from "./temas";
 
 
-export const galeriaStyles = StyleSheet.create({
+export const criarGaleriaStyles = (tema: CoresTema) => StyleSheet.create({
 
     // =========================
     // ESTRUTURA
@@ -13,7 +14,7 @@ export const galeriaStyles = StyleSheet.create({
         flex: 1,
 
         backgroundColor:
-            cores.pretoPrincipal,
+            tema.fundo,
     },
 
     scroll: {
@@ -44,7 +45,7 @@ export const galeriaStyles = StyleSheet.create({
     galeriaTxt: {
         fontSize: 15,
 
-        color: cores.branco,
+        color: tema.texto,
 
         fontFamily:
             fontes.normal,
@@ -56,7 +57,7 @@ export const galeriaStyles = StyleSheet.create({
         fontSize: 20,
 
         color:
-            cores.douradoPrincipal,
+            tema.destaque,
 
         fontFamily:
             fontes.negrito,
@@ -74,12 +75,12 @@ export const galeriaStyles = StyleSheet.create({
         height: 34,
 
         backgroundColor:
-            cores.roxoPrincipal,
+            tema.card,
 
         borderWidth: 1,
 
         borderColor:
-            cores.douradoPrincipal,
+            tema.destaque,
 
         borderRadius: 8,
 
@@ -95,7 +96,7 @@ export const galeriaStyles = StyleSheet.create({
 
     btnGaleriaPressed: {
         backgroundColor:
-            cores.roxoPrincipal80,
+            tema.cardSecundario,
 
         transform:
             cores.btnPress,
@@ -110,7 +111,7 @@ export const galeriaStyles = StyleSheet.create({
 
     btnTxt: {
         color:
-            cores.douradoPrincipal,
+            tema.destaque,
 
         fontSize: 12,
 
@@ -131,12 +132,12 @@ export const galeriaStyles = StyleSheet.create({
         alignItems: "center",
 
         backgroundColor:
-            cores.pretoPrincipal,
+            tema.input,
 
         borderWidth: 1,
 
         borderColor:
-            cores.douradoPrincipal,
+            tema.destaque,
 
         borderRadius: 20,
 
@@ -162,7 +163,7 @@ export const galeriaStyles = StyleSheet.create({
         height: "100%",
 
         color:
-            cores.branco,
+            tema.texto,
 
         fontSize: 13,
 
@@ -188,7 +189,7 @@ export const galeriaStyles = StyleSheet.create({
         borderBottomWidth: 1,
 
         borderBottomColor:
-            cores.roxoPrincipal80,
+            tema.cardSecundario,
     },
 
     itemMenu: {
@@ -202,14 +203,14 @@ export const galeriaStyles = StyleSheet.create({
         borderBottomWidth: 2,
 
         borderBottomColor:
-            cores.douradoPrincipal,
+            tema.destaque,
     },
 
     txtMenu: {
         fontSize: 11,
 
         color:
-            cores.branco,
+            tema.texto,
 
         fontFamily:
             fontes.negrito,
@@ -221,7 +222,7 @@ export const galeriaStyles = StyleSheet.create({
 
     txtMenuAtivo: {
         color:
-            cores.douradoPrincipal,
+            tema.destaque,
 
         opacity: 1,
     },
@@ -247,12 +248,12 @@ export const galeriaStyles = StyleSheet.create({
         height: 34,
 
         backgroundColor:
-            cores.roxoPrincipal,
+            tema.card,
 
         borderWidth: 1,
 
         borderColor:
-            cores.douradoPrincipal,
+            tema.destaque,
 
         borderRadius: 8,
 
@@ -264,7 +265,7 @@ export const galeriaStyles = StyleSheet.create({
 
     txtEventos: {
         color:
-            cores.branco,
+            tema.texto,
 
         fontSize: 11,
 
@@ -289,14 +290,14 @@ export const galeriaStyles = StyleSheet.create({
         borderWidth: 1,
 
         borderColor:
-            cores.douradoPrincipal,
+            tema.destaque,
     },
 
     txtFiltro: {
         fontSize: 11,
 
         color:
-            cores.branco,
+            tema.texto,
 
         fontFamily:
             fontes.normal,
@@ -343,7 +344,7 @@ export const galeriaStyles = StyleSheet.create({
             fontes.negrito,
 
         color:
-            cores.douradoPrincipal,
+            tema.destaque,
     },
 
     deSubtitulo: {
@@ -353,7 +354,7 @@ export const galeriaStyles = StyleSheet.create({
 
     txtDestaque: {
         color:
-            cores.branco,
+            tema.texto,
 
         fontSize: 11,
 
@@ -384,10 +385,10 @@ export const galeriaStyles = StyleSheet.create({
         borderWidth: 1,
 
         borderColor:
-            cores.douradoPrincipal,
+            tema.destaque,
 
         backgroundColor:
-            cores.pretoPrincipal,
+            tema.card,
 
         overflow: "hidden",
     },
@@ -411,7 +412,7 @@ export const galeriaStyles = StyleSheet.create({
             fontes.negrito,
 
         color:
-            cores.douradoPrincipal,
+            tema.destaque,
 
         marginTop: 12,
         marginBottom: 10,
@@ -462,7 +463,7 @@ export const galeriaStyles = StyleSheet.create({
 
     txtSemResultados: {
         color:
-            cores.branco,
+            tema.texto,
 
         fontSize: 12,
 
@@ -473,3 +474,7 @@ export const galeriaStyles = StyleSheet.create({
     },
 
 });
+
+// Compatibilidade: mantém os imports atuais funcionando no tema escuro.
+// Para tema dinâmico, use criarGaleriaStyles(coresTema) dentro do componente.
+export const galeriaStyles = criarGaleriaStyles(temaEscuro);

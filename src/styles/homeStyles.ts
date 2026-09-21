@@ -1,15 +1,16 @@
 import { StyleSheet } from "react-native";
 
 import { cores, fontes } from "./variaveis";
+import { CoresTema, temaEscuro } from "./temas";
 
-export const homeStyle = StyleSheet.create({
+export const criarHomeStyle = (tema: CoresTema) => StyleSheet.create({
 
     // =========================
     // CONTAINER
     // =========================
 
     container: {
-        backgroundColor: "#0A0909",
+        backgroundColor: tema.fundo,
     },
 
 
@@ -26,12 +27,12 @@ export const homeStyle = StyleSheet.create({
         justifyContent: "space-between",
 
         paddingHorizontal: 18,
-        
 
-        backgroundColor: cores.bgPreto80,
+
+        backgroundColor: tema.header,
 
         borderBottomWidth: 1,
-        borderBottomColor: cores.douradoPrincipal,
+        borderBottomColor: tema.destaque,
     },
 
     perfil: {
@@ -49,13 +50,13 @@ export const homeStyle = StyleSheet.create({
         borderRadius: 20,
 
         borderWidth: 1,
-        borderColor: cores.douradoPrincipal,
+        borderColor: tema.destaque,
 
         resizeMode: "cover",
     },
 
     logoContainer: {
-       
+
         alignItems: "center",
         justifyContent: "center",
 
@@ -70,7 +71,7 @@ export const homeStyle = StyleSheet.create({
     },
 
     nomeProjeto: {
-        color: cores.douradoPrincipal,
+        color: tema.destaque,
 
         fontSize: fontes.subtitulo,
         fontFamily: fontes.negrito,
@@ -87,7 +88,7 @@ export const homeStyle = StyleSheet.create({
     },
 
     btnPressed: {
-        backgroundColor: cores.roxoPrincipal80,
+        backgroundColor: tema.cardSecundario,
         transform: cores.btnPress,
     },
 
@@ -97,7 +98,7 @@ export const homeStyle = StyleSheet.create({
 
         resizeMode: "contain",
 
-        tintColor: cores.douradoPrincipal,
+        tintColor: tema.destaque,
     },
 
 
@@ -112,7 +113,7 @@ export const homeStyle = StyleSheet.create({
         paddingTop: 10,
         paddingBottom: 8,
 
-        backgroundColor: "#080808",
+        backgroundColor: tema.fundo,
     },
 
     inputBusca: {
@@ -124,12 +125,12 @@ export const homeStyle = StyleSheet.create({
 
         paddingHorizontal: 14,
 
-        backgroundColor: cores.bgPreto80,
+        backgroundColor: tema.input,
 
         borderRadius: 20,
 
         borderWidth: 1,
-        borderColor: cores.roxoPrincipal80,
+        borderColor: tema.cardSecundario,
     },
 
     iconeBusca: {
@@ -150,7 +151,7 @@ export const homeStyle = StyleSheet.create({
 
         paddingVertical: 0,
 
-        color: cores.branco,
+        color: tema.texto,
 
         fontSize: 13,
         fontFamily: fontes.normal,
@@ -171,10 +172,10 @@ export const homeStyle = StyleSheet.create({
 
         paddingHorizontal: 18,
 
-        backgroundColor: "#080808",
+        backgroundColor: tema.fundo,
 
         borderBottomWidth: 1,
-        borderBottomColor: cores.bgPreto80,
+        borderBottomColor: tema.card,
     },
 
     filtro: {
@@ -195,11 +196,11 @@ export const homeStyle = StyleSheet.create({
         paddingHorizontal: 5,
 
         borderBottomWidth: 2,
-        borderBottomColor: cores.douradoPrincipal,
+        borderBottomColor: tema.destaque,
     },
 
     txtFiltro: {
-        color: cores.branco,
+        color: tema.texto,
 
         fontSize: 11,
         fontFamily: fontes.normal,
@@ -208,7 +209,7 @@ export const homeStyle = StyleSheet.create({
     },
 
     txtFiltroAtivo: {
-        color: cores.douradoPrincipal,
+        color: tema.destaque,
 
         fontSize: 11,
         fontFamily: fontes.negrito,
@@ -248,7 +249,7 @@ export const homeStyle = StyleSheet.create({
         overflow: "hidden",
 
         borderWidth: 1,
-        borderColor: cores.douradoPrincipal,
+        borderColor: tema.destaque,
     },
 
     banner: {
@@ -276,7 +277,7 @@ export const homeStyle = StyleSheet.create({
 
         borderRadius: 5,
 
-        backgroundColor: cores.branco,
+        backgroundColor: tema.textoSecundario,
 
         opacity: 0.4,
     },
@@ -287,7 +288,7 @@ export const homeStyle = StyleSheet.create({
 
         borderRadius: 7,
 
-        backgroundColor: cores.douradoPrincipal,
+        backgroundColor: tema.destaque,
     },
 
 
@@ -296,7 +297,7 @@ export const homeStyle = StyleSheet.create({
     // =========================
 
     tituloSecao: {
-        color: cores.douradoPrincipal,
+        color: tema.destaque,
 
         fontSize: fontes.subtitulo,
         fontFamily: fontes.negrito,
@@ -308,10 +309,10 @@ export const homeStyle = StyleSheet.create({
     cardPublicacao: {
         width: "100%",
 
-        backgroundColor: cores.bgPreto80,
+        backgroundColor: tema.card,
 
         borderWidth: 1,
-        borderColor: cores.roxoPrincipal80,
+        borderColor: tema.cardSecundario,
 
         borderRadius: 10,
 
@@ -343,7 +344,7 @@ export const homeStyle = StyleSheet.create({
         marginRight: 10,
 
         borderWidth: 1,
-        borderColor: cores.douradoPrincipal,
+        borderColor: tema.destaque,
 
         resizeMode: "cover",
     },
@@ -353,14 +354,14 @@ export const homeStyle = StyleSheet.create({
     },
 
     nomeAutor: {
-        color: cores.branco,
+        color: tema.texto,
 
         fontSize: 13,
         fontFamily: fontes.negrito,
     },
 
     tempoPublicacao: {
-        color: cores.branco,
+        color: tema.texto,
 
         fontSize: 10,
         fontFamily: fontes.normal,
@@ -376,7 +377,7 @@ export const homeStyle = StyleSheet.create({
     // =========================
 
     textoPublicacao: {
-        color: cores.branco,
+        color: tema.texto,
 
         fontSize: 13,
         fontFamily: fontes.normal,
@@ -417,7 +418,7 @@ export const homeStyle = StyleSheet.create({
         justifyContent: "space-between",
 
         borderTopWidth: 1,
-        borderTopColor: cores.roxoPrincipal80,
+        borderTopColor: tema.cardSecundario,
 
         paddingTop: 10,
     },
@@ -439,7 +440,7 @@ export const homeStyle = StyleSheet.create({
     },
 
     txtAcao: {
-        color: cores.branco,
+        color: tema.texto,
 
         fontSize: 10,
         fontFamily: fontes.normal,
@@ -465,10 +466,10 @@ export const homeStyle = StyleSheet.create({
 
         paddingHorizontal: 5,
 
-        backgroundColor: "#080808",
+        backgroundColor: tema.footer,
 
         borderTopWidth: 1,
-        borderTopColor: cores.roxoPrincipal80,
+        borderTopColor: tema.cardSecundario,
     },
 
     itemMenu: {
@@ -494,11 +495,11 @@ export const homeStyle = StyleSheet.create({
     iconeMenuAtivo: {
         opacity: 1,
 
-        tintColor: cores.douradoPrincipal,
+        tintColor: tema.destaque,
     },
 
     txtMenu: {
-        color: cores.branco,
+        color: tema.texto,
 
         fontSize: 9,
         fontFamily: fontes.normal,
@@ -507,7 +508,7 @@ export const homeStyle = StyleSheet.create({
     },
 
     txtMenuAtivo: {
-        color: cores.douradoPrincipal,
+        color: tema.destaque,
 
         fontSize: 9,
         fontFamily: fontes.negrito,
@@ -527,16 +528,16 @@ export const homeStyle = StyleSheet.create({
         alignItems: "center",
         justifyContent: "center",
 
-        backgroundColor: cores.douradoPrincipal,
+        backgroundColor: tema.destaque,
 
         marginTop: -18,
 
         borderWidth: 3,
-        borderColor: "#080808",
+        borderColor: tema.footer,
     },
 
     maisPublicar: {
-        color: cores.roxoPrincipal,
+        color: tema.textoSobreDestaque,
 
         fontSize: 28,
         fontFamily: fontes.negrito,
@@ -552,11 +553,11 @@ export const homeStyle = StyleSheet.create({
         paddingVertical: 8,
 
         borderBottomWidth: 1,
-        borderBottomColor: cores.roxoPrincipal80,
+        borderBottomColor: tema.cardSecundario,
     },
 
     txtContador: {
-        color: cores.branco,
+        color: tema.texto,
 
         fontSize: 9,
         fontFamily: fontes.normal,
@@ -566,12 +567,12 @@ export const homeStyle = StyleSheet.create({
 
 
     iconeAcaoAtivo: {
-        tintColor: cores.douradoPrincipal,
+        tintColor: tema.destaque,
         opacity: 1,
     },
 
     txtAcaoAtivo: {
-        color: cores.douradoPrincipal,
+        color: tema.destaque,
         opacity: 1,
 
         fontFamily: fontes.negrito,
@@ -593,9 +594,9 @@ export const homeStyle = StyleSheet.create({
         flex: 1,
         height: 40,
 
-        backgroundColor: cores.roxoPrincipal80,
+        backgroundColor: tema.input,
 
-        color: cores.branco,
+        color: tema.texto,
 
         borderRadius: 20,
 
@@ -614,7 +615,7 @@ export const homeStyle = StyleSheet.create({
 
         borderRadius: 20,
 
-        backgroundColor: cores.douradoPrincipal,
+        backgroundColor: tema.destaque,
     },
 
     iconeEnviarComentario: {
@@ -625,7 +626,7 @@ export const homeStyle = StyleSheet.create({
     },
 
     semPublicacoes: {
-        color: cores.branco,
+        color: tema.texto,
 
         fontSize: 13,
         fontFamily: fontes.normal,
@@ -638,3 +639,7 @@ export const homeStyle = StyleSheet.create({
     },
 
 });
+
+// Compatibilidade: mantém os imports atuais funcionando no tema escuro.
+// Para tema dinâmico, use criarHomeStyle(coresTema) dentro do componente.
+export const homeStyle = criarHomeStyle(temaEscuro);

@@ -18,7 +18,9 @@ import globalStyle from "@/styles/globalStyles";
 import MenuSreen from "./menu";
 import HeaderCreen from "./header";
 
-import { homeStyle } from "@/styles/homeStyles";
+import { criarHomeStyle } from "@/styles/homeStyles";
+import { useTema } from "@/contexts/TemaContext";
+
 
 
 type Filtro = "Todas" | "Recentes" | "Em alta" | "Meus posts";
@@ -41,6 +43,10 @@ interface Post {
 
 
 export default function HomeScreen() {
+
+    const { coresTema } = useTema();
+
+    const homeStyle = criarHomeStyle(coresTema);
 
     // =====================================
     // FILTRO ATIVO

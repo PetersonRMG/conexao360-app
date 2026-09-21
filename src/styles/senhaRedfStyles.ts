@@ -1,8 +1,9 @@
 import { StyleSheet } from "react-native";
 
 import { cores, fontes } from "./variaveis";
+import { CoresTema, temaEscuro } from "./temas";
 
-export const senhaRedfStyle = StyleSheet.create({
+export const criarSenhaRedfStyle = (tema: CoresTema) => StyleSheet.create({
   conteudo: {
     flex: 1,
     alignItems: "center",
@@ -16,25 +17,25 @@ export const senhaRedfStyle = StyleSheet.create({
   },
 
   subtitulo: {
-    color: cores.douradoPrincipal,
+    color: tema.destaque,
     fontSize: fontes.subtitulo,
     fontFamily: fontes.normal,
     marginBottom: 6,
   },
 
   titulo: {
-    color: cores.branco,
+    color: tema.texto,
     fontSize: fontes.titulo,
     fontFamily: fontes.extraNegrito,
     marginBottom: 12,
   },
 
   tituloDourado: {
-    color: cores.douradoPrincipal,
+    color: tema.destaque,
   },
 
   inf: {
-    color: cores.branco,
+    color: tema.texto,
     lineHeight: 14,
     opacity: 0.9,
   },
@@ -46,7 +47,7 @@ export const senhaRedfStyle = StyleSheet.create({
   btnEnviar: {
     width: "75%",
     height: 50,
-    backgroundColor: cores.douradoPrincipal,
+    backgroundColor: tema.destaque,
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 8,
@@ -54,13 +55,13 @@ export const senhaRedfStyle = StyleSheet.create({
   },
 
   btnEnviarPressed: {
-    backgroundColor: cores.douradoPrincipalPressed,
+    backgroundColor: tema.destaquePressed,
     transform: cores.btnPress,
   },
 
   txtEnviar: {
     fontSize: fontes.btn,
-    color: cores.roxoPrincipal,
+    color: tema.textoSobreDestaque,
     fontFamily: fontes.extraNegrito,
   },
 
@@ -71,9 +72,9 @@ export const senhaRedfStyle = StyleSheet.create({
   btnVoltar: {
     width: "75%",
     height: 50,
-    backgroundColor: "rgba(0, 0, 0, 0.25)",
+    backgroundColor: tema.card,
     borderWidth: 1,
-    borderColor: cores.douradoPrincipal,
+    borderColor: tema.destaque,
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 8,
@@ -81,13 +82,17 @@ export const senhaRedfStyle = StyleSheet.create({
   },
 
   btnVoltarPressed: {
-    backgroundColor: cores.roxoPrincipal80,
+    backgroundColor: tema.pressionado,
     transform: cores.btnPress,
   },
 
   txtVoltar: {
     fontSize: fontes.btn,
-    color: cores.douradoPrincipal,
+    color: tema.destaque,
     fontFamily: fontes.extraNegrito,
   },
 });
+
+// Compatibilidade: mantém os imports atuais funcionando no tema escuro.
+// Para tema dinâmico, use criarSenhaRedfStyle(coresTema) dentro do componente.
+export const senhaRedfStyle = criarSenhaRedfStyle(temaEscuro);

@@ -1,8 +1,9 @@
 import { StyleSheet } from "react-native";
 
 import { cores, fontes } from "./variaveis";
+import { CoresTema, temaEscuro } from "./temas";
 
-export const perfilStyles = StyleSheet.create({
+export const criarPerfilStyles = (tema: CoresTema) => StyleSheet.create({
 
 
     // =========================
@@ -11,7 +12,7 @@ export const perfilStyles = StyleSheet.create({
 
     container: {
         flex: 1,
-        backgroundColor: "#080808",
+        backgroundColor: tema.fundo,
     },
 
     background: {
@@ -22,7 +23,7 @@ export const perfilStyles = StyleSheet.create({
 
     overlay: {
         flex: 1,
-        backgroundColor: "rgba(0, 0, 0, 0.35)",
+        backgroundColor: tema.overlay,
     },
 
 
@@ -64,12 +65,12 @@ export const perfilStyles = StyleSheet.create({
         borderRadius: 23,
 
 
-        borderColor: cores.douradoPrincipal,
+        borderColor: tema.destaque,
 
         alignItems: "center",
         justifyContent: "center",
 
-        backgroundColor: cores.bgPreto80,
+        backgroundColor: tema.overlay,
     },
     voltarImagem: {
         width: 45,
@@ -77,12 +78,12 @@ export const perfilStyles = StyleSheet.create({
     },
 
     btnVoltarPressed: {
-        backgroundColor: cores.roxoPrincipal80,
+        backgroundColor: tema.pressionado,
         transform: cores.btnPress,
     },
 
     txtVoltar: {
-        color: cores.branco,
+        color: tema.texto,
 
         fontSize: 32,
 
@@ -118,7 +119,7 @@ export const perfilStyles = StyleSheet.create({
     },
 
     titulo: {
-        color: cores.branco,
+        color: tema.texto,
 
         fontSize: fontes.titulo,
 
@@ -126,11 +127,11 @@ export const perfilStyles = StyleSheet.create({
     },
 
     tituloDourado: {
-        color: cores.douradoPrincipal,
+        color: tema.destaque,
     },
 
     aviso: {
-        color: cores.douradoPrincipal,
+        color: tema.destaque,
 
         fontSize: 10,
 
@@ -149,7 +150,7 @@ export const perfilStyles = StyleSheet.create({
     cardPerfil: {
         width: "100%",
 
-        backgroundColor: cores.roxoPrincipal,
+        backgroundColor: tema.card,
 
         borderRadius: 18,
 
@@ -178,7 +179,7 @@ export const perfilStyles = StyleSheet.create({
         marginBottom: 10,
 
         borderWidth: 2,
-        borderColor: cores.douradoPrincipal,
+        borderColor: tema.destaque,
     },
 
     avatar: {
@@ -194,7 +195,7 @@ export const perfilStyles = StyleSheet.create({
     // =========================
 
     nome: {
-        color: cores.douradoPrincipal,
+        color: tema.destaque,
 
         fontSize: 22,
 
@@ -204,7 +205,7 @@ export const perfilStyles = StyleSheet.create({
     },
 
     descricao: {
-        color: cores.branco,
+        color: tema.texto,
 
         fontSize: 15,
 
@@ -243,13 +244,13 @@ export const perfilStyles = StyleSheet.create({
 
         resizeMode: "contain",
 
-        tintColor: cores.branco,
+        tintColor: tema.texto,
 
         opacity: 0.8,
     },
 
     txtInfo: {
-        color: cores.branco,
+        color: tema.texto,
 
         fontSize: 12,
 
@@ -282,28 +283,28 @@ export const perfilStyles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "center",
 
-        backgroundColor: cores.roxoPrincipal80,
+        backgroundColor: tema.cardSecundario,
 
         borderRadius: 20,
 
         borderWidth: 1,
-        borderColor: cores.douradoPrincipal,
+        borderColor: tema.destaque,
     },
     btnAcaoAtivo: {
-        backgroundColor: cores.douradoPrincipal,
+        backgroundColor: tema.destaque,
     },
 
     txtBtnAcaoAtivo: {
-        color: cores.roxoPrincipal,
+        color: tema.textoSobreDestaque,
     },
 
     btnAcaoPressed: {
-        backgroundColor: cores.douradoPrincipalPressed,
+        backgroundColor: tema.destaquePressed,
         transform: cores.btnPress,
     },
 
     txtBtnAcao: {
-        color: cores.branco,
+        color: tema.texto,
 
         fontSize: fontes.btn,
 
@@ -318,7 +319,7 @@ export const perfilStyles = StyleSheet.create({
     cardConquistas: {
         width: "100%",
 
-        backgroundColor: cores.roxoPrincipal,
+        backgroundColor: tema.card,
 
         borderRadius: 18,
 
@@ -329,7 +330,7 @@ export const perfilStyles = StyleSheet.create({
     },
 
     tituloConquistas: {
-        color: cores.branco,
+        color: tema.texto,
 
         fontSize: 21,
 
@@ -363,13 +364,13 @@ export const perfilStyles = StyleSheet.create({
 
         resizeMode: "contain",
 
-        tintColor: cores.branco,
+        tintColor: tema.texto,
 
         opacity: 0.75,
     },
 
     txtConquista: {
-        color: cores.branco,
+        color: tema.texto,
 
         fontSize: 11,
 
@@ -381,3 +382,7 @@ export const perfilStyles = StyleSheet.create({
     },
 
 });
+
+// Compatibilidade: mantém os imports atuais funcionando no tema escuro.
+// Para tema dinâmico, use criarPerfilStyles(coresTema) dentro do componente.
+export const perfilStyles = criarPerfilStyles(temaEscuro);

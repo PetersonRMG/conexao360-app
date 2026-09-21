@@ -10,9 +10,14 @@ import {
 } from "react-native";
 
 import globalStyle from "@/styles/globalStyles";
-import { cadClienteStyle } from "@/styles/cadClientStyles";
+import { criarCadClienteStyles } from "@/styles/cadClientStyles";
+import { useTema } from "@/contexts/TemaContext";
 
 export default function CadClienteScreen() {
+
+  const { coresTema } = useTema();
+
+  const cadClienteStyle = criarCadClienteStyles(coresTema);
   return (
     <View style={globalStyle.container}>
       <ImageBackground

@@ -1,14 +1,15 @@
 import { StyleSheet } from "react-native";
 import { cores, fontes } from "./variaveis";
+import { CoresTema, temaEscuro } from "./temas";
 
-export const headerStyles = StyleSheet.create({
+export const criarHeaderStyles = (tema: CoresTema) => StyleSheet.create({
 
     // =========================
     // CONTAINER
     // =========================
 
     container: {
-        backgroundColor: "#0A0909",
+        backgroundColor: tema.header,
     },
 
 
@@ -25,12 +26,12 @@ export const headerStyles = StyleSheet.create({
         justifyContent: "space-between",
 
         paddingHorizontal: 18,
-        
 
-        backgroundColor: cores.bgPreto80,
+
+        backgroundColor: tema.header,
 
         borderBottomWidth: 1,
-        borderBottomColor: cores.douradoPrincipal,
+        borderBottomColor: tema.destaque,
     },
 
     perfil: {
@@ -48,13 +49,13 @@ export const headerStyles = StyleSheet.create({
         borderRadius: 20,
 
         borderWidth: 1,
-        borderColor: cores.douradoPrincipal,
+        borderColor: tema.destaque,
 
         resizeMode: "cover",
     },
 
     logoContainer: {
-       
+
         alignItems: "center",
         justifyContent: "center",
 
@@ -69,7 +70,7 @@ export const headerStyles = StyleSheet.create({
     },
 
     nomeProjeto: {
-        color: cores.douradoPrincipal,
+        color: tema.destaque,
 
         fontSize: fontes.subtitulo,
         fontFamily: fontes.negrito,
@@ -86,7 +87,7 @@ export const headerStyles = StyleSheet.create({
     },
 
     btnPressed: {
-        backgroundColor: cores.roxoPrincipal80,
+        backgroundColor: tema.pressionado,
         transform: cores.btnPress,
     },
 
@@ -96,10 +97,14 @@ export const headerStyles = StyleSheet.create({
 
         resizeMode: "contain",
 
-        tintColor: cores.douradoPrincipal,
+        tintColor: tema.destaque,
     },
 
-    
+
 
 
 });
+
+// Compatibilidade: mantém os imports atuais funcionando no tema escuro.
+// Para tema dinâmico, use criarHeaderStyles(coresTema) dentro do componente.
+export const headerStyles = criarHeaderStyles(temaEscuro);

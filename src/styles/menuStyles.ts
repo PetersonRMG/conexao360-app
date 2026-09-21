@@ -1,7 +1,8 @@
 import { StyleSheet } from "react-native";
-import { cores, fontes } from "./variaveis";
+import { fontes } from "./variaveis";
+import { CoresTema } from "./temas";
 
-export const menuStyles = StyleSheet.create({
+export const criarMenuStyles = (tema: CoresTema) => StyleSheet.create({
 
     menuInferior: {
         width: "100%",
@@ -16,10 +17,10 @@ export const menuStyles = StyleSheet.create({
 
         paddingHorizontal: 5,
 
-        backgroundColor: "#080808",
+        backgroundColor: tema.footer,
 
         borderTopWidth: 1,
-        borderTopColor: cores.roxoPrincipal80,
+        borderTopColor: tema.linha,
     },
 
     itemMenu: {
@@ -44,12 +45,11 @@ export const menuStyles = StyleSheet.create({
 
     iconeMenuAtivo: {
         opacity: 1,
-
-        tintColor: cores.douradoPrincipal,
+        tintColor: tema.destaque,
     },
 
     txtMenu: {
-        color: cores.branco,
+        color: tema.texto,
 
         fontSize: 9,
         fontFamily: fontes.normal,
@@ -58,12 +58,11 @@ export const menuStyles = StyleSheet.create({
     },
 
     txtMenuAtivo: {
-        color: cores.douradoPrincipal,
+        color: tema.destaque,
 
         fontSize: 9,
         fontFamily: fontes.negrito,
     },
-
 
     btnPublicar: {
         width: 42,
@@ -74,16 +73,16 @@ export const menuStyles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "center",
 
-        backgroundColor: cores.douradoPrincipal,
+        backgroundColor: tema.destaque,
 
         marginTop: -18,
 
         borderWidth: 3,
-        borderColor: "#080808",
+        borderColor: tema.footer,
     },
 
     maisPublicar: {
-        color: cores.roxoPrincipal,
+        color: tema.textoSobreDestaque,
 
         fontSize: 28,
         fontFamily: fontes.negrito,

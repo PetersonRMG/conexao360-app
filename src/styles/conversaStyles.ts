@@ -3,7 +3,8 @@ import { StyleSheet } from "react-native";
 import { cores, fontes } from "./variaveis";
 
 
-export const conversaStyles = StyleSheet.create({
+import { CoresTema } from "./temas";
+export const criarConversaStyles = (tema: CoresTema) => StyleSheet.create({
 
     // =========================
     // ESTRUTURA
@@ -12,7 +13,7 @@ export const conversaStyles = StyleSheet.create({
     container: {
         flex: 1,
 
-        backgroundColor: cores.pretoPrincipal,
+        backgroundColor: tema.fundo,
     },
 
     keyboard: {
@@ -33,10 +34,10 @@ export const conversaStyles = StyleSheet.create({
 
         paddingHorizontal: 14,
 
-        backgroundColor: cores.pretoPrincipal,
+        backgroundColor: tema.header,
 
         borderBottomWidth: 1,
-        borderBottomColor: cores.roxoPrincipal80,
+        borderBottomColor: tema.linha,
     },
 
     btnVoltar: {
@@ -52,7 +53,7 @@ export const conversaStyles = StyleSheet.create({
     },
 
     btnVoltarPressed: {
-        backgroundColor: cores.roxoPrincipal80,
+        backgroundColor: tema.cardSecundario,
 
         transform: cores.btnPress,
     },
@@ -108,18 +109,18 @@ export const conversaStyles = StyleSheet.create({
         backgroundColor: cores.verdeOnline,
 
         borderWidth: 1,
-        borderColor: cores.pretoPrincipal,
+        borderColor: tema.fundo,
     },
 
     nome: {
-        color: cores.branco,
+        color: tema.texto,
 
         fontSize: 14,
         fontFamily: fontes.negrito,
     },
 
     status: {
-        color: cores.branco,
+        color: tema.texto,
 
         fontSize: 9,
         fontFamily: fontes.normal,
@@ -169,7 +170,7 @@ export const conversaStyles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
 
-        backgroundColor: cores.roxoPrincipal,
+        backgroundColor: tema.card,
 
         borderWidth: 1,
         borderColor: cores.douradoPrincipal,
@@ -192,7 +193,7 @@ export const conversaStyles = StyleSheet.create({
     txtSeguranca: {
         flexShrink: 1,
 
-        color: cores.branco,
+        color: tema.texto,
 
         fontSize: 8,
         lineHeight: 11,
@@ -281,8 +282,7 @@ export const conversaStyles = StyleSheet.create({
     },
 
     balaoRecebido: {
-        backgroundColor:
-            cores.roxoPrincipal,
+        backgroundColor: tema.card,
 
         borderBottomLeftRadius: 3,
     },
@@ -295,7 +295,7 @@ export const conversaStyles = StyleSheet.create({
     },
 
     txtMensagem: {
-        color: cores.branco,
+        color: tema.texto,
 
         fontSize: 11,
         lineHeight: 15,
@@ -304,11 +304,11 @@ export const conversaStyles = StyleSheet.create({
     },
 
     txtMinhaMensagem: {
-        color: cores.roxoPrincipal,
+        color: tema.textoSobreDestaque,
     },
 
     horario: {
-        color: cores.branco,
+        color: tema.texto,
 
         fontSize: 7,
         fontFamily: fontes.normal,
@@ -321,7 +321,7 @@ export const conversaStyles = StyleSheet.create({
     },
 
     horarioMeu: {
-        color: cores.roxoPrincipal,
+        color: tema.textoSobreDestaque,
     },
 
 
@@ -341,12 +341,10 @@ export const conversaStyles = StyleSheet.create({
         paddingHorizontal: 12,
         paddingVertical: 10,
 
-        backgroundColor:
-            cores.pretoPrincipal,
+        backgroundColor: tema.footer,
 
         borderTopWidth: 1,
-        borderTopColor:
-            cores.roxoPrincipal80,
+        borderTopColor: tema.linha,
     },
 
 
@@ -363,13 +361,11 @@ export const conversaStyles = StyleSheet.create({
 
         borderRadius: 19,
 
-        backgroundColor:
-            cores.roxoPrincipal,
+        backgroundColor: tema.card,
     },
 
     btnAnexoPressed: {
-        backgroundColor:
-            cores.roxoPrincipal80,
+        backgroundColor: tema.cardSecundario,
 
         transform: cores.btnPress,
     },
@@ -395,8 +391,7 @@ export const conversaStyles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
 
-        backgroundColor:
-            cores.roxoPrincipal,
+        backgroundColor: tema.input,
 
         borderWidth: 1,
         borderColor:
@@ -412,7 +407,7 @@ export const conversaStyles = StyleSheet.create({
 
         maxHeight: 90,
 
-        color: cores.branco,
+        color: tema.texto,
 
         fontSize: 11,
         fontFamily: fontes.normal,

@@ -15,12 +15,17 @@ import {
 
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { excluirContaStyles } from "@/styles/excluirContaStyles";
+import { criarExcluirContaStyles } from "@/styles/excluirContaStyles";
+import { useTema } from "@/contexts/TemaContext";
 import globalStyle from "@/styles/globalStyles";
 
 import MenuSreen from "./menu";
 
 export default function ExcluirContaScreen() {
+
+    const { coresTema } = useTema();
+
+    const excluirContaStyles = criarExcluirContaStyles(coresTema);
 
     const [senha, setSenha] = useState("");
     const [verSenha, setVerSenha] = useState(false);

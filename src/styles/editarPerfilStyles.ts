@@ -1,7 +1,12 @@
 import { StyleSheet } from "react-native";
-import { cores, fontes } from "./variaveis";
 
-export const editarPerfilStyles = StyleSheet.create({
+import { fontes } from "./variaveis";
+import { CoresTema, temaEscuro } from "./temas";
+
+
+export const criarEditarPerfilStyles = (
+    tema: CoresTema
+) => StyleSheet.create({
 
     // =========================
     // ESTRUTURA
@@ -9,7 +14,7 @@ export const editarPerfilStyles = StyleSheet.create({
 
     container: {
         flex: 1,
-        backgroundColor: cores.bgPreto80,
+        backgroundColor: tema.fundo,
     },
 
     background: {
@@ -20,7 +25,7 @@ export const editarPerfilStyles = StyleSheet.create({
 
     overlay: {
         flex: 1,
-        backgroundColor: cores.bgPreto80,
+        backgroundColor: tema.fundo,
     },
 
     keyboard: {
@@ -61,12 +66,12 @@ export const editarPerfilStyles = StyleSheet.create({
 
         borderRadius: 23,
 
-        backgroundColor: cores.bgPreto80,
+        backgroundColor: tema.cardSecundario,
     },
 
     btnVoltarPressed: {
-        backgroundColor: cores.roxoPrincipal80,
-        transform: cores.btnPress,
+        backgroundColor: tema.card,
+        transform: [{ scale: 0.97 }],
     },
 
     voltarImagem: {
@@ -103,18 +108,18 @@ export const editarPerfilStyles = StyleSheet.create({
     },
 
     titulo: {
-        color: cores.branco,
+        color: tema.texto,
 
         fontSize: fontes.titulo,
         fontFamily: fontes.negrito,
     },
 
     tituloDourado: {
-        color: cores.douradoPrincipal,
+        color: tema.destaque,
     },
 
     aviso: {
-        color: cores.douradoPrincipal,
+        color: tema.destaque,
 
         fontSize: fontes.subtitulo,
         fontFamily: fontes.normal,
@@ -153,7 +158,7 @@ export const editarPerfilStyles = StyleSheet.create({
         resizeMode: "cover",
 
         borderWidth: 2,
-        borderColor: cores.douradoPrincipal,
+        borderColor: tema.destaque,
     },
 
     btnEditarFoto: {
@@ -170,10 +175,10 @@ export const editarPerfilStyles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "center",
 
-        backgroundColor: cores.douradoPrincipal,
+        backgroundColor: tema.destaque,
 
         borderWidth: 2,
-        borderColor: cores.roxoPrincipal,
+        borderColor: tema.card,
     },
 
     iconeEditarFoto: {
@@ -191,7 +196,7 @@ export const editarPerfilStyles = StyleSheet.create({
     tituloGrupo: {
         width: "100%",
 
-        color: cores.branco,
+        color: tema.texto,
 
         fontSize: fontes.subtitulo,
         fontFamily: fontes.negrito,
@@ -210,7 +215,10 @@ export const editarPerfilStyles = StyleSheet.create({
 
         minHeight: 68,
 
-        backgroundColor: cores.roxoPrincipal,
+        backgroundColor: tema.card,
+
+        borderWidth: 1,
+      
 
         borderRadius: 12,
 
@@ -229,7 +237,7 @@ export const editarPerfilStyles = StyleSheet.create({
     },
 
     label: {
-        color: cores.branco,
+        color: tema.texto,
 
         fontSize: fontes.subtitulo,
         fontFamily: fontes.negrito,
@@ -251,14 +259,14 @@ export const editarPerfilStyles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "center",
 
-        backgroundColor: cores.roxoPrincipal80,
+        backgroundColor: tema.cardSecundario,
 
         borderWidth: 1,
-        borderColor: cores.douradoPrincipal,
+        borderColor: tema.destaque,
     },
 
     txtStatus: {
-        color: cores.branco,
+        color: tema.texto,
 
         fontSize: 8,
         fontFamily: fontes.normal,
@@ -274,12 +282,12 @@ export const editarPerfilStyles = StyleSheet.create({
     input: {
         width: "100%",
 
-        color: cores.branco,
+        color: tema.texto,
 
         fontSize: 13,
         fontFamily: fontes.normal,
 
-        opacity: 0.8,
+        opacity: 0.9,
 
         paddingHorizontal: 0,
         paddingVertical: 4,
@@ -297,7 +305,10 @@ export const editarPerfilStyles = StyleSheet.create({
 
         minHeight: 120,
 
-        backgroundColor: cores.roxoPrincipal,
+        backgroundColor: tema.card,
+
+        borderWidth: 1,
+        
 
         borderRadius: 12,
 
@@ -311,12 +322,12 @@ export const editarPerfilStyles = StyleSheet.create({
         width: "100%",
         minHeight: 75,
 
-        color: cores.branco,
+        color: tema.texto,
 
         fontSize: 13,
         fontFamily: fontes.normal,
 
-        opacity: 0.8,
+        opacity: 0.9,
 
         paddingHorizontal: 0,
         paddingTop: 8,
@@ -336,7 +347,10 @@ export const editarPerfilStyles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "space-between",
 
-        backgroundColor: cores.roxoPrincipal,
+        backgroundColor: tema.card,
+
+        borderWidth: 1,
+         
 
         borderRadius: 12,
 
@@ -347,18 +361,18 @@ export const editarPerfilStyles = StyleSheet.create({
     },
 
     txtDadoSeguranca: {
-        color: cores.branco,
+        color: tema.textoSecundario,
 
         fontSize: 12,
         fontFamily: fontes.normal,
 
-        opacity: 0.8,
+        opacity: 0.9,
 
         marginTop: 4,
     },
 
     verificado: {
-        color: cores.douradoPrincipal,
+        color: tema.destaque,
 
         fontSize: 9,
         fontFamily: fontes.negrito,
@@ -384,10 +398,22 @@ export const editarPerfilStyles = StyleSheet.create({
     },
 
     txtAlterarSenha: {
-        color: cores.douradoPrincipal,
+        color: tema.destaque,
 
         fontSize: 9,
         fontFamily: fontes.negrito,
     },
 
 });
+
+
+// =====================================================
+// COMPATIBILIDADE
+// =====================================================
+// Mantém o import antigo funcionando no tema escuro.
+// Para tema dinâmico, use:
+// const { coresTema } = useTema();
+// const editarPerfilStyles = criarEditarPerfilStyles(coresTema);
+
+export const editarPerfilStyles =
+    criarEditarPerfilStyles(temaEscuro);

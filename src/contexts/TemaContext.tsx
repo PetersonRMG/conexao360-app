@@ -2,8 +2,16 @@ import {
     createContext,
     ReactNode,
     useContext,
+    useEffect,
     useState,
 } from "react";
+
+import {
+    useColorScheme,
+} from "react-native";
+
+import AsyncStorage from
+    "@react-native-async-storage/async-storage";
 
 import {
     temaClaro,
@@ -12,20 +20,28 @@ import {
 } from "@/styles/temas";
 
 
-type TemaNome = "claro" | "escuro";
+type TemaNome =
+    | "claro"
+    | "escuro";
+
+type PreferenciaTema =
+    | TemaNome
+    | "sistema";
 
 
 interface TemaContextProps {
 
     tema: TemaNome;
 
-    coresTema: CoresTema;
+    preferenciaTema:
+    PreferenciaTema;
 
-    mudarTema: (
-        tema: TemaNome
-    ) => void;
+    coresTema:
+    CoresTema;
 
     alternarTema: () => void;
+
+    usarTemaSistema: () => void;
 
 }
 
@@ -37,52 +53,186 @@ const TemaContext =
 
 
 interface TemaProviderProps {
+
     children: ReactNode;
+
 }
 
 
+const CHAVE_TEMA =
+    "@conexao360:tema";
+
+
 export function TemaProvider({
+
     children,
+
 }: TemaProviderProps) {
 
-    const [tema, setTema] =
-        useState<TemaNome>("escuro");
+    // =========================
+    // TEMA DO CELULAR
+    // =========================
 
+    const temaSistema =
+        useColorScheme();
+
+
+    // =========================
+    // PREFERÊNCIA DO USUÁRIO
+    // =========================
+
+    const [
+        preferenciaTema,
+        setPreferenciaTema,
+    ] = useState<PreferenciaTema>(
+        "sistema"
+    );
+
+
+    // =========================
+    // CARREGAR TEMA SALVO
+    // =========================
+
+    useEffect(() => {
+
+        const carregarTema = async () => {
+
+            try {
+
+                const temaSalvo =
+                    await AsyncStorage.getItem(
+                        CHAVE_TEMA
+                    );
+
+
+                if (
+                    temaSalvo === "claro" ||
+                    temaSalvo === "escuro" ||
+                    temaSalvo === "sistema"
+                ) {
+
+                    setPreferenciaTema(
+                        temaSalvo
+                    );
+
+                }
+
+            } catch (error) {
+
+                console.log(
+                    "Erro ao carregar tema:",
+                    error
+                );
+
+            }
+
+        };
+
+
+        carregarTema();
+
+    }, []);
+
+
+    // =========================
+    // DEFINE TEMA ATUAL
+    // =========================
+
+    const tema: TemaNome =
+
+        preferenciaTema === "sistema"
+
+            ? (
+                temaSistema === "light"
+                    ? "claro"
+                    : "escuro"
+            )
+
+            : preferenciaTema;
+
+
+    // =========================
+    // CORES DO TEMA
+    // =========================
 
     const coresTema =
-        tema === "escuro"
-            ? temaEscuro
-            : temaClaro;
+
+        tema === "claro"
+
+            ? temaClaro
+
+            : temaEscuro;
 
 
-    const mudarTema = (
-        novoTema: TemaNome
-    ) => {
+    // =========================
+    // ALTERNAR TEMA
+    // =========================
 
-        setTema(novoTema);
+    const alternarTema = async () => {
 
-    };
+        const novoTema: TemaNome =
 
+            tema === "escuro"
 
-    const alternarTema = () => {
-
-        setTema((current) =>
-            current === "escuro"
                 ? "claro"
-                : "escuro"
+
+                : "escuro";
+
+
+        setPreferenciaTema(
+            novoTema
+        );
+
+
+        await AsyncStorage.setItem(
+
+            CHAVE_TEMA,
+
+            novoTema
+
         );
 
     };
+
+
+    // =========================
+    // VOLTAR AO TEMA DO SISTEMA
+    // =========================
+
+    const usarTemaSistema =
+        async () => {
+
+            setPreferenciaTema(
+                "sistema"
+            );
+
+
+            await AsyncStorage.setItem(
+
+                CHAVE_TEMA,
+
+                "sistema"
+
+            );
+
+        };
 
 
     return (
 
         <TemaContext.Provider
             value={{
+
                 tema,
+
+                preferenciaTema,
+
                 coresTema,
-                mudarTema,
+
                 alternarTema,
+
+                usarTemaSistema,
+
             }}
         >
 
@@ -97,6 +247,8 @@ export function TemaProvider({
 
 export function useTema() {
 
-    return useContext(TemaContext);
+    return useContext(
+        TemaContext
+    );
 
 }

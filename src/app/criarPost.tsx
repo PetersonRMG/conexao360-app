@@ -15,12 +15,18 @@ import {
 
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { criarPostStyles } from "@/styles/criarPostStyles";
 import globalStyle from "@/styles/globalStyles";
+import { criarPostStyle } from "@/styles/criarPostStyles";
+import { useTema } from "@/contexts/TemaContext";
 
 import MenuSreen from "./menu";
 
 export default function CriarPostScreen() {
+
+    
+        const { coresTema } = useTema();
+    
+    const criarPostStyles = criarPostStyle(coresTema);
 
     const [titulo, setTitulo] = useState("");
     const [descricao, setDescricao] = useState("");

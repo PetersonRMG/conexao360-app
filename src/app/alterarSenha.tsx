@@ -15,12 +15,18 @@ import {
 
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { alterarSenhaStyles } from "@/styles/alterarSenhaStyles";
+import { criarAlterarSenhaStyles } from "@/styles/alterarSenhaStyles";
 import globalStyle from "@/styles/globalStyles";
+import { useTema } from "@/contexts/TemaContext";
 
 import MenuSreen from "./menu";
 
 export default function AlterarSenhaScreen() {
+
+
+    const { coresTema } = useTema();
+
+    const alterarSenhaStyles = criarAlterarSenhaStyles(coresTema);
 
     const [senhaAtual, setSenhaAtual] = useState("");
     const [novaSenha, setNovaSenha] = useState("");

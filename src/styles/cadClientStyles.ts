@@ -2,7 +2,8 @@ import { StyleSheet } from "react-native";
 
 import { cores, fontes } from "./variaveis";
 
-export const cadClienteStyle = StyleSheet.create({
+import { CoresTema } from "./temas";
+export const criarCadClienteStyles = (tema: CoresTema) => StyleSheet.create({
   conteudo: {
     flex: 1,
     alignItems: "center",
@@ -27,7 +28,7 @@ export const cadClienteStyle = StyleSheet.create({
   },
 
   titulo: {
-    color: cores.branco,
+    color: tema.texto,
     fontSize: fontes.titulo,
     marginBottom: 10,
     fontFamily: fontes.negrito,
@@ -38,7 +39,7 @@ export const cadClienteStyle = StyleSheet.create({
   },
 
   inf: {
-    color: cores.branco,
+    color: tema.texto,
     lineHeight: 14,
     opacity: 0.9,
     fontFamily: fontes.normalItalico,
@@ -53,7 +54,7 @@ export const cadClienteStyle = StyleSheet.create({
     marginTop: 28,
     marginBottom: 20,
 
-    backgroundColor: cores.bgPreto80,
+    backgroundColor: tema.card,
 
     paddingHorizontal: 10,
     paddingVertical: 5,
@@ -91,7 +92,7 @@ export const cadClienteStyle = StyleSheet.create({
   txtInput: {
     flex: 1,
 
-    color: cores.branco,
+    color: tema.texto,
 
     fontSize: 14,
     fontFamily: fontes.normal,
@@ -124,7 +125,7 @@ export const cadClienteStyle = StyleSheet.create({
 
   txtCriar: {
     fontSize: fontes.btn,
-    color: cores.roxoPrincipal,
+    color: tema.textoSobreDestaque,
 
     fontFamily: fontes.extraNegrito,
   },
@@ -137,7 +138,7 @@ export const cadClienteStyle = StyleSheet.create({
     width: "75%",
     height: 50,
 
-    backgroundColor: cores.bgPreto80,
+    backgroundColor: tema.cardSecundario,
 
     borderWidth: 1,
     borderColor: cores.douradoPrincipal,
@@ -153,7 +154,7 @@ export const cadClienteStyle = StyleSheet.create({
   },
 
   btnVoltarPressed: {
-    backgroundColor: cores.roxoPrincipal80,
+    backgroundColor: tema.cardSecundario,
     transform: cores.btnPress,
   },
 

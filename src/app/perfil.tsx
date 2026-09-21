@@ -12,12 +12,17 @@ import {
 
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { perfilStyles } from "@/styles/perfilStyles";
+import { useTema } from "@/contexts/TemaContext";
+import { criarPerfilStyles } from "@/styles/perfilStyles";
 import globalStyle from "@/styles/globalStyles";
 
 import MenuSreen from "./menu";
 
 export default function PerfilScreen() {
+
+        const { coresTema } = useTema();
+    
+    const perfilStyles = criarPerfilStyles(coresTema);
 
     const [seguindo, setSeguindo] = useState(false);
     const [conexoes, setConexoes] = useState(45);

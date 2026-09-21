@@ -10,11 +10,15 @@ import {
 } from "react-native";
 import PublicarModalScreen from "@/components/publicarModal";
 
-import { menuStyles } from "@/styles/menuStyles";
 import globalStyle from "@/styles/globalStyles";
+import { criarMenuStyles } from "@/styles/menuStyles";
+import { useTema } from "@/contexts/TemaContext";
 
 
 export default function MenuSreen() {
+    const { coresTema } = useTema();
+
+    const menuStyles = criarMenuStyles(coresTema);
     const iconePadrao = require("@/assets/images/img/e-mail.png");
     const [modalPublicar, setModalPublicar] = useState(false);
     return (
@@ -110,7 +114,7 @@ export default function MenuSreen() {
 
             {/* GALERIA */}
             <Pressable
-               
+
                 style={({ pressed }) => [menuStyles.itemMenu, pressed && globalStyle.pressBtn]}
                 onPress={() => {
                     router.navigate('/galeria')

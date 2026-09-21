@@ -15,13 +15,17 @@ import {
 
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { criarTopicosStyles } from "@/styles/criarTopicos";
 import globalStyle from "@/styles/globalStyles";
+import { criarTopicosStyle } from "@/styles/criarTopicos";
+import { useTema } from "@/contexts/TemaContext";
 
 import MenuSreen from "./menu";
 
 
 export default function CriarTopicosScreen() {
+        const { coresTema } = useTema();
+    
+    const criarTopicosStyles = criarTopicosStyle(coresTema);
 
     // =========================
     // DADOS DO TÓPICO

@@ -1,8 +1,9 @@
 import { StyleSheet } from "react-native";
 
 import { cores, fontes } from "./variaveis";
+import { CoresTema, temaEscuro } from "./temas";
 
-export const publicarModalStyles = StyleSheet.create({
+export const criarPublicarModalStyles = (tema: CoresTema) => StyleSheet.create({
 
     // =========================
     // FUNDO DO MODAL
@@ -11,7 +12,7 @@ export const publicarModalStyles = StyleSheet.create({
     overlay: {
         flex: 1,
 
-        backgroundColor: "rgba(0,0,0,0.25)",
+        backgroundColor: tema.overlay,
 
         justifyContent: "flex-end",
         alignItems: "center",
@@ -28,10 +29,10 @@ export const publicarModalStyles = StyleSheet.create({
     caixaMenu: {
         width: 180,
 
-        backgroundColor: "#0A0909",
+        backgroundColor: tema.card,
 
         borderWidth: 1,
-        borderColor: cores.douradoPrincipal,
+        borderColor: tema.destaque,
 
         borderRadius: 8,
 
@@ -78,10 +79,14 @@ export const publicarModalStyles = StyleSheet.create({
     // =========================
 
     txtMenu: {
-        color: cores.douradoPrincipal,
+        color: tema.destaque,
 
         fontSize: 15,
         fontFamily: fontes.normal,
     },
 
 });
+
+// Compatibilidade: mantém os imports atuais funcionando no tema escuro.
+// Para tema dinâmico, use criarPublicarModalStyles(coresTema) dentro do componente.
+export const publicarModalStyles = criarPublicarModalStyles(temaEscuro);

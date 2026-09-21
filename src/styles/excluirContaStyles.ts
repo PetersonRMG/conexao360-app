@@ -1,7 +1,8 @@
 import { StyleSheet } from "react-native";
 import { cores, fontes } from "./variaveis";
+import { CoresTema, temaEscuro } from "./temas";
 
-export const excluirContaStyles = StyleSheet.create({
+export const criarExcluirContaStyles = (tema: CoresTema) => StyleSheet.create({
 
     // =========================
     // ESTRUTURA
@@ -10,7 +11,7 @@ export const excluirContaStyles = StyleSheet.create({
     container: {
         flex: 1,
 
-        backgroundColor: cores.bgPreto80,
+        backgroundColor: tema.card,
     },
 
     background: {
@@ -23,7 +24,7 @@ export const excluirContaStyles = StyleSheet.create({
     overlay: {
         flex: 1,
 
-        backgroundColor: cores.bgPreto80,
+        backgroundColor: tema.overlay,
     },
 
     keyboard: {
@@ -66,11 +67,11 @@ export const excluirContaStyles = StyleSheet.create({
 
         borderRadius: 23,
 
-        backgroundColor: cores.bgPreto80,
+        backgroundColor: tema.card,
     },
 
     btnVoltarPressed: {
-        backgroundColor: cores.roxoPrincipal80,
+        backgroundColor: tema.pressionado,
 
         transform: cores.btnPress,
     },
@@ -106,18 +107,18 @@ export const excluirContaStyles = StyleSheet.create({
     },
 
     titulo: {
-        color: cores.branco,
+        color: tema.texto,
 
         fontSize: fontes.titulo,
         fontFamily: fontes.negrito,
     },
 
     tituloDourado: {
-        color: cores.douradoPrincipal,
+        color: tema.destaque,
     },
 
     aviso: {
-        color: cores.douradoPrincipal,
+        color: tema.destaque,
 
         fontSize: 10,
         fontFamily: fontes.normal,
@@ -137,7 +138,7 @@ export const excluirContaStyles = StyleSheet.create({
     card: {
         width: "100%",
 
-        backgroundColor: cores.roxoPrincipal,
+        backgroundColor: tema.card,
 
         borderRadius: 14,
 
@@ -164,7 +165,7 @@ export const excluirContaStyles = StyleSheet.create({
     },
 
     cardTitulo: {
-        color: cores.branco,
+        color: tema.texto,
 
         fontSize: 17,
         fontFamily: fontes.negrito,
@@ -192,7 +193,7 @@ export const excluirContaStyles = StyleSheet.create({
     },
 
     bullet: {
-        color: cores.douradoPrincipal,
+        color: tema.destaque,
 
         fontSize: 14,
         fontFamily: fontes.negrito,
@@ -203,7 +204,7 @@ export const excluirContaStyles = StyleSheet.create({
     txtAviso: {
         flex: 1,
 
-        color: cores.branco,
+        color: tema.texto,
 
         fontSize: 11,
         lineHeight: 16,
@@ -214,7 +215,7 @@ export const excluirContaStyles = StyleSheet.create({
     },
 
     txtConfirmacao: {
-        color: cores.branco,
+        color: tema.texto,
 
         fontSize: 11,
         fontFamily: fontes.normal,
@@ -236,7 +237,7 @@ export const excluirContaStyles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
 
-        backgroundColor: cores.roxoPrincipal80,
+        backgroundColor: tema.input,
 
         borderRadius: 10,
 
@@ -257,7 +258,7 @@ export const excluirContaStyles = StyleSheet.create({
 
         height: "100%",
 
-        color: cores.branco,
+        color: tema.texto,
 
         fontSize: 12,
         fontFamily: fontes.normal,
@@ -281,7 +282,7 @@ export const excluirContaStyles = StyleSheet.create({
     },
 
     txtEsqueciSenha: {
-        color: cores.douradoPrincipal,
+        color: tema.destaque,
 
         fontSize: 9,
         fontFamily: fontes.normal,
@@ -307,7 +308,7 @@ export const excluirContaStyles = StyleSheet.create({
 
         height: 45,
 
-        backgroundColor: cores.douradoPrincipal,
+        backgroundColor: tema.destaque,
 
         borderRadius: 8,
 
@@ -316,13 +317,13 @@ export const excluirContaStyles = StyleSheet.create({
     },
 
     btnCancelarPressed: {
-        backgroundColor: cores.douradoPrincipalPressed,
+        backgroundColor: tema.destaquePressed,
 
         transform: cores.btnPress,
     },
 
     txtCancelar: {
-        color: cores.roxoPrincipal,
+        color: tema.textoSobreDestaque,
 
         fontSize: fontes.btn,
         fontFamily: fontes.extraNegrito,
@@ -333,10 +334,10 @@ export const excluirContaStyles = StyleSheet.create({
 
         height: 45,
 
-        backgroundColor: cores.bgPreto80,
+        backgroundColor: tema.card,
 
         borderWidth: 1,
-        borderColor: cores.douradoPrincipal,
+        borderColor: tema.destaque,
 
         borderRadius: 8,
 
@@ -345,16 +346,20 @@ export const excluirContaStyles = StyleSheet.create({
     },
 
     btnExcluirPressed: {
-        backgroundColor: cores.roxoPrincipal80,
+        backgroundColor: tema.pressionado,
 
         transform: cores.btnPress,
     },
 
     txtExcluir: {
-        color: cores.douradoPrincipal,
+        color: tema.destaque,
 
         fontSize: fontes.btn,
         fontFamily: fontes.extraNegrito,
     },
 
 });
+
+// Compatibilidade: mantém os imports atuais funcionando no tema escuro.
+// Para tema dinâmico, use criarExcluirContaStyles(coresTema) dentro do componente.
+export const excluirContaStyles = criarExcluirContaStyles(temaEscuro);

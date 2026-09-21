@@ -7,10 +7,11 @@ export const cores = {
   douradoPrincipal: "#D6B26A",
   douradoPrincipalPressed: "#B99653",
 
+  // LEGADO TEMPORÁRIO: remover quando não houver mais referências no projeto.
   roxoPrincipal: "#2A172E",
   roxoPrincipal80: "#2A172ECC",
 
-  preto: "#000000",
+  preto: "#0e0d0dff",
   pretoPrincipal: "#0A0909",
   bgPreto80: "#00000080",
 

@@ -15,12 +15,18 @@ import {
 
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { editarPerfilStyles } from "@/styles/editarPerfilStyles";
 import globalStyle from "@/styles/globalStyles";
+import { criarEditarPerfilStyles } from "@/styles/editarPerfilStyles";
+import { useTema } from "@/contexts/TemaContext";
 
 import MenuSreen from "./menu";
 
 export default function EditarPerfilScreen() {
+
+
+    const { coresTema } = useTema();
+
+    const editarPerfilStyles = criarEditarPerfilStyles(coresTema);
 
     // =========================
     // DADOS DO PERFIL

@@ -8,11 +8,16 @@ import {
     ScrollView,
 } from "react-native";
 import { router } from "expo-router";
-
-import { headerStyles } from "@/styles/headerStyles";
+import { useTema } from "@/contexts/TemaContext";
+import { criarHeaderStyles } from "@/styles/headerStyles";
 import MenuModalScreen from "@/components/menuModal";
     
 export default function HeaderCreen() {
+
+    
+        const { coresTema } = useTema();
+    
+    const headerStyles = criarHeaderStyles(coresTema);
     const [modalLinkSenha, setModalLinkSenha] = useState(false);
     return (
         <View style={headerStyles.header}>

@@ -1,6 +1,5 @@
 import { StyleSheet } from "react-native";
-import { cores } from "./variaveis";  
-import { fontes } from "./variaveis";
+import { cores, fontes } from "./variaveis";
 
 const globalStyle = StyleSheet.create({
   logoMenor: {
@@ -16,7 +15,6 @@ const globalStyle = StyleSheet.create({
     width: "100%",
     maxWidth: 440,
     height: "100%",
-    backgroundSize: "convain",
   },
   logoMaior: {
     width: 160,
@@ -48,11 +46,11 @@ const globalStyle = StyleSheet.create({
   pressBtn: {
     transform: 'scale(0.9)',
 
-    
+
   },
   containerG: {
     flex: 1,
-    backgroundColor: "#0A0909",
+    backgroundColor: cores.pretoPrincipal,
   },
   conteudoG: {
     padding: 20,
@@ -60,17 +58,17 @@ const globalStyle = StyleSheet.create({
 
   },
   titulo: {
-    color: "#D6B26A",
+    color: cores.douradoPrincipal,
     fontSize: 22,
     fontWeight: "bold",
     marginBottom: 10,
   },
   texto: {
-    color: "#FFFFFF",
+    color: cores.branco,
     fontSize: 16,
   },
-  
-  
+
+
 });
 
 export default globalStyle;

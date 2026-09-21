@@ -1,7 +1,8 @@
 import { StyleSheet } from "react-native";
 import { cores, fontes } from "./variaveis";
 
-export const alterarSenhaStyles = StyleSheet.create({
+import { CoresTema } from "./temas";
+export const criarAlterarSenhaStyles = (tema: CoresTema) => StyleSheet.create({
 
     // =========================
     // ESTRUTURA
@@ -9,7 +10,7 @@ export const alterarSenhaStyles = StyleSheet.create({
 
     container: {
         flex: 1,
-        backgroundColor: cores.bgPreto80,
+        backgroundColor: tema.fundo,
     },
 
     background: {
@@ -20,7 +21,7 @@ export const alterarSenhaStyles = StyleSheet.create({
 
     overlay: {
         flex: 1,
-        backgroundColor: cores.bgPreto80,
+        backgroundColor: tema.overlay,
     },
 
     keyboard: {
@@ -63,11 +64,11 @@ export const alterarSenhaStyles = StyleSheet.create({
 
         borderRadius: 23,
 
-        backgroundColor: cores.bgPreto80,
+      
     },
 
     btnVoltarPressed: {
-        backgroundColor: cores.roxoPrincipal80,
+        backgroundColor: tema.cardSecundario,
         transform: cores.btnPress,
     },
 
@@ -104,7 +105,7 @@ export const alterarSenhaStyles = StyleSheet.create({
     },
 
     titulo: {
-        color: cores.branco,
+        color: tema.texto,
 
         fontSize: fontes.titulo,
         fontFamily: fontes.negrito,
@@ -133,7 +134,7 @@ export const alterarSenhaStyles = StyleSheet.create({
     card: {
         width: "100%",
 
-        backgroundColor: cores.roxoPrincipal,
+        backgroundColor: tema.card,
 
         borderRadius: 14,
 
@@ -154,7 +155,7 @@ export const alterarSenhaStyles = StyleSheet.create({
         alignItems: "center",
 
         borderBottomWidth: 1,
-        borderBottomColor: cores.roxoPrincipal80,
+        borderBottomColor: tema.linha,
 
         paddingHorizontal: 4,
         paddingVertical: 6,
@@ -185,7 +186,7 @@ export const alterarSenhaStyles = StyleSheet.create({
     input: {
         width: "100%",
 
-        color: cores.branco,
+        color: tema.texto,
 
         fontSize: 12,
         fontFamily: fontes.normal,
@@ -214,7 +215,7 @@ export const alterarSenhaStyles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
 
-        backgroundColor: cores.bgPreto80,
+        backgroundColor: tema.card,
 
         borderWidth: 1,
         borderColor: cores.douradoPrincipal,
@@ -241,7 +242,7 @@ export const alterarSenhaStyles = StyleSheet.create({
     },
 
     tituloInfo: {
-        color: cores.branco,
+        color: tema.texto,
 
         fontSize: 10,
         fontFamily: fontes.negrito,
@@ -250,7 +251,7 @@ export const alterarSenhaStyles = StyleSheet.create({
     },
 
     txtInfo: {
-        color: cores.branco,
+        color: tema.texto,
 
         fontSize: 8,
         lineHeight: 12,
@@ -279,7 +280,7 @@ export const alterarSenhaStyles = StyleSheet.create({
         width: "100%",
         height: 45,
 
-        backgroundColor: cores.bgPreto80,
+        backgroundColor: tema.cardSecundario,
 
         borderWidth: 1,
         borderColor: cores.douradoPrincipal,
@@ -291,7 +292,7 @@ export const alterarSenhaStyles = StyleSheet.create({
     },
 
     btnSalvarPressed: {
-        backgroundColor: cores.roxoPrincipal80,
+        backgroundColor: tema.cardSecundario,
         transform: cores.btnPress,
     },
 
@@ -320,7 +321,7 @@ export const alterarSenhaStyles = StyleSheet.create({
     },
 
     txtCancelar: {
-        color: cores.roxoPrincipal,
+        color: tema.textoSobreDestaque,
 
         fontSize: fontes.btn,
         fontFamily: fontes.extraNegrito,

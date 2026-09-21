@@ -14,6 +14,10 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import HeaderScreen from "@/app/header";
 import MenuScreen from "@/app/menu";
 
+import { criarGaleriaStyles } from "@/styles/galeriaStyles";
+import { useTema } from "@/contexts/TemaContext";
+
+
 import { galeriaStyles } from "@/styles/galeriaStyles";
 import globalStyle from "@/styles/globalStyles";
 
@@ -50,6 +54,11 @@ const IMAGENS_BASE = Array.from(
 
 
 export default function GaleriaScreen() {
+
+
+    const { coresTema } = useTema();
+
+    const galeriaStyles = criarGaleriaStyles(coresTema);
 
     // =========================
     // ESTADOS
