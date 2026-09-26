@@ -1,76 +1,72 @@
 import { useState } from "react";
-import {
-    View,
-    Text,
-    Image,
-    TextInput,
-    Pressable,
-    ScrollView,
-} from "react-native";
-import { router } from "expo-router";
-import { useTema } from "@/contexts/TemaContext";
-import { criarHeaderStyles } from "@/styles/headerStyles";
+import { View, Text, Image, Pressable } from "react-native";
+
+import { headerStyles } from "@/styles/headerStyles";
 import MenuModalScreen from "@/components/menuModal";
-    
-export default function HeaderCreen() {
 
-    
-        const { coresTema } = useTema();
-    
-    const headerStyles = criarHeaderStyles(coresTema);
-    const [modalLinkSenha, setModalLinkSenha] = useState(false);
-    return (
-        <View style={headerStyles.header}>
-                {/* ================= HEADER ================= */ }
+type HeaderProps = {
+  fotoUsuario?: string | null;
+};
 
-                {/* FOTO PERFIL */}
-                <Pressable style={headerStyles.perfil}>
-                    <Image
-                        source={require("@/assets/images/img/avatar.png")}
-                        style={headerStyles.fotoPerfil}
-                    />
-                </Pressable>
+export default function HeaderCreen({ fotoUsuario }: HeaderProps) {
+  const [modalLinkSenha, setModalLinkSenha] = useState(false);
 
+  return (
+    <View style={headerStyles.header}>
+      {/* ================= FOTO PERFIL ================= */}
 
-                {/* LOGO / NOME */}
-                <View style={headerStyles.logoContainer}>
+      <Pressable style={headerStyles.perfil}>
+        {fotoUsuario ? (
+          <Image
+            source={{
+              uri: fotoUsuario,
+            }}
+            style={headerStyles.fotoPerfil}
+            resizeMode="cover"
+          />
+        ) : (
+          <Image
+            source={require("@/assets/images/img/avatar.png")}
+            style={headerStyles.fotoPerfil}
+            resizeMode="cover"
+          />
+        )}
+      </Pressable>
 
-                    <Image
-                        source={require("@/assets/images/img/logo.svg")}
-                        style={headerStyles.logo}
-                    />
+      {/* ================= LOGO / NOME ================= */}
 
-                    <Text style={headerStyles.nomeProjeto}>
-                        Conexão 360°
-                    </Text>
+      <View style={headerStyles.logoContainer}>
+        <Image
+          source={require("@/assets/images/img/logo.svg")}
+          style={headerStyles.logo}
+        />
 
-                </View>
+        <Text style={headerStyles.nomeProjeto}>Conexão 360°</Text>
+      </View>
 
+      {/* ================= MENU ================= */}
 
-                {/* MENU */}
-                <Pressable
-                    style={({ pressed }) => [
-                        headerStyles.btnMenu,   
-                        pressed && headerStyles.btnPressed,
-                    ]}
-                onPress={() => setModalLinkSenha(true)}
-                >
+      <Pressable
+        style={({ pressed }) => [
+          headerStyles.btnMenu,
+          pressed && headerStyles.btnPressed,
+        ]}
+        onPress={() => setModalLinkSenha(true)}
+      >
+        <Image
+          source={require("@/assets/images/img/menu.png")}
+          style={headerStyles.iconeHeader}
+        />
+      </Pressable>
 
-                    <Image
-                        source={require("@/assets/images/img/menu.png")}
-                        style={headerStyles.iconeHeader}
-                    />
+      {/* ================= MODAL MENU ================= */}
 
-            </Pressable>
-            <MenuModalScreen
-                visible={modalLinkSenha}
-                onClose={() => {
-                    router.back;
-                    setModalLinkSenha(false);
-                }}
-            />
-
-            </View>
-        
-    )
+      <MenuModalScreen
+        visible={modalLinkSenha}
+        onClose={() => {
+          setModalLinkSenha(false);
+        }}
+      />
+    </View>
+  );
 }
