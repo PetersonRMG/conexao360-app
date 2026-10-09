@@ -3,23 +3,33 @@ import { View, Text, Image, Pressable } from "react-native";
 
 import { headerStyles } from "@/styles/headerStyles";
 import MenuModalScreen from "@/components/menuModal";
+import { useAuth } from "@/contexts/AuthContext";
+import { getUrlFotoUsuario } from "@/services/usuarioService";
 
 type HeaderProps = {
   fotoUsuario?: string | null;
 };
 
-export default function HeaderCreen({ fotoUsuario }: HeaderProps) {
+export default function HeaderScreen({ fotoUsuario }: HeaderProps) {
   const [modalLinkSenha, setModalLinkSenha] = useState(false);
+
+  const { usuario } = useAuth();
+
+  const fotoUsuarioContexto = getUrlFotoUsuario(
+    usuario?.foto_usuario ?? null
+  );
+
+  const fotoExibida = fotoUsuario ?? fotoUsuarioContexto;
 
   return (
     <View style={headerStyles.header}>
       {/* ================= FOTO PERFIL ================= */}
 
       <Pressable style={headerStyles.perfil}>
-        {fotoUsuario ? (
+        {fotoExibida ? (
           <Image
             source={{
-              uri: fotoUsuario,
+              uri: fotoExibida,
             }}
             style={headerStyles.fotoPerfil}
             resizeMode="cover"
@@ -41,7 +51,9 @@ export default function HeaderCreen({ fotoUsuario }: HeaderProps) {
           style={headerStyles.logo}
         />
 
-        <Text style={headerStyles.nomeProjeto}>Conexão 360°</Text>
+        <Text style={headerStyles.nomeProjeto}>
+          Conexão 360°
+        </Text>
       </View>
 
       {/* ================= MENU ================= */}

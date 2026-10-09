@@ -20,6 +20,7 @@ import {
 } from "@expo-google-fonts/lato";
 
 import { TemaProvider } from "@/contexts/TemaContext";
+import { AuthProvider } from "@/contexts/AuthContext";
 
 
 // =========================================
@@ -91,15 +92,19 @@ export default function RootLayout() {
 
   return (
 
-    <TemaProvider>
+    <AuthProvider>
 
-      <Stack
-        screenOptions={{
-          headerShown: false,
-        }}
-      />
+      <TemaProvider>
 
-    </TemaProvider>
+        <Stack
+          screenOptions={{
+            headerShown: false,
+          }}
+        />
+
+      </TemaProvider>
+
+    </AuthProvider>
 
   );
 

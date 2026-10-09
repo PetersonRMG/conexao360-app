@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+
 import {
     View,
     Text,
@@ -14,258 +15,295 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import globalStyle from "@/styles/globalStyles";
 
 import MenuSreen from "./menu";
-import HeaderCreen from "./header";
-import ComentariosModalScreen from "@/components/modalComentarios";
+import HeaderScreen from "./header";
 
 import { criarHomeStyle } from "@/styles/homeStyles";
 import { useTema } from "@/contexts/TemaContext";
+import { useAuth } from "@/contexts/AuthContext";
+
+import {
+    buscarPublicacoes,
+    getUrlMidiaPublicacao,
+    Publicacao,
+} from "@/services/publicacaoService";
+
+import {
+    getUrlFotoUsuario,
+} from "@/services/usuarioService";
 
 
-
-type Filtro = "Todas" | "Recentes" | "Em alta" | "Meus posts";
-
-
-interface Post {
-    id: number;
-    autor: string;
-    tempo: string;
-    texto?: string;
-    imagem?: boolean;
-
-    recente: boolean;
-    emAlta: boolean;
-    meu: boolean;
-
-    curtidas: number;
-    comentarios: number;
-}
+type Filtro =
+    | "Todas"
+    | "Meus posts";
 
 
 export default function HomeScreen() {
 
     const { coresTema } = useTema();
 
-    const homeStyle = criarHomeStyle(coresTema);
-
-    // =====================================
-    // FILTRO ATIVO
-    // =====================================
-    const [filtro, setFiltro] = useState<Filtro>("Todas");
+    const homeStyle =
+        criarHomeStyle(coresTema);
 
 
     // =====================================
-    // POSTS
+    // AUTENTICAÇÃO
     // =====================================
-    const [posts, setPosts] = useState<Post[]>([
-        {
-            id: 1,
-            autor: "Dr. Simone Baptista",
-            tempo: "2h",
 
-            texto:
-                "Compartilhando conhecimento, experiências e conexões que fazem parte da nossa rede.",
-
-            recente: true,
-            emAlta: false,
-            meu: false,
-
-            curtidas: 12,
-            comentarios: 3,
-        },
-
-        {
-            id: 2,
-            autor: "Dr. Simone Baptista",
-            tempo: "3h",
-
-            imagem: true,
-
-            recente: false,
-            emAlta: true,
-            meu: false,
-
-            curtidas: 27,
-            comentarios: 8,
-        },
-
-        {
-            id: 3,
-            autor: "Fernanda Silva",
-            tempo: "5h",
-
-            texto:
-                "Muito feliz em participar da comunidade Conexão 360.",
-
-            recente: false,
-            emAlta: false,
-            meu: true,
-
-            curtidas: 5,
-            comentarios: 1,
-        },
-    ]);
+    const {
+        token,
+        usuario,
+    } = useAuth();
 
 
     // =====================================
-    // POSTS CURTIDOS
+    // PUBLICAÇÕES
     // =====================================
-    const [curtidos, setCurtidos] = useState<number[]>([]);
+
+    const [
+        publicacoes,
+        setPublicacoes,
+    ] = useState<Publicacao[]>([]);
+
+
+    const [
+        carregando,
+        setCarregando,
+    ] = useState(true);
+
+
+    const [
+        erro,
+        setErro,
+    ] = useState<string | null>(null);
 
 
     // =====================================
-    // MODAL DE COMENTÁRIOS
+    // FILTRO
     // =====================================
-    const [comentariosAberto, setComentariosAberto] =
-        useState(false);
 
-    const [postSelecionado, setPostSelecionado] =
-        useState<number | null>(null);
+    const [
+        filtro,
+        setFiltro,
+    ] = useState<Filtro>("Todas");
 
 
     // =====================================
-    // FILTRAR POSTS
+    // BUSCAR PUBLICAÇÕES
     // =====================================
-    const postsFiltrados = posts.filter((post) => {
 
-        if (filtro === "Recentes") {
-            return post.recente;
+    useEffect(() => {
+
+        let telaAtiva = true;
+
+
+        async function carregarPublicacoes() {
+
+            if (!token) {
+
+                if (telaAtiva) {
+
+                    setErro(
+                        "Sessão não encontrada. Faça login novamente."
+                    );
+
+                    setCarregando(false);
+
+                }
+
+                return;
+
+            }
+
+
+            try {
+
+                setCarregando(true);
+
+                setErro(null);
+
+
+                const resposta =
+                    await buscarPublicacoes(token);
+
+
+                console.log(
+                    "PUBLICAÇÕES:",
+                    resposta
+                );
+
+
+                if (!resposta.success) {
+
+                    throw new Error(
+                        "Não foi possível carregar as publicações."
+                    );
+
+                }
+
+
+                if (telaAtiva) {
+
+                    setPublicacoes(
+                        resposta.data ?? []
+                    );
+
+                }
+
+
+            } catch (error) {
+
+                console.log(
+                    "ERRO PUBLICAÇÕES:",
+                    error
+                );
+
+
+                if (telaAtiva) {
+
+                    setErro(
+                        error instanceof Error
+                            ? error.message
+                            : "Não foi possível carregar as publicações."
+                    );
+
+                }
+
+
+            } finally {
+
+                if (telaAtiva) {
+
+                    setCarregando(false);
+
+                }
+
+            }
+
         }
 
-        if (filtro === "Em alta") {
-            return post.emAlta;
-        }
 
-        if (filtro === "Meus posts") {
-            return post.meu;
-        }
+        carregarPublicacoes();
 
-        return true;
 
-    });
+        return () => {
+
+            telaAtiva = false;
+
+        };
+
+    }, [token]);
 
 
     // =====================================
-    // CURTIR
+    // FILTRAR PUBLICAÇÕES
     // =====================================
-    const curtirPost = (id: number) => {
 
-        const jaCurtiu = curtidos.includes(id);
+    const publicacoesFiltradas =
+        publicacoes.filter((publicacao) => {
 
+            if (
+                filtro === "Meus posts"
+            ) {
 
-        setCurtidos((current) => {
-
-            if (jaCurtiu) {
-
-                return current.filter(
-                    (postId) => postId !== id
+                return (
+                    publicacao.id_usuario ===
+                    usuario?.id_usuario
                 );
 
             }
 
-            return [...current, id];
+
+            return true;
 
         });
 
 
-        setPosts((current) =>
-            current.map((post) => {
-
-                if (post.id !== id) {
-                    return post;
-                }
-
-                return {
-                    ...post,
-
-                    curtidas:
-                        jaCurtiu
-                            ? post.curtidas - 1
-                            : post.curtidas + 1,
-                };
-
-            })
-        );
-
-    };
-
-
     // =====================================
-    // ABRIR COMENTÁRIOS
+    // FORMATAR DATA
     // =====================================
-    const abrirComentarios = (id: number) => {
 
-        setPostSelecionado(id);
+    function formatarData(
+        data: string
+    ) {
 
-        setComentariosAberto(true);
+        if (!data) {
 
-    };
+            return "";
 
-
-    // =====================================
-    // FECHAR COMENTÁRIOS
-    // =====================================
-    const fecharComentarios = () => {
-
-        setComentariosAberto(false);
-
-        setPostSelecionado(null);
-
-    };
-
-
-    // =====================================
-    // ATUALIZAR CONTADOR DE COMENTÁRIOS
-    // =====================================
-    const comentarioEnviado = () => {
-
-        if (postSelecionado === null) {
-            return;
         }
 
-        setPosts((current) =>
-            current.map((post) => {
 
-                if (post.id !== postSelecionado) {
-                    return post;
+        const dataPublicacao =
+            new Date(data);
+
+
+        if (
+            Number.isNaN(
+                dataPublicacao.getTime()
+            )
+        ) {
+
+            return "";
+
+        }
+
+
+        return dataPublicacao
+            .toLocaleDateString(
+                "pt-BR",
+                {
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "numeric",
                 }
+            );
 
-                return {
-                    ...post,
-                    comentarios:
-                        post.comentarios + 1,
-                };
-
-            })
-        );
-
-    };
+    }
 
 
     // =====================================
     // COMPARTILHAR
     // =====================================
-    const compartilharPost = async (post: Post) => {
 
-        await Share.share({
-            message:
-                post.texto ??
-                "Confira esta publicação no Conexão 360°.",
-        });
+    async function compartilharPost(
+        publicacao: Publicacao
+    ) {
 
-    };
+        try {
 
+            await Share.share({
+
+                message:
+                    publicacao.texto_publicacao ??
+                    "Confira esta publicação no Conexão 360°.",
+
+            });
+
+
+        } catch (error) {
+
+            console.log(
+                "ERRO COMPARTILHAR:",
+                error
+            );
+
+        }
+
+    }
+
+
+    // =====================================
+    // TELA
+    // =====================================
 
     return (
 
-        // =====================================
-        // FUNDO EXTERNO
-        // =====================================
-        <View style={globalStyle.container}>
+        <View
+            style={
+                globalStyle.container
+            }
+        >
 
-
-            {/* =================================
-                LIMITE 440px
-            ================================= */}
             <View
                 style={[
                     globalStyle.background,
@@ -273,26 +311,46 @@ export default function HomeScreen() {
                 ]}
             >
 
-
-                <SafeAreaView style={globalStyle.areaConteudo}>
+                <SafeAreaView
+                    style={
+                        globalStyle.areaConteudo
+                    }
+                >
 
 
                     {/* ================= HEADER ================= */}
-                    <HeaderCreen />
+
+                    <HeaderScreen />
 
 
                     {/* ================= BUSCA ================= */}
-                    <View style={homeStyle.areaBusca}>
 
-                        <View style={homeStyle.inputBusca}>
+                    <View
+                        style={
+                            homeStyle.areaBusca
+                        }
+                    >
+
+                        <View
+                            style={
+                                homeStyle.inputBusca
+                            }
+                        >
 
                             <Image
-                                source={require("@/assets/images/img/search.png")}
-                                style={homeStyle.iconeBusca}
+                                source={require(
+                                    "@/assets/images/img/search.png"
+                                )}
+                                style={
+                                    homeStyle.iconeBusca
+                                }
                             />
 
+
                             <TextInput
-                                style={homeStyle.txtBusca}
+                                style={
+                                    homeStyle.txtBusca
+                                }
                                 placeholder="Buscar"
                                 placeholderTextColor="#888888"
                             />
@@ -303,16 +361,21 @@ export default function HomeScreen() {
 
 
                     {/* ================= FILTROS ================= */}
-                    <View style={homeStyle.filtros}>
+
+                    <View
+                        style={
+                            homeStyle.filtros
+                        }
+                    >
 
                         {[
                             "Todas",
-                            "Recentes",
-                            "Em alta",
                             "Meus posts",
                         ].map((item) => {
 
-                            const ativo = filtro === item;
+                            const ativo =
+                                filtro === item;
+
 
                             return (
 
@@ -327,7 +390,9 @@ export default function HomeScreen() {
                                     ]}
 
                                     onPress={() =>
-                                        setFiltro(item as Filtro)
+                                        setFiltro(
+                                            item as Filtro
+                                        )
                                     }
                                 >
 
@@ -339,7 +404,9 @@ export default function HomeScreen() {
                                             homeStyle.txtFiltroAtivo,
                                         ]}
                                     >
+
                                         {item}
+
                                     </Text>
 
                                 </Pressable>
@@ -352,247 +419,435 @@ export default function HomeScreen() {
 
 
                     {/* ================= CONTEÚDO ================= */}
+
                     <ScrollView
-                        style={homeStyle.scroll}
-                        contentContainerStyle={homeStyle.scrollConteudo}
-                        showsVerticalScrollIndicator={false}
+                        style={
+                            homeStyle.scroll
+                        }
+
+                        contentContainerStyle={
+                            homeStyle.scrollConteudo
+                        }
+
+                        showsVerticalScrollIndicator={
+                            false
+                        }
+
                         keyboardShouldPersistTaps="handled"
                     >
 
 
                         {/* ================= BANNER ================= */}
-                        <View style={homeStyle.bannerContainer}>
+
+                        <View
+                            style={
+                                homeStyle.bannerContainer
+                            }
+                        >
 
                             <Image
-                                source={require("@/assets/images/img/banner 1.png")}
-                                style={homeStyle.banner}
+                                source={require(
+                                    "@/assets/images/img/banner 1.png"
+                                )}
+                                style={
+                                    homeStyle.banner
+                                }
                             />
 
                         </View>
 
 
-                        {/* INDICADORES */}
-                        <View style={homeStyle.indicadores}>
+                        {/* ================= INDICADORES ================= */}
 
-                            <View style={homeStyle.indicadorAtivo} />
-                            <View style={homeStyle.indicador} />
-                            <View style={homeStyle.indicador} />
+                        <View
+                            style={
+                                homeStyle.indicadores
+                            }
+                        >
+
+                            <View
+                                style={
+                                    homeStyle.indicadorAtivo
+                                }
+                            />
+
+                            <View
+                                style={
+                                    homeStyle.indicador
+                                }
+                            />
+
+                            <View
+                                style={
+                                    homeStyle.indicador
+                                }
+                            />
 
                         </View>
 
 
                         {/* ================= TÍTULO ================= */}
-                        <Text style={homeStyle.tituloSecao}>
+
+                        <Text
+                            style={
+                                homeStyle.tituloSecao
+                            }
+                        >
                             Publicações
                         </Text>
 
 
-                        {/* ================= POSTS ================= */}
-                        {postsFiltrados.map((post) => {
+                        {/* ================= CARREGANDO ================= */}
 
-                            const curtido =
-                                curtidos.includes(post.id);
+                        {carregando && (
 
-
-                            return (
-
-                                <View
-                                    key={post.id}
-                                    style={homeStyle.cardPublicacao}
-                                >
-
-
-                                    {/* ================= AUTOR ================= */}
-                                    <View style={homeStyle.publicacaoHeader}>
-
-                                        <Image
-                                            source={require("@/assets/images/img/avatar.png")}
-                                            style={homeStyle.avatarPublicacao}
-                                        />
-
-
-                                        <View style={homeStyle.autorContainer}>
-
-                                            <Text style={homeStyle.nomeAutor}>
-                                                {post.autor}
-                                            </Text>
-
-                                            <Text style={homeStyle.tempoPublicacao}>
-                                                {post.tempo}
-                                            </Text>
-
-                                        </View>
-
-                                    </View>
-
-
-                                    {/* ================= TEXTO ================= */}
-                                    {post.texto && (
-
-                                        <Text style={homeStyle.textoPublicacao}>
-                                            {post.texto}
-                                        </Text>
-
-                                    )}
-
-
-                                    {/* ================= IMAGEM ================= */}
-                                    {post.imagem && (
-
-                                        <Image
-                                            source={require("@/assets/images/img/banner 1.png")}
-                                            style={homeStyle.imagemPublicacao}
-                                        />
-
-                                    )}
-
-
-                                    {/* ================= NÚMEROS ================= */}
-                                    <View style={homeStyle.areaContadores}>
-
-                                        <Text style={homeStyle.txtContador}>
-                                            {post.curtidas} curtidas
-                                        </Text>
-
-                                        <Text style={homeStyle.txtContador}>
-                                            {post.comentarios} comentários
-                                        </Text>
-
-                                    </View>
-
-
-                                    {/* ================= AÇÕES ================= */}
-                                    <View style={homeStyle.acoesPublicacao}>
-
-
-                                        {/* CURTIR */}
-                                        <Pressable
-                                            style={homeStyle.acao}
-                                            onPress={() =>
-                                                curtirPost(post.id)
-                                            }
-                                        >
-
-                                            <Image
-                                                source={require("@/assets/images/img/heart.png")}
-                                                style={[
-                                                    homeStyle.iconeAcao,
-
-                                                    curtido &&
-                                                    homeStyle.iconeAcaoAtivo,
-                                                ]}
-                                            />
-
-                                            <Text
-                                                style={[
-                                                    homeStyle.txtAcao,
-
-                                                    curtido &&
-                                                    homeStyle.txtAcaoAtivo,
-                                                ]}
-                                            >
-                                                {curtido
-                                                    ? "Curtido"
-                                                    : "Curtir"
-                                                }
-                                            </Text>
-
-                                        </Pressable>
-
-
-                                        {/* COMENTAR */}
-                                        <Pressable
-                                            style={homeStyle.acao}
-                                            onPress={() =>
-                                                abrirComentarios(
-                                                    post.id
-                                                )
-                                            }
-                                        >
-
-                                            <Image
-                                                source={require("@/assets/images/img/coment.png")}
-                                                style={homeStyle.iconeAcao}
-                                            />
-
-                                            <Text style={homeStyle.txtAcao}>
-                                                Comentar
-                                            </Text>
-
-                                        </Pressable>
-
-
-                                        {/* COMPARTILHAR */}
-                                        <Pressable
-                                            style={homeStyle.acao}
-                                            onPress={() =>
-                                                compartilharPost(post)
-                                            }
-                                        >
-
-                                            <Image
-                                                source={require("@/assets/images/img/share.png")}
-                                                style={homeStyle.iconeAcao}
-                                            />
-
-                                            <Text style={homeStyle.txtAcao}>
-                                                Compartilhar
-                                            </Text>
-
-                                        </Pressable>
-
-
-                                    </View>
-
-
-                                </View>
-
-                            );
-
-                        })}
-
-
-                        {/* SEM RESULTADOS */}
-                        {postsFiltrados.length === 0 && (
-
-                            <Text style={homeStyle.semPublicacoes}>
-                                Nenhuma publicação encontrada.
+                            <Text
+                                style={
+                                    homeStyle.semPublicacoes
+                                }
+                            >
+                                Carregando publicações...
                             </Text>
 
                         )}
+
+
+                        {/* ================= ERRO ================= */}
+
+                        {!carregando &&
+                            erro && (
+
+                                <Text
+                                    style={
+                                        homeStyle.semPublicacoes
+                                    }
+                                >
+                                    {erro}
+                                </Text>
+
+                            )}
+
+
+                        {/* ================= PUBLICAÇÕES ================= */}
+
+                        {!carregando &&
+                            !erro &&
+                            publicacoesFiltradas.map(
+                                (publicacao) => {
+
+
+                                    // =====================================
+                                    // FOTO DO AUTOR
+                                    // =====================================
+
+                                    const fotoAutor =
+                                        getUrlFotoUsuario(
+                                            publicacao
+                                                .usuario
+                                                ?.foto_usuario ??
+                                            null
+                                        );
+
+
+                                    // =====================================
+                                    // MÍDIA
+                                    // =====================================
+
+                                    const midia =
+                                        getUrlMidiaPublicacao(
+                                            publicacao
+                                                .midia_publicacao
+                                        );
+
+
+                                    return (
+
+                                        <View
+                                            key={
+                                                publicacao
+                                                    .id_publicacao
+                                            }
+
+                                            style={
+                                                homeStyle.cardPublicacao
+                                            }
+                                        >
+
+
+                                            {/* ================= AUTOR ================= */}
+
+                                            <View
+                                                style={
+                                                    homeStyle.publicacaoHeader
+                                                }
+                                            >
+
+
+                                                {fotoAutor ? (
+
+                                                    <Image
+                                                        source={{
+                                                            uri: fotoAutor,
+                                                        }}
+
+                                                        style={
+                                                            homeStyle.avatarPublicacao
+                                                        }
+
+                                                        resizeMode="cover"
+                                                    />
+
+                                                ) : (
+
+                                                    <Image
+                                                        source={require(
+                                                            "@/assets/images/img/avatar.png"
+                                                        )}
+
+                                                        style={
+                                                            homeStyle.avatarPublicacao
+                                                        }
+
+                                                        resizeMode="cover"
+                                                    />
+
+                                                )}
+
+
+                                                <View
+                                                    style={
+                                                        homeStyle.autorContainer
+                                                    }
+                                                >
+
+                                                    <Text
+                                                        style={
+                                                            homeStyle.nomeAutor
+                                                        }
+                                                    >
+
+                                                        {
+                                                            publicacao
+                                                                .usuario
+                                                                ?.nome_usuario ??
+                                                            "Usuário"
+                                                        }
+
+                                                    </Text>
+
+
+                                                    <Text
+                                                        style={
+                                                            homeStyle.tempoPublicacao
+                                                        }
+                                                    >
+
+                                                        {
+                                                            formatarData(
+                                                                publicacao
+                                                                    .criado_em_publicacao
+                                                            )
+                                                        }
+
+                                                    </Text>
+
+                                                </View>
+
+                                            </View>
+
+
+                                            {/* ================= TEXTO ================= */}
+
+                                            {publicacao
+                                                .texto_publicacao && (
+
+                                                    <Text
+                                                        style={
+                                                            homeStyle.textoPublicacao
+                                                        }
+                                                    >
+
+                                                        {
+                                                            publicacao
+                                                                .texto_publicacao
+                                                        }
+
+                                                    </Text>
+
+                                                )}
+
+
+                                            {/* ================= MÍDIA ================= */}
+
+                                            {midia && (
+
+                                                <Image
+                                                    source={{
+                                                        uri: midia,
+                                                    }}
+
+                                                    style={
+                                                        homeStyle.imagemPublicacao
+                                                    }
+
+                                                    resizeMode="cover"
+                                                />
+
+                                            )}
+
+
+                                            {/* ================= AÇÕES ================= */}
+
+                                            <View
+                                                style={
+                                                    homeStyle.acoesPublicacao
+                                                }
+                                            >
+
+
+                                                {/* CURTIR */}
+
+                                                <Pressable
+                                                    style={
+                                                        homeStyle.acao
+                                                    }
+
+                                                    disabled
+                                                >
+
+                                                    <Image
+                                                        source={require(
+                                                            "@/assets/images/img/heart.png"
+                                                        )}
+
+                                                        style={
+                                                            homeStyle.iconeAcao
+                                                        }
+                                                    />
+
+
+                                                    <Text
+                                                        style={
+                                                            homeStyle.txtAcao
+                                                        }
+                                                    >
+                                                        Curtir
+                                                    </Text>
+
+                                                </Pressable>
+
+
+                                                {/* COMENTAR */}
+
+                                                <Pressable
+                                                    style={
+                                                        homeStyle.acao
+                                                    }
+
+                                                    disabled
+                                                >
+
+                                                    <Image
+                                                        source={require(
+                                                            "@/assets/images/img/coment.png"
+                                                        )}
+
+                                                        style={
+                                                            homeStyle.iconeAcao
+                                                        }
+                                                    />
+
+
+                                                    <Text
+                                                        style={
+                                                            homeStyle.txtAcao
+                                                        }
+                                                    >
+                                                        Comentar
+                                                    </Text>
+
+                                                </Pressable>
+
+
+                                                {/* COMPARTILHAR */}
+
+                                                <Pressable
+                                                    style={
+                                                        homeStyle.acao
+                                                    }
+
+                                                    onPress={() =>
+                                                        compartilharPost(
+                                                            publicacao
+                                                        )
+                                                    }
+                                                >
+
+                                                    <Image
+                                                        source={require(
+                                                            "@/assets/images/img/share.png"
+                                                        )}
+
+                                                        style={
+                                                            homeStyle.iconeAcao
+                                                        }
+                                                    />
+
+
+                                                    <Text
+                                                        style={
+                                                            homeStyle.txtAcao
+                                                        }
+                                                    >
+                                                        Compartilhar
+                                                    </Text>
+
+                                                </Pressable>
+
+
+                                            </View>
+
+
+                                        </View>
+
+                                    );
+
+                                }
+                            )}
+
+
+                        {/* ================= SEM PUBLICAÇÕES ================= */}
+
+                        {!carregando &&
+                            !erro &&
+                            publicacoesFiltradas.length ===
+                            0 && (
+
+                                <Text
+                                    style={
+                                        homeStyle.semPublicacoes
+                                    }
+                                >
+                                    Nenhuma publicação encontrada.
+                                </Text>
+
+                            )}
 
 
                     </ScrollView>
 
 
                     {/* ================= FOOTER ================= */}
+
                     <MenuSreen />
-
-
-                    {/* ================= MODAL DE COMENTÁRIOS ================= */}
-                    <ComentariosModalScreen
-                        visible={
-                            comentariosAberto
-                        }
-                        postId={
-                            postSelecionado
-                        }
-                        onClose={
-                            fecharComentarios
-                        }
-                        onComentarioEnviado={
-                            comentarioEnviado
-                        }
-                    />
 
 
                 </SafeAreaView>
 
-
             </View>
-
 
         </View>
 
     );
+
 }

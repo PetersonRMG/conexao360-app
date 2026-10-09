@@ -1,5 +1,6 @@
 //export const API_URL = "http://192.168.15.3:8081";
-export const API_URL = "http://192.168.56.1:8081"; 
+// export const API_URL = "http://192.168.56.1:8081"; 
+export const API_URL = "https://hardsettings.tipi5.smpsistema.com.br/conexao";
 
 type ApiOptions = RequestInit & {
   token?: string;
