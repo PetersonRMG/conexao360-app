@@ -28,7 +28,6 @@ export const criarHomeStyle = (tema: CoresTema) => StyleSheet.create({
 
         paddingHorizontal: 18,
 
-
         backgroundColor: tema.header,
 
         borderBottomWidth: 1,
@@ -56,7 +55,6 @@ export const criarHomeStyle = (tema: CoresTema) => StyleSheet.create({
     },
 
     logoContainer: {
-
         alignItems: "center",
         justifyContent: "center",
 
@@ -544,6 +542,12 @@ export const criarHomeStyle = (tema: CoresTema) => StyleSheet.create({
 
         lineHeight: 30,
     },
+
+
+    // =========================
+    // CONTADORES
+    // =========================
+
     areaContadores: {
         width: "100%",
 
@@ -566,6 +570,10 @@ export const criarHomeStyle = (tema: CoresTema) => StyleSheet.create({
     },
 
 
+    // =========================
+    // AÇÃO ATIVA
+    // =========================
+
     iconeAcaoAtivo: {
         tintColor: tema.destaque,
         opacity: 1,
@@ -578,6 +586,10 @@ export const criarHomeStyle = (tema: CoresTema) => StyleSheet.create({
         fontFamily: fontes.negrito,
     },
 
+
+    // =========================
+    // COMENTÁRIO
+    // =========================
 
     areaComentario: {
         width: "100%",
@@ -625,6 +637,154 @@ export const criarHomeStyle = (tema: CoresTema) => StyleSheet.create({
         resizeMode: "contain",
     },
 
+
+    // =========================
+    // SKELETON / PLACEHOLDER
+    // =========================
+
+    skeletonHeader: {
+        width: "100%",
+
+        flexDirection: "row",
+        alignItems: "center",
+
+        marginBottom: 10,
+    },
+
+    skeletonAvatar: {
+        width: 36,
+        height: 36,
+
+        borderRadius: 18,
+
+        marginRight: 10,
+
+        backgroundColor:
+            tema.cardSecundario,
+    },
+
+    skeletonAutor: {
+        flex: 1,
+    },
+
+    skeletonLinha: {
+        height: 11,
+
+        borderRadius: 5,
+
+        backgroundColor:
+            tema.cardSecundario,
+    },
+
+    skeletonLinhaPequena: {
+        height: 8,
+
+        borderRadius: 4,
+
+        backgroundColor:
+            tema.cardSecundario,
+
+        marginTop: 6,
+    },
+
+    skeletonNome: {
+        width: "48%",
+    },
+
+    skeletonData: {
+        width: "25%",
+    },
+
+    skeletonTexto1: {
+        width: "95%",
+
+        marginTop: 5,
+    },
+
+    skeletonTexto2: {
+        width: "82%",
+
+        marginTop: 7,
+    },
+
+    skeletonTexto3: {
+        width: "57%",
+
+        marginTop: 7,
+
+        marginBottom: 12,
+    },
+
+    skeletonImagem: {
+        width: "100%",
+        height: 190,
+
+        borderRadius: 8,
+
+        backgroundColor:
+            tema.cardSecundario,
+
+        marginBottom: 12,
+    },
+
+    skeletonContadores: {
+        width: "100%",
+
+        flexDirection: "row",
+        justifyContent: "space-between",
+
+        paddingVertical: 8,
+
+        borderBottomWidth: 1,
+        borderBottomColor:
+            tema.cardSecundario,
+    },
+
+    skeletonContadorCurto: {
+        width: 65,
+        height: 8,
+
+        borderRadius: 4,
+
+        backgroundColor:
+            tema.cardSecundario,
+    },
+
+    skeletonContadorLongo: {
+        width: 90,
+        height: 8,
+
+        borderRadius: 4,
+
+        backgroundColor:
+            tema.cardSecundario,
+    },
+
+    skeletonAcoes: {
+        width: "100%",
+
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+
+        paddingTop: 10,
+    },
+
+    skeletonAcao: {
+        width: "25%",
+        height: 12,
+
+        borderRadius: 5,
+
+        backgroundColor:
+            tema.cardSecundario,
+    },
+
+
+    // =========================
+    // SEM PUBLICAÇÕES
+    // =========================
+
     semPublicacoes: {
         color: tema.texto,
 
@@ -640,6 +800,10 @@ export const criarHomeStyle = (tema: CoresTema) => StyleSheet.create({
 
 });
 
+
 // Compatibilidade: mantém os imports atuais funcionando no tema escuro.
 // Para tema dinâmico, use criarHomeStyle(coresTema) dentro do componente.
-export const homeStyle = criarHomeStyle(temaEscuro);
+export const homeStyle =
+    criarHomeStyle(
+        temaEscuro
+    );

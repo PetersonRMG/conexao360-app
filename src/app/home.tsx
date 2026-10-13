@@ -1,4 +1,8 @@
-import { useEffect, useState } from "react";
+import {
+    useEffect,
+    useRef,
+    useState,
+} from "react";
 
 import {
     View,
@@ -8,21 +12,36 @@ import {
     Pressable,
     ScrollView,
     Share,
+    Animated,
 } from "react-native";
 
-import { SafeAreaView } from "react-native-safe-area-context";
+import {
+    SafeAreaView,
+} from "react-native-safe-area-context";
 
 import globalStyle from "@/styles/globalStyles";
 
 import MenuSreen from "./menu";
 import HeaderScreen from "./header";
 
-import { criarHomeStyle } from "@/styles/homeStyles";
-import { useTema } from "@/contexts/TemaContext";
-import { useAuth } from "@/contexts/AuthContext";
+import ComentariosModalScreen from "@/components/modalComentarios";
+
+import {
+    criarHomeStyle,
+} from "@/styles/homeStyles";
+
+import {
+    useTema,
+} from "@/contexts/TemaContext";
+
+import {
+    useAuth,
+} from "@/contexts/AuthContext";
 
 import {
     buscarPublicacoes,
+    curtirPublicacao,
+    descurtirPublicacao,
     getUrlMidiaPublicacao,
     Publicacao,
 } from "@/services/publicacaoService";
@@ -31,18 +50,31 @@ import {
     getUrlFotoUsuario,
 } from "@/services/usuarioService";
 
+import { Ionicons } from "@expo/vector-icons";
+
 
 type Filtro =
     | "Todas"
+    | "Recentes"
+    | "Em alta"
     | "Meus posts";
 
 
 export default function HomeScreen() {
 
-    const { coresTema } = useTema();
+    // =====================================
+    // TEMA
+    // =====================================
+
+    const {
+        coresTema,
+    } = useTema();
+
 
     const homeStyle =
-        criarHomeStyle(coresTema);
+        criarHomeStyle(
+            coresTema
+        );
 
 
     // =====================================
@@ -74,7 +106,9 @@ export default function HomeScreen() {
     const [
         erro,
         setErro,
-    ] = useState<string | null>(null);
+    ] = useState<
+        string | null
+    >(null);
 
 
     // =====================================
@@ -84,7 +118,102 @@ export default function HomeScreen() {
     const [
         filtro,
         setFiltro,
-    ] = useState<Filtro>("Todas");
+    ] = useState<Filtro>(
+        "Todas"
+    );
+
+
+    // =====================================
+    // CURTIDA EM PROCESSAMENTO
+    // =====================================
+
+    const [
+        processandoCurtida,
+        setProcessandoCurtida,
+    ] = useState<
+        number | null
+    >(null);
+
+
+    // =====================================
+    // MODAL DE COMENTÁRIOS
+    // =====================================
+
+    const [
+        comentariosAberto,
+        setComentariosAberto,
+    ] = useState(false);
+
+
+    const [
+        postSelecionado,
+        setPostSelecionado,
+    ] = useState<
+        number | null
+    >(null);
+
+
+    // =====================================
+    // PLACEHOLDER
+    // =====================================
+
+    const placeholderOpacity =
+        useRef(
+            new Animated.Value(
+                0.35
+            )
+        ).current;
+
+
+    useEffect(() => {
+
+        if (!carregando) {
+
+            return;
+
+        }
+
+
+        const animacao =
+            Animated.loop(
+
+                Animated.sequence([
+
+                    Animated.timing(
+                        placeholderOpacity,
+                        {
+                            toValue: 0.8,
+                            duration: 700,
+                            useNativeDriver: true,
+                        }
+                    ),
+
+                    Animated.timing(
+                        placeholderOpacity,
+                        {
+                            toValue: 0.35,
+                            duration: 700,
+                            useNativeDriver: true,
+                        }
+                    ),
+
+                ])
+            );
+
+
+        animacao.start();
+
+
+        return () => {
+
+            animacao.stop();
+
+        };
+
+    }, [
+        carregando,
+        placeholderOpacity,
+    ]);
 
 
     // =====================================
@@ -93,7 +222,8 @@ export default function HomeScreen() {
 
     useEffect(() => {
 
-        let telaAtiva = true;
+        let telaAtiva =
+            true;
 
 
         async function carregarPublicacoes() {
@@ -106,9 +236,12 @@ export default function HomeScreen() {
                         "Sessão não encontrada. Faça login novamente."
                     );
 
-                    setCarregando(false);
+                    setCarregando(
+                        false
+                    );
 
                 }
+
 
                 return;
 
@@ -117,13 +250,19 @@ export default function HomeScreen() {
 
             try {
 
-                setCarregando(true);
+                setCarregando(
+                    true
+                );
 
-                setErro(null);
+                setErro(
+                    null
+                );
 
 
                 const resposta =
-                    await buscarPublicacoes(token);
+                    await buscarPublicacoes(
+                        token
+                    );
 
 
                 console.log(
@@ -132,7 +271,9 @@ export default function HomeScreen() {
                 );
 
 
-                if (!resposta.success) {
+                if (
+                    !resposta.success
+                ) {
 
                     throw new Error(
                         "Não foi possível carregar as publicações."
@@ -161,9 +302,11 @@ export default function HomeScreen() {
                 if (telaAtiva) {
 
                     setErro(
+
                         error instanceof Error
                             ? error.message
                             : "Não foi possível carregar as publicações."
+
                     );
 
                 }
@@ -173,7 +316,9 @@ export default function HomeScreen() {
 
                 if (telaAtiva) {
 
-                    setCarregando(false);
+                    setCarregando(
+                        false
+                    );
 
                 }
 
@@ -187,7 +332,8 @@ export default function HomeScreen() {
 
         return () => {
 
-            telaAtiva = false;
+            telaAtiva =
+                false;
 
         };
 
@@ -199,23 +345,350 @@ export default function HomeScreen() {
     // =====================================
 
     const publicacoesFiltradas =
-        publicacoes.filter((publicacao) => {
+        (() => {
+
+            let resultado =
+                [...publicacoes];
+
+
+            // =============================
+            // MEUS POSTS
+            // =============================
 
             if (
-                filtro === "Meus posts"
+                filtro ===
+                "Meus posts"
             ) {
 
-                return (
-                    publicacao.id_usuario ===
-                    usuario?.id_usuario
+                resultado =
+                    resultado.filter(
+                        (
+                            publicacao
+                        ) =>
+
+                            publicacao.id_usuario ===
+                            usuario?.id_usuario
+                    );
+
+            }
+
+
+            // =============================
+            // RECENTES
+            // =============================
+
+            if (
+                filtro ===
+                "Recentes"
+            ) {
+
+                resultado.sort(
+                    (
+                        a,
+                        b
+                    ) => {
+
+                        const dataA =
+                            new Date(
+                                a.criado_em_publicacao
+                            ).getTime();
+
+
+                        const dataB =
+                            new Date(
+                                b.criado_em_publicacao
+                            ).getTime();
+
+
+                        return (
+                            dataB -
+                            dataA
+                        );
+
+                    }
                 );
 
             }
 
 
-            return true;
+            // =============================
+            // EM ALTA
+            // =============================
 
-        });
+            if (
+                filtro ===
+                "Em alta"
+            ) {
+
+                resultado.sort(
+                    (
+                        a,
+                        b
+                    ) => {
+
+                        const totalA =
+                            (
+                                a.curtidas_count ??
+                                0
+                            )
+                            +
+                            (
+                                a.comentarios_count ??
+                                0
+                            );
+
+
+                        const totalB =
+                            (
+                                b.curtidas_count ??
+                                0
+                            )
+                            +
+                            (
+                                b.comentarios_count ??
+                                0
+                            );
+
+
+                        return (
+                            totalB -
+                            totalA
+                        );
+
+                    }
+                );
+
+            }
+
+
+            return resultado;
+
+        })();
+
+
+    // =====================================
+    // CURTIR / DESCURTIR
+    // =====================================
+
+    async function alternarCurtida(
+        publicacao: Publicacao
+    ) {
+
+        if (!token) {
+
+            return;
+
+        }
+
+
+        if (
+            processandoCurtida ===
+            publicacao.id_publicacao
+        ) {
+
+            return;
+
+        }
+
+
+        try {
+
+            setProcessandoCurtida(
+                publicacao.id_publicacao
+            );
+
+
+            const jaCurtiu =
+                Boolean(
+                    publicacao
+                        .curtido_por_mim
+                );
+
+
+            const resposta =
+                jaCurtiu
+
+                    ? await descurtirPublicacao(
+                        token,
+                        publicacao.id_publicacao
+                    )
+
+                    : await curtirPublicacao(
+                        token,
+                        publicacao.id_publicacao
+                    );
+
+
+            if (
+                !resposta.success
+            ) {
+
+                throw new Error(
+                    "Não foi possível atualizar a curtida."
+                );
+
+            }
+
+
+            setPublicacoes(
+                (
+                    atuais
+                ) =>
+
+                    atuais.map(
+                        (
+                            item
+                        ) => {
+
+                            if (
+                                item.id_publicacao !==
+                                publicacao.id_publicacao
+                            ) {
+
+                                return item;
+
+                            }
+
+
+                            return {
+
+                                ...item,
+
+                                curtido_por_mim:
+                                    resposta
+                                        .data
+                                        .curtido_por_mim,
+
+                                curtidas_count:
+                                    resposta
+                                        .data
+                                        .curtidas_count,
+
+                            };
+
+                        }
+                    )
+            );
+
+
+        } catch (error) {
+
+            console.log(
+                "ERRO CURTIDA:",
+                error
+            );
+
+
+        } finally {
+
+            setProcessandoCurtida(
+                null
+            );
+
+        }
+
+    }
+
+
+    // =====================================
+    // ABRIR COMENTÁRIOS
+    // =====================================
+
+    function abrirComentarios(
+        idPublicacao: number
+    ) {
+
+        setPostSelecionado(
+            idPublicacao
+        );
+
+
+        setComentariosAberto(
+            true
+        );
+
+    }
+
+
+    // =====================================
+    // FECHAR COMENTÁRIOS
+    // =====================================
+
+    function fecharComentarios() {
+
+        setComentariosAberto(
+            false
+        );
+
+
+        setPostSelecionado(
+            null
+        );
+
+    }
+
+
+    // =====================================
+    // COMENTÁRIO ENVIADO
+    // =====================================
+
+    function comentarioEnviado(
+        totalComentarios?: number
+    ) {
+
+        if (
+            postSelecionado ===
+            null
+        ) {
+
+            return;
+
+        }
+
+
+        setPublicacoes(
+            (
+                atuais
+            ) =>
+
+                atuais.map(
+                    (
+                        publicacao
+                    ) => {
+
+                        if (
+                            publicacao.id_publicacao !==
+                            postSelecionado
+                        ) {
+
+                            return publicacao;
+
+                        }
+
+
+                        return {
+
+                            ...publicacao,
+
+                            comentarios_count:
+                                totalComentarios !==
+                                    undefined
+
+                                    ? totalComentarios
+
+                                    : (
+                                        publicacao
+                                            .comentarios_count ??
+                                        0
+                                    ) + 1,
+
+                        };
+
+                    }
+                )
+        );
+
+    }
 
 
     // =====================================
@@ -234,7 +707,9 @@ export default function HomeScreen() {
 
 
         const dataPublicacao =
-            new Date(data);
+            new Date(
+                data
+            );
 
 
         if (
@@ -274,7 +749,9 @@ export default function HomeScreen() {
             await Share.share({
 
                 message:
-                    publicacao.texto_publicacao ??
+                    publicacao
+                        .texto_publicacao
+                    ??
                     "Confira esta publicação no Conexão 360°.",
 
             });
@@ -341,6 +818,7 @@ export default function HomeScreen() {
                                 source={require(
                                     "@/assets/images/img/search.png"
                                 )}
+
                                 style={
                                     homeStyle.iconeBusca
                                 }
@@ -351,7 +829,9 @@ export default function HomeScreen() {
                                 style={
                                     homeStyle.txtBusca
                                 }
+
                                 placeholder="Buscar"
+
                                 placeholderTextColor="#888888"
                             />
 
@@ -370,50 +850,61 @@ export default function HomeScreen() {
 
                         {[
                             "Todas",
+                            "Recentes",
+                            "Em alta",
                             "Meus posts",
-                        ].map((item) => {
+                        ].map(
+                            (
+                                item
+                            ) => {
 
-                            const ativo =
-                                filtro === item;
+                                const ativo =
+                                    filtro ===
+                                    item;
 
 
-                            return (
+                                return (
 
-                                <Pressable
-                                    key={item}
+                                    <Pressable
+                                        key={
+                                            item
+                                        }
 
-                                    style={[
-                                        homeStyle.filtro,
-
-                                        ativo &&
-                                        homeStyle.filtroAtivo,
-                                    ]}
-
-                                    onPress={() =>
-                                        setFiltro(
-                                            item as Filtro
-                                        )
-                                    }
-                                >
-
-                                    <Text
                                         style={[
-                                            homeStyle.txtFiltro,
+                                            homeStyle.filtro,
 
                                             ativo &&
-                                            homeStyle.txtFiltroAtivo,
+                                            homeStyle.filtroAtivo,
                                         ]}
+
+                                        onPress={() =>
+                                            setFiltro(
+                                                item as Filtro
+                                            )
+                                        }
                                     >
 
-                                        {item}
+                                        <Text
+                                            style={[
+                                                homeStyle.txtFiltro,
 
-                                    </Text>
+                                                ativo &&
+                                                homeStyle.txtFiltroAtivo,
+                                            ]}
+                                        >
 
-                                </Pressable>
+                                            {
+                                                item
+                                            }
 
-                            );
+                                        </Text>
 
-                        })}
+                                    </Pressable>
+
+                                );
+
+                            }
+                        )}
 
                     </View>
 
@@ -449,6 +940,7 @@ export default function HomeScreen() {
                                 source={require(
                                     "@/assets/images/img/banner 1.png"
                                 )}
+
                                 style={
                                     homeStyle.banner
                                 }
@@ -493,21 +985,172 @@ export default function HomeScreen() {
                                 homeStyle.tituloSecao
                             }
                         >
+
                             Publicações
+
                         </Text>
 
 
-                        {/* ================= CARREGANDO ================= */}
+                        {/* ================= PLACEHOLDERS ================= */}
 
                         {carregando && (
 
-                            <Text
-                                style={
-                                    homeStyle.semPublicacoes
-                                }
-                            >
-                                Carregando publicações...
-                            </Text>
+                            <>
+
+                                {[1, 2, 3].map(
+                                    (
+                                        item
+                                    ) => (
+
+                                        <View
+                                            key={
+                                                item
+                                            }
+
+                                            style={
+                                                homeStyle.cardPublicacao
+                                            }
+                                        >
+
+                                            <Animated.View
+                                                style={{
+                                                    opacity:
+                                                        placeholderOpacity,
+                                                }}
+                                            >
+
+                                                {/* AUTOR */}
+
+                                                <View
+                                                    style={
+                                                        homeStyle.skeletonHeader
+                                                    }
+                                                >
+
+                                                    <View
+                                                        style={
+                                                            homeStyle.skeletonAvatar
+                                                        }
+                                                    />
+
+
+                                                    <View
+                                                        style={
+                                                            homeStyle.skeletonAutor
+                                                        }
+                                                    >
+
+                                                        <View
+                                                            style={[
+                                                                homeStyle.skeletonLinha,
+                                                                homeStyle.skeletonNome,
+                                                            ]}
+                                                        />
+
+                                                        <View
+                                                            style={[
+                                                                homeStyle.skeletonLinhaPequena,
+                                                                homeStyle.skeletonData,
+                                                            ]}
+                                                        />
+
+                                                    </View>
+
+                                                </View>
+
+
+                                                {/* TEXTO */}
+
+                                                <View
+                                                    style={[
+                                                        homeStyle.skeletonLinha,
+                                                        homeStyle.skeletonTexto1,
+                                                    ]}
+                                                />
+
+                                                <View
+                                                    style={[
+                                                        homeStyle.skeletonLinha,
+                                                        homeStyle.skeletonTexto2,
+                                                    ]}
+                                                />
+
+                                                <View
+                                                    style={[
+                                                        homeStyle.skeletonLinha,
+                                                        homeStyle.skeletonTexto3,
+                                                    ]}
+                                                />
+
+
+                                                {/* IMAGEM */}
+
+                                                <View
+                                                    style={
+                                                        homeStyle.skeletonImagem
+                                                    }
+                                                />
+
+
+                                                {/* CONTADORES */}
+
+                                                <View
+                                                    style={
+                                                        homeStyle.skeletonContadores
+                                                    }
+                                                >
+
+                                                    <View
+                                                        style={
+                                                            homeStyle.skeletonContadorCurto
+                                                        }
+                                                    />
+
+                                                    <View
+                                                        style={
+                                                            homeStyle.skeletonContadorLongo
+                                                        }
+                                                    />
+
+                                                </View>
+
+
+                                                {/* AÇÕES */}
+
+                                                <View
+                                                    style={
+                                                        homeStyle.skeletonAcoes
+                                                    }
+                                                >
+
+                                                    <View
+                                                        style={
+                                                            homeStyle.skeletonAcao
+                                                        }
+                                                    />
+
+                                                    <View
+                                                        style={
+                                                            homeStyle.skeletonAcao
+                                                        }
+                                                    />
+
+                                                    <View
+                                                        style={
+                                                            homeStyle.skeletonAcao
+                                                        }
+                                                    />
+
+                                                </View>
+
+                                            </Animated.View>
+
+                                        </View>
+
+                                    )
+                                )}
+
+                            </>
 
                         )}
 
@@ -522,7 +1165,11 @@ export default function HomeScreen() {
                                         homeStyle.semPublicacoes
                                     }
                                 >
-                                    {erro}
+
+                                    {
+                                        erro
+                                    }
+
                                 </Text>
 
                             )}
@@ -533,31 +1180,65 @@ export default function HomeScreen() {
                         {!carregando &&
                             !erro &&
                             publicacoesFiltradas.map(
-                                (publicacao) => {
+                                (
+                                    publicacao
+                                ) => {
 
 
-                                    // =====================================
-                                    // FOTO DO AUTOR
-                                    // =====================================
+                                    // =============================
+                                    // FOTO
+                                    // =============================
 
                                     const fotoAutor =
                                         getUrlFotoUsuario(
+
                                             publicacao
                                                 .usuario
-                                                ?.foto_usuario ??
+                                                ?.foto_usuario
+                                            ??
                                             null
+
                                         );
 
 
-                                    // =====================================
+                                    // =============================
                                     // MÍDIA
-                                    // =====================================
+                                    // =============================
 
                                     const midia =
                                         getUrlMidiaPublicacao(
+
                                             publicacao
                                                 .midia_publicacao
+
                                         );
+
+
+                                    // =============================
+                                    // CURTIDA
+                                    // =============================
+
+                                    const curtido =
+                                        Boolean(
+
+                                            publicacao
+                                                .curtido_por_mim
+
+                                        );
+
+
+                                    const quantidadeCurtidas =
+                                        publicacao
+                                            .curtidas_count
+                                        ??
+                                        0;
+
+
+                                    const quantidadeComentarios =
+                                        publicacao
+                                            .comentarios_count
+                                        ??
+                                        0;
 
 
                                     return (
@@ -582,12 +1263,12 @@ export default function HomeScreen() {
                                                 }
                                             >
 
-
                                                 {fotoAutor ? (
 
                                                     <Image
                                                         source={{
-                                                            uri: fotoAutor,
+                                                            uri:
+                                                                fotoAutor,
                                                         }}
 
                                                         style={
@@ -629,7 +1310,8 @@ export default function HomeScreen() {
                                                         {
                                                             publicacao
                                                                 .usuario
-                                                                ?.nome_usuario ??
+                                                                ?.nome_usuario
+                                                            ??
                                                             "Usuário"
                                                         }
 
@@ -644,8 +1326,10 @@ export default function HomeScreen() {
 
                                                         {
                                                             formatarData(
+
                                                                 publicacao
                                                                     .criado_em_publicacao
+
                                                             )
                                                         }
 
@@ -683,7 +1367,8 @@ export default function HomeScreen() {
 
                                                 <Image
                                                     source={{
-                                                        uri: midia,
+                                                        uri:
+                                                            midia,
                                                     }}
 
                                                     style={
@@ -696,6 +1381,73 @@ export default function HomeScreen() {
                                             )}
 
 
+                                            {/* ================= CONTADORES ================= */}
+
+                                            <View
+                                                style={
+                                                    homeStyle.areaContadores
+                                                }
+                                            >
+
+                                                <Text
+                                                    style={
+                                                        homeStyle.txtContador
+                                                    }
+                                                >
+
+                                                    {
+                                                        quantidadeCurtidas
+                                                    }{" "}
+
+                                                    {
+                                                        quantidadeCurtidas ===
+                                                            1
+
+                                                            ? "curtida"
+
+                                                            : "curtidas"
+                                                    }
+
+                                                </Text>
+
+
+                                                <Pressable
+                                                    onPress={() =>
+                                                        abrirComentarios(
+
+                                                            publicacao
+                                                                .id_publicacao
+
+                                                        )
+                                                    }
+                                                >
+
+                                                    <Text
+                                                        style={
+                                                            homeStyle.txtContador
+                                                        }
+                                                    >
+
+                                                        {
+                                                            quantidadeComentarios
+                                                        }{" "}
+
+                                                        {
+                                                            quantidadeComentarios ===
+                                                                1
+
+                                                                ? "comentário"
+
+                                                                : "comentários"
+                                                        }
+
+                                                    </Text>
+
+                                                </Pressable>
+
+                                            </View>
+
+
                                             {/* ================= AÇÕES ================= */}
 
                                             <View
@@ -704,7 +1456,6 @@ export default function HomeScreen() {
                                                 }
                                             >
 
-
                                                 {/* CURTIR */}
 
                                                 <Pressable
@@ -712,26 +1463,57 @@ export default function HomeScreen() {
                                                         homeStyle.acao
                                                     }
 
-                                                    disabled
+                                                    disabled={
+                                                        processandoCurtida ===
+                                                        publicacao.id_publicacao
+                                                    }
+
+                                                    onPress={() =>
+                                                        alternarCurtida(
+                                                            publicacao
+                                                        )
+                                                    }
                                                 >
 
-                                                    <Image
-                                                        source={require(
-                                                            "@/assets/images/img/heart.png"
-                                                        )}
-
-                                                        style={
-                                                            homeStyle.iconeAcao
+                                                    <Ionicons
+                                                        name={
+                                                            curtido
+                                                                ? "heart"
+                                                                : "heart-outline"
                                                         }
+
+                                                        size={17}
+
+                                                        color={
+                                                            curtido
+                                                                ? coresTema.destaque
+                                                                : coresTema.texto
+                                                        }
+
+                                                        style={{
+                                                            opacity:
+                                                                curtido
+                                                                    ? 1
+                                                                    : 0.7,
+                                                        }}
                                                     />
 
 
                                                     <Text
-                                                        style={
-                                                            homeStyle.txtAcao
-                                                        }
+                                                        style={[
+                                                            homeStyle.txtAcao,
+
+                                                            curtido &&
+                                                            homeStyle.txtAcaoAtivo,
+                                                        ]}
                                                     >
-                                                        Curtir
+
+                                                        {
+                                                            curtido
+                                                                ? "Curtido"
+                                                                : "Curtir"
+                                                        }
+
                                                     </Text>
 
                                                 </Pressable>
@@ -744,7 +1526,14 @@ export default function HomeScreen() {
                                                         homeStyle.acao
                                                     }
 
-                                                    disabled
+                                                    onPress={() =>
+                                                        abrirComentarios(
+
+                                                            publicacao
+                                                                .id_publicacao
+
+                                                        )
+                                                    }
                                                 >
 
                                                     <Image
@@ -763,7 +1552,9 @@ export default function HomeScreen() {
                                                             homeStyle.txtAcao
                                                         }
                                                     >
+
                                                         Comentar
+
                                                     </Text>
 
                                                 </Pressable>
@@ -799,14 +1590,14 @@ export default function HomeScreen() {
                                                             homeStyle.txtAcao
                                                         }
                                                     >
+
                                                         Compartilhar
+
                                                     </Text>
 
                                                 </Pressable>
 
-
                                             </View>
-
 
                                         </View>
 
@@ -828,11 +1619,12 @@ export default function HomeScreen() {
                                         homeStyle.semPublicacoes
                                     }
                                 >
+
                                     Nenhuma publicação encontrada.
+
                                 </Text>
 
                             )}
-
 
                     </ScrollView>
 
@@ -840,6 +1632,29 @@ export default function HomeScreen() {
                     {/* ================= FOOTER ================= */}
 
                     <MenuSreen />
+
+
+                    {/* ================= MODAL COMENTÁRIOS ================= */}
+
+                    <ComentariosModalScreen
+
+                        visible={
+                            comentariosAberto
+                        }
+
+                        postId={
+                            postSelecionado
+                        }
+
+                        onClose={
+                            fecharComentarios
+                        }
+
+                        onComentarioEnviado={
+                            comentarioEnviado
+                        }
+
+                    />
 
 
                 </SafeAreaView>

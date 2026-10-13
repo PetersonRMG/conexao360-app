@@ -23,48 +23,38 @@ import {
     useTema,
 } from "@/contexts/TemaContext";
 
-import { criarComentariosModalStyles } from "@/styles/criarComentariosStyles";
+import {
+    useAuth,
+} from "@/contexts/AuthContext";
 
+import {
+    buscarComentarios,
+    criarComentario,
+    ComentarioPublicacao,
+} from "@/services/publicacaoService";
 
-interface Comentario {
-    id: number;
-    nome: string;
-    horario: string;
-    texto: string;
-}
+import {
+    getUrlFotoUsuario,
+} from "@/services/usuarioService";
+
+import {
+    criarComentariosModalStyles,
+} from "@/styles/criarComentariosStyles";
 
 
 interface ComentariosModalProps {
+
     visible: boolean;
+
     onClose: () => void;
-    postId?: number | string | null;
-    onComentarioEnviado?: () => void;
+
+    postId?: number | null;
+
+    onComentarioEnviado?: (
+        totalComentarios: number
+    ) => void;
+
 }
-
-
-const COMENTARIOS_INICIAIS: Comentario[] = [
-    {
-        id: 1,
-        nome: "Comissão jurídica",
-        horario: "10m atrás",
-        texto:
-            "Obrigada pelo convite. Será um prazer participar!",
-    },
-    {
-        id: 2,
-        nome: "Dra. Fernanda Silva",
-        horario: "8m atrás",
-        texto:
-            "Excelente conteúdo. Muito importante para quem está participando do evento.",
-    },
-    {
-        id: 3,
-        nome: "Dr. Rafael Mendes",
-        horario: "2m atrás",
-        texto:
-            "Concordo. Networking também faz parte da experiência.",
-    },
-];
 
 
 export default function ComentariosModalScreen({
@@ -76,108 +66,480 @@ export default function ComentariosModalScreen({
 
 }: ComentariosModalProps) {
 
-    const { coresTema } =
-        useTema();
+
+    const {
+        coresTema,
+    } = useTema();
+
+
+    const {
+        token,
+        usuario,
+    } = useAuth();
+
 
     const styles =
         criarComentariosModalStyles(
             coresTema
         );
 
+
     const insets =
         useSafeAreaInsets();
 
-    const [novoComentario, setNovoComentario] =
-        useState("");
 
-    const [comentarios, setComentarios] =
-        useState<Comentario[]>(
-            COMENTARIOS_INICIAIS
+    const [
+        novoComentario,
+        setNovoComentario,
+    ] = useState("");
+
+
+    const [
+        comentarios,
+        setComentarios,
+    ] = useState<
+        ComentarioPublicacao[]
+    >([]);
+
+
+    const [
+        carregando,
+        setCarregando,
+    ] = useState(false);
+
+
+    const [
+        enviando,
+        setEnviando,
+    ] = useState(false);
+
+
+    const [
+        erro,
+        setErro,
+    ] = useState<
+        string | null
+    >(null);
+
+
+    // =====================================
+    // FOTO DO USUÁRIO LOGADO
+    // =====================================
+
+    const fotoUsuario =
+        getUrlFotoUsuario(
+            usuario?.foto_usuario ??
+            null
         );
 
 
-    // =========================
-    // TROCA DE POST
-    // =========================
+    // =====================================
+    // BUSCAR COMENTÁRIOS
+    // =====================================
 
     useEffect(() => {
 
-        if (visible) {
+        let componenteAtivo =
+            true;
+
+
+        async function carregarComentarios() {
+
+            if (!visible) {
+
+                return;
+
+            }
+
 
             setNovoComentario("");
 
-            // Futuramente:
-            // GET /api/feeds/{postId}/comentarios
+            setErro(null);
+
+            setComentarios([]);
+
+
+            if (!postId) {
+
+                return;
+
+            }
+
+
+            if (!token) {
+
+                setErro(
+                    "Sessão não encontrada."
+                );
+
+                return;
+
+            }
+
+
+            try {
+
+                setCarregando(true);
+
+
+                const resposta =
+                    await buscarComentarios(
+                        token,
+                        postId
+                    );
+
+
+                if (!resposta.success) {
+
+                    throw new Error(
+                        "Não foi possível carregar os comentários."
+                    );
+
+                }
+
+
+                if (componenteAtivo) {
+
+                    setComentarios(
+                        resposta.data ??
+                        []
+                    );
+
+                }
+
+
+            } catch (error) {
+
+                console.log(
+                    "ERRO COMENTÁRIOS:",
+                    error
+                );
+
+
+                if (componenteAtivo) {
+
+                    setErro(
+
+                        error instanceof Error
+                            ? error.message
+                            : "Não foi possível carregar os comentários."
+
+                    );
+
+                }
+
+
+            } finally {
+
+                if (componenteAtivo) {
+
+                    setCarregando(
+                        false
+                    );
+
+                }
+
+            }
 
         }
 
-    }, [visible, postId]);
+
+        carregarComentarios();
 
 
-    // =========================
+        return () => {
+
+            componenteAtivo =
+                false;
+
+        };
+
+    }, [
+        visible,
+        postId,
+        token,
+    ]);
+
+
+    // =====================================
+    // FORMATAR HORÁRIO
+    // =====================================
+
+    function formatarHorario(
+        data: string
+    ) {
+
+        if (!data) {
+
+            return "";
+
+        }
+
+
+        const dataComentario =
+            new Date(data);
+
+
+        if (
+            Number.isNaN(
+                dataComentario.getTime()
+            )
+        ) {
+
+            return "";
+
+        }
+
+
+        const diferenca =
+            Date.now()
+            -
+            dataComentario.getTime();
+
+
+        const minutos =
+            Math.floor(
+                diferenca /
+                60000
+            );
+
+
+        if (
+            minutos < 1
+        ) {
+
+            return "Agora";
+
+        }
+
+
+        if (
+            minutos < 60
+        ) {
+
+            return `${minutos}m atrás`;
+
+        }
+
+
+        const horas =
+            Math.floor(
+                minutos /
+                60
+            );
+
+
+        if (
+            horas < 24
+        ) {
+
+            return `${horas}h atrás`;
+
+        }
+
+
+        const dias =
+            Math.floor(
+                horas /
+                24
+            );
+
+
+        if (
+            dias < 7
+        ) {
+
+            return `${dias}d atrás`;
+
+        }
+
+
+        return dataComentario
+            .toLocaleDateString(
+                "pt-BR",
+                {
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "numeric",
+                }
+            );
+
+    }
+
+
+    // =====================================
     // ENVIAR COMENTÁRIO
-    // =========================
+    // =====================================
 
-    const enviarComentario = () => {
+    async function enviarComentario() {
 
         const texto =
             novoComentario.trim();
 
+
         if (!texto) {
+
             return;
+
         }
 
-        const comentario: Comentario = {
-            id: Date.now(),
-            nome: "Você",
-            horario: "Agora",
-            texto,
-        };
 
-        setComentarios(
-            (atuais) => [
-                ...atuais,
-                comentario,
-            ]
-        );
+        if (!token) {
 
-        setNovoComentario("");
+            return;
 
-        onComentarioEnviado?.();
+        }
 
-        // Futuramente:
-        // POST /api/feeds/{postId}/comentarios
 
-    };
+        if (!postId) {
 
+            return;
+
+        }
+
+
+        if (enviando) {
+
+            return;
+
+        }
+
+
+        try {
+
+            setEnviando(
+                true
+            );
+
+            setErro(
+                null
+            );
+
+
+            const resposta =
+                await criarComentario(
+                    token,
+                    postId,
+                    texto
+                );
+
+
+            if (!resposta.success) {
+
+                throw new Error(
+                    "Não foi possível enviar o comentário."
+                );
+
+            }
+
+
+            const comentarioCriado =
+                resposta
+                    .data
+                    .comentario;
+
+
+            setComentarios(
+                (atuais) => [
+
+                    ...atuais,
+
+                    comentarioCriado,
+
+                ]
+            );
+
+
+            setNovoComentario(
+                ""
+            );
+
+
+            onComentarioEnviado?.(
+                resposta
+                    .data
+                    .comentarios_count
+            );
+
+
+        } catch (error) {
+
+            console.log(
+                "ERRO ENVIAR COMENTÁRIO:",
+                error
+            );
+
+
+            setErro(
+
+                error instanceof Error
+                    ? error.message
+                    : "Não foi possível enviar o comentário."
+
+            );
+
+
+        } finally {
+
+            setEnviando(
+                false
+            );
+
+        }
+
+    }
+
+
+    // =====================================
+    // TELA
+    // =====================================
 
     return (
 
         <Modal
-            visible={visible}
+            visible={
+                visible
+            }
+
             transparent
+
             animationType="slide"
+
             statusBarTranslucent
-            onRequestClose={onClose}
+
+            onRequestClose={
+                onClose
+            }
         >
 
             <KeyboardAvoidingView
-                style={styles.keyboard}
+                style={
+                    styles.keyboard
+                }
+
                 behavior={
-                    Platform.OS === "ios"
+                    Platform.OS ===
+                        "ios"
                         ? "padding"
                         : "height"
                 }
             >
+
 
                 {/* =========================
                     FUNDO / FECHAR
                 ========================= */}
 
                 <Pressable
-                    style={styles.overlay}
-                    onPress={onClose}
+                    style={
+                        styles.overlay
+                    }
+
+                    onPress={
+                        onClose
+                    }
                 >
+
 
                     {/* =========================
                         BOTTOM SHEET
@@ -186,6 +548,7 @@ export default function ComentariosModalScreen({
                     <Pressable
                         style={[
                             styles.sheet,
+
                             {
                                 paddingBottom:
                                     Math.max(
@@ -194,11 +557,13 @@ export default function ComentariosModalScreen({
                                     ),
                             },
                         ]}
+
                         onPress={
                             (event) =>
                                 event.stopPropagation()
                         }
                     >
+
 
                         {/* =========================
                             HANDLE
@@ -226,9 +591,11 @@ export default function ComentariosModalScreen({
                                     styles.titulo
                                 }
                             >
+
                                 Comentários ({
                                     comentarios.length
                                 })
+
                             </Text>
 
 
@@ -236,7 +603,10 @@ export default function ComentariosModalScreen({
                                 style={
                                     styles.btnFechar
                                 }
-                                onPress={onClose}
+
+                                onPress={
+                                    onClose
+                                }
                             >
 
                                 <Text
@@ -244,7 +614,9 @@ export default function ComentariosModalScreen({
                                         styles.txtFechar
                                     }
                                 >
+
                                     ×
+
                                 </Text>
 
                             </Pressable>
@@ -257,106 +629,231 @@ export default function ComentariosModalScreen({
                         ========================= */}
 
                         <ScrollView
-                            style={styles.scroll}
+                            style={
+                                styles.scroll
+                            }
+
                             contentContainerStyle={
                                 styles.scrollConteudo
                             }
+
                             showsVerticalScrollIndicator={
                                 false
                             }
+
                             keyboardShouldPersistTaps="handled"
                         >
 
-                            {comentarios.map(
-                                (comentario) => (
 
-                                    <View
-                                        key={
-                                            comentario.id
-                                        }
+                            {/* CARREGANDO */}
+
+                            {carregando && (
+
+                                <Text
+                                    style={
+                                        styles.textoComentario
+                                    }
+                                >
+
+                                    Carregando comentários...
+
+                                </Text>
+
+                            )}
+
+
+                            {/* ERRO */}
+
+                            {!carregando &&
+                                erro && (
+
+                                    <Text
                                         style={
-                                            styles.comentario
+                                            styles.textoComentario
                                         }
                                     >
 
-                                        <Image
-                                            source={require(
-                                                "@/assets/images/img/avatar.png"
-                                            )}
-                                            style={
-                                                styles.avatar
-                                            }
-                                        />
+                                        {erro}
+
+                                    </Text>
+
+                                )}
 
 
-                                        <View
-                                            style={
-                                                styles.comentarioConteudo
-                                            }
-                                        >
+                            {/* SEM COMENTÁRIOS */}
+
+                            {!carregando &&
+                                !erro &&
+                                comentarios.length ===
+                                0 && (
+
+                                    <Text
+                                        style={
+                                            styles.textoComentario
+                                        }
+                                    >
+
+                                        Seja o primeiro a comentar.
+
+                                    </Text>
+
+                                )}
+
+
+                            {/* COMENTÁRIOS */}
+
+                            {!carregando &&
+                                comentarios.map(
+                                    (
+                                        comentario
+                                    ) => {
+
+
+                                        const fotoAutor =
+                                            getUrlFotoUsuario(
+
+                                                comentario
+                                                    .usuario
+                                                    ?.foto_usuario
+                                                ??
+                                                null
+
+                                            );
+
+
+                                        return (
 
                                             <View
+                                                key={
+                                                    comentario
+                                                        .id_comentario_publicacao
+                                                }
+
                                                 style={
-                                                    styles.comentarioTopo
+                                                    styles.comentario
                                                 }
                                             >
 
+
+                                                {/* FOTO */}
+
+                                                {fotoAutor ? (
+
+                                                    <Image
+                                                        source={{
+                                                            uri:
+                                                                fotoAutor,
+                                                        }}
+
+                                                        style={
+                                                            styles.avatar
+                                                        }
+                                                    />
+
+                                                ) : (
+
+                                                    <Image
+                                                        source={require(
+                                                            "@/assets/images/img/avatar.png"
+                                                        )}
+
+                                                        style={
+                                                            styles.avatar
+                                                        }
+                                                    />
+
+                                                )}
+
+
+                                                {/* CONTEÚDO */}
+
                                                 <View
                                                     style={
-                                                        styles.comentarioAutor
+                                                        styles.comentarioConteudo
                                                     }
                                                 >
 
-                                                    <Text
+                                                    <View
                                                         style={
-                                                            styles.nome
+                                                            styles.comentarioTopo
                                                         }
                                                     >
-                                                        {
-                                                            comentario.nome
-                                                        }
-                                                    </Text>
+
+                                                        <View
+                                                            style={
+                                                                styles.comentarioAutor
+                                                            }
+                                                        >
+
+                                                            <Text
+                                                                style={
+                                                                    styles.nome
+                                                                }
+                                                            >
+
+                                                                {
+                                                                    comentario
+                                                                        .usuario
+                                                                        ?.nome_usuario
+                                                                    ??
+                                                                    "Usuário"
+                                                                }
+
+                                                            </Text>
+
+
+                                                            <Text
+                                                                style={
+                                                                    styles.horario
+                                                                }
+                                                            >
+
+                                                                {
+                                                                    formatarHorario(
+                                                                        comentario
+                                                                            .criado_em_comentario_publicacao
+                                                                    )
+                                                                }
+
+                                                            </Text>
+
+                                                        </View>
+
+
+                                                        <Text
+                                                            style={
+                                                                styles.mais
+                                                            }
+                                                        >
+
+                                                            ⋮
+
+                                                        </Text>
+
+                                                    </View>
+
 
                                                     <Text
                                                         style={
-                                                            styles.horario
+                                                            styles.textoComentario
                                                         }
                                                     >
+
                                                         {
-                                                            comentario.horario
+                                                            comentario
+                                                                .texto_comentario_publicacao
                                                         }
+
                                                     </Text>
 
                                                 </View>
 
-
-                                                <Text
-                                                    style={
-                                                        styles.mais
-                                                    }
-                                                >
-                                                    ⋮
-                                                </Text>
-
                                             </View>
 
+                                        );
 
-                                            <Text
-                                                style={
-                                                    styles.textoComentario
-                                                }
-                                            >
-                                                {
-                                                    comentario.texto
-                                                }
-                                            </Text>
-
-                                        </View>
-
-                                    </View>
-
-                                )
-                            )}
+                                    }
+                                )}
 
                         </ScrollView>
 
@@ -371,15 +868,38 @@ export default function ComentariosModalScreen({
                             }
                         >
 
-                            <Image
-                                source={require(
-                                    "@/assets/images/img/avatar.png"
-                                )}
-                                style={
-                                    styles.avatarInput
-                                }
-                            />
 
+                            {/* FOTO USUÁRIO */}
+
+                            {fotoUsuario ? (
+
+                                <Image
+                                    source={{
+                                        uri:
+                                            fotoUsuario,
+                                    }}
+
+                                    style={
+                                        styles.avatarInput
+                                    }
+                                />
+
+                            ) : (
+
+                                <Image
+                                    source={require(
+                                        "@/assets/images/img/avatar.png"
+                                    )}
+
+                                    style={
+                                        styles.avatarInput
+                                    }
+                                />
+
+                            )}
+
+
+                            {/* INPUT */}
 
                             <View
                                 style={
@@ -391,18 +911,30 @@ export default function ComentariosModalScreen({
                                     value={
                                         novoComentario
                                     }
+
                                     onChangeText={
                                         setNovoComentario
                                     }
+
                                     style={
                                         styles.input
                                     }
+
                                     placeholder="Escreva um comentário..."
+
                                     placeholderTextColor={
                                         coresTema.textoSecundario
                                     }
+
                                     multiline
-                                    maxLength={500}
+
+                                    maxLength={
+                                        500
+                                    }
+
+                                    editable={
+                                        !enviando
+                                    }
                                 />
 
 
@@ -410,6 +942,7 @@ export default function ComentariosModalScreen({
                                     source={require(
                                         "@/assets/images/img/smile.png"
                                     )}
+
                                     style={
                                         styles.iconeEmoji
                                     }
@@ -418,21 +951,39 @@ export default function ComentariosModalScreen({
                             </View>
 
 
+                            {/* ENVIAR */}
+
                             <Pressable
+                                disabled={
+                                    enviando ||
+                                    !novoComentario.trim()
+                                }
+
                                 onPress={
                                     enviarComentario
                                 }
-                                style={({ pressed }) => [
-                                    styles.btnEnviar,
-                                    pressed &&
-                                    styles.btnEnviarPressed,
-                                ]}
+
+                                style={({
+                                    pressed,
+                                }) => [
+
+                                        styles.btnEnviar,
+
+                                        pressed &&
+                                        styles.btnEnviarPressed,
+
+                                        enviando && {
+                                            opacity: 0.6,
+                                        },
+
+                                    ]}
                             >
 
                                 <Image
                                     source={require(
                                         "@/assets/images/img/send.png"
                                     )}
+
                                     style={
                                         styles.iconeEnviar
                                     }
