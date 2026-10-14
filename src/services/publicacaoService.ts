@@ -44,6 +44,23 @@ export type Publicacao = {
 
 
 // =====================================
+// IMAGEM DE NOVA PUBLICAÇÃO
+// =====================================
+
+export type ImagemNovaPublicacao = {
+  uri: string;
+
+  fileName?:
+  string | null;
+
+  mimeType?:
+  string | null;
+
+  file?: any;
+};
+
+
+// =====================================
 // COMENTÁRIO
 // =====================================
 
@@ -72,6 +89,15 @@ export type ComentarioPublicacao = {
 type PublicacoesResponse = {
   success: boolean;
   data: Publicacao[];
+};
+
+
+type CriarPublicacaoResponse = {
+  success: boolean;
+
+  message: string;
+
+  data: Publicacao;
 };
 
 
@@ -122,6 +148,82 @@ export async function buscarPublicacoes(
     {
       method: "GET",
       token,
+    }
+  );
+
+}
+
+
+// =====================================
+// CRIAR PUBLICAÇÃO
+// =====================================
+
+export async function criarPublicacao(
+  token: string,
+  texto: string,
+  imagem?: ImagemNovaPublicacao | null
+) {
+
+  const formData =
+    new FormData();
+
+
+  const textoLimpo =
+    texto.trim();
+
+
+  if (textoLimpo) {
+
+    formData.append(
+      "texto_publicacao",
+      textoLimpo
+    );
+
+  }
+
+
+  if (imagem) {
+
+    // No Expo Web, o ImagePicker pode fornecer
+    // o próprio File do navegador.
+    if (imagem.file) {
+
+      formData.append(
+        "midia_publicacao",
+        imagem.file
+      );
+
+    } else {
+
+      // No Android/iOS, o fetch do React Native
+      // aceita este formato dentro do FormData.
+      formData.append(
+        "midia_publicacao",
+        {
+          uri:
+            imagem.uri,
+
+          name:
+            imagem.fileName ??
+            `publicacao_${Date.now()}.jpg`,
+
+          type:
+            imagem.mimeType ??
+            "image/jpeg",
+        } as any
+      );
+
+    }
+
+  }
+
+
+  return apiFetch<CriarPublicacaoResponse>(
+    "/api/v1/publicacoes",
+    {
+      method: "POST",
+      token,
+      body: formData,
     }
   );
 

@@ -1,5 +1,10 @@
-import { useState } from "react";
-import { router } from "expo-router";
+import {
+    useState,
+} from "react";
+
+import {
+    router,
+} from "expo-router";
 
 import {
     View,
@@ -11,118 +16,438 @@ import {
     TextInput,
     KeyboardAvoidingView,
     Platform,
+    Alert,
 } from "react-native";
 
-import { SafeAreaView } from "react-native-safe-area-context";
+import {
+    SafeAreaView,
+} from "react-native-safe-area-context";
+
+import * as ImagePicker from "expo-image-picker";
 
 import globalStyle from "@/styles/globalStyles";
-import { criarPostStyle } from "@/styles/criarPostStyles";
-import { useTema } from "@/contexts/TemaContext";
+
+import {
+    criarPostStyle,
+} from "@/styles/criarPostStyles";
+
+import {
+    useTema,
+} from "@/contexts/TemaContext";
+
+import {
+    useAuth,
+} from "@/contexts/AuthContext";
+
+import {
+    criarPublicacao,
+} from "@/services/publicacaoService";
 
 import MenuSreen from "./menu";
 
+
 export default function CriarPostScreen() {
 
-    
-        const { coresTema } = useTema();
-    
-    const criarPostStyles = criarPostStyle(coresTema);
+    // =====================================
+    // TEMA
+    // =====================================
 
-    const [titulo, setTitulo] = useState("");
-    const [descricao, setDescricao] = useState("");
+    const {
+        coresTema,
+    } = useTema();
 
-    const [tags, setTags] = useState([
+
+    const criarPostStyles =
+        criarPostStyle(
+            coresTema
+        );
+
+
+    // =====================================
+    // AUTENTICAÇÃO
+    // =====================================
+
+    const {
+        token,
+    } = useAuth();
+
+
+    // =====================================
+    // FORMULÁRIO
+    // =====================================
+
+    const [
+        titulo,
+        setTitulo,
+    ] = useState("");
+
+
+    const [
+        descricao,
+        setDescricao,
+    ] = useState("");
+
+
+    const [
+        tags,
+        setTags,
+    ] = useState([
         "Negócios",
         "Design",
         "Eventos 360",
     ]);
 
-    const [novaTag, setNovaTag] = useState("");
-    const [mostrarNovaTag, setMostrarNovaTag] = useState(false);
+
+    const [
+        novaTag,
+        setNovaTag,
+    ] = useState("");
 
 
-    // =========================
+    const [
+        mostrarNovaTag,
+        setMostrarNovaTag,
+    ] = useState(false);
+
+
+    const [
+        imagemSelecionada,
+        setImagemSelecionada,
+    ] = useState<
+        ImagePicker.ImagePickerAsset | null
+    >(null);
+
+
+    const [
+        publicando,
+        setPublicando,
+    ] = useState(false);
+
+
+    // =====================================
     // ADICIONAR TAG
-    // =========================
+    // =====================================
 
     const adicionarTag = () => {
 
-        const tag = novaTag.trim();
+        const tag =
+            novaTag.trim();
+
 
         if (!tag) {
+
             return;
+
         }
 
-        if (tags.includes(tag)) {
+
+        if (
+            tags.includes(tag)
+        ) {
+
             return;
+
         }
 
-        setTags((current) => [
-            ...current,
-            tag,
-        ]);
+
+        setTags(
+            (current) => [
+                ...current,
+                tag,
+            ]
+        );
+
 
         setNovaTag("");
-        setMostrarNovaTag(false);
 
-    };
-
-
-    // =========================
-    // REMOVER TAG
-    // =========================
-
-    const removerTag = (tagRemover: string) => {
-
-        setTags((current) =>
-            current.filter(
-                (tag) => tag !== tagRemover
-            )
+        setMostrarNovaTag(
+            false
         );
 
     };
 
 
-    // =========================
-    // PUBLICAR
-    // =========================
+    // =====================================
+    // REMOVER TAG
+    // =====================================
 
-    const publicarPost = () => {
+    const removerTag = (
+        tagRemover: string
+    ) => {
+
+        setTags(
+            (current) =>
+                current.filter(
+                    (tag) =>
+                        tag !==
+                        tagRemover
+                )
+        );
+
+    };
+
+
+    // =====================================
+    // SELECIONAR FOTO
+    // =====================================
+
+    async function selecionarImagem() {
+
+        if (publicando) {
+
+            return;
+
+        }
+
+
+        try {
+
+            const permissao =
+                await ImagePicker
+                    .requestMediaLibraryPermissionsAsync();
+
+
+            if (
+                !permissao.granted
+            ) {
+
+                Alert.alert(
+                    "Permissão necessária",
+                    "Permita o acesso às fotos para selecionar uma imagem."
+                );
+
+                return;
+
+            }
+
+
+            const resultado =
+                await ImagePicker
+                    .launchImageLibraryAsync({
+                        mediaTypes: [
+                            "images",
+                        ],
+
+                        allowsEditing:
+                            false,
+
+                        quality:
+                            0.85,
+
+                        allowsMultipleSelection:
+                            false,
+                    });
+
+
+            if (
+                resultado.canceled ||
+                !resultado.assets?.length
+            ) {
+
+                return;
+
+            }
+
+
+            const imagem =
+                resultado.assets[0];
+
+
+            if (
+                imagem.fileSize &&
+                imagem.fileSize >
+                20 * 1024 * 1024
+            ) {
+
+                Alert.alert(
+                    "Imagem muito grande",
+                    "A imagem não pode ultrapassar 20 MB."
+                );
+
+                return;
+
+            }
+
+
+            const mimeType =
+                imagem.mimeType?.toLowerCase();
+
+
+            if (
+                mimeType &&
+                ![
+                    "image/jpeg",
+                    "image/png",
+                    "image/webp",
+                ].includes(mimeType)
+            ) {
+
+                Alert.alert(
+                    "Formato não suportado",
+                    "Selecione uma imagem JPG, JPEG, PNG ou WEBP."
+                );
+
+                return;
+
+            }
+
+
+            setImagemSelecionada(
+                imagem
+            );
+
+        } catch (error) {
+
+            console.log(
+                "ERRO SELECIONAR IMAGEM:",
+                error
+            );
+
+
+            Alert.alert(
+                "Erro",
+                "Não foi possível selecionar a imagem."
+            );
+
+        }
+
+    }
+
+
+    // =====================================
+    // MONTAR TEXTO DA PUBLICAÇÃO
+    // =====================================
+
+    function montarTextoPublicacao() {
+
+        const tagsTexto =
+            tags.length > 0
+
+                ? tags
+                    .map(
+                        (tag) =>
+                            `#${tag
+                                .trim()
+                                .replace(
+                                    /\s+/g,
+                                    ""
+                                )}`
+                    )
+                    .join(" ")
+
+                : "";
+
+
+        return [
+            titulo.trim(),
+            descricao.trim(),
+            tagsTexto,
+        ]
+            .filter(Boolean)
+            .join("\n\n");
+
+    }
+
+
+    // =====================================
+    // PUBLICAR
+    // =====================================
+
+    async function publicarPost() {
+
+        if (publicando) {
+
+            return;
+
+        }
+
+
+        if (!token) {
+
+            Alert.alert(
+                "Sessão não encontrada",
+                "Faça login novamente para publicar."
+            );
+
+            return;
+
+        }
+
 
         if (!titulo.trim()) {
 
-            console.log(
+            Alert.alert(
+                "Título obrigatório",
                 "Informe um título para o post."
             );
 
             return;
+
         }
+
 
         if (!descricao.trim()) {
 
-            console.log(
+            Alert.alert(
+                "Descrição obrigatória",
                 "Informe uma descrição."
             );
 
             return;
+
         }
 
 
-        console.log({
-            titulo,
-            descricao,
-            tags,
-        });
+        try {
 
+            setPublicando(
+                true
+            );
 
-        // futuramente:
-        // enviar para API
+            const textoPublicacao =
+                montarTextoPublicacao();
 
+            const resposta =
+                await criarPublicacao(
+                    token,
+                    textoPublicacao,
+                    imagemSelecionada
+                );
 
-        // após salvar com sucesso:
-        // router.replace("/home");
+            if (!resposta.success) {
 
-    };
+                throw new Error(
+                    resposta.message ||
+                    "Não foi possível criar a publicação."
+                );
+
+            }
+
+            router.replace("/home");
+
+        } catch (error) {
+
+            console.log(
+                "ERRO CRIAR PUBLICAÇÃO:",
+                error
+            );
+
+            Alert.alert(
+                "Erro ao publicar",
+                error instanceof Error
+                    ? error.message
+                    : "Não foi possível criar a publicação."
+            );
+
+        } finally {
+
+            setPublicando(
+                false
+            );
+
+        }
+
+    }
 
 
     return (
@@ -131,8 +456,11 @@ export default function CriarPostScreen() {
         // FUNDO EXTERNO
         // =========================================
 
-        <View style={globalStyle.container}>
-
+        <View
+            style={
+                globalStyle.container
+            }
+        >
 
             {/* =====================================
                 ÁREA MOBILE - MÁXIMO 440px
@@ -145,20 +473,21 @@ export default function CriarPostScreen() {
                 ]}
             >
 
-
                 <ImageBackground
                     source={require(
                         "@/assets/images/img/fundoLogin.png"
                     )}
-                    style={criarPostStyles.background}
+                    style={
+                        criarPostStyles.background
+                    }
                     resizeMode="cover"
                 >
 
-
                     <SafeAreaView
-                        style={globalStyle.areaConteudo}
+                        style={
+                            globalStyle.areaConteudo
+                        }
                     >
-
 
                         <View
                             style={
@@ -166,18 +495,19 @@ export default function CriarPostScreen() {
                             }
                         >
 
-
                             <KeyboardAvoidingView
                                 style={
                                     criarPostStyles.keyboard
                                 }
                                 behavior={
-                                    Platform.OS === "ios"
+                                    Platform.OS ===
+                                        "ios"
+
                                         ? "padding"
+
                                         : "height"
                                 }
                             >
-
 
                                 <ScrollView
                                     style={
@@ -192,7 +522,6 @@ export default function CriarPostScreen() {
                                     keyboardShouldPersistTaps="handled"
                                 >
 
-
                                     {/* =================
                                         TOPO
                                     ================= */}
@@ -202,7 +531,6 @@ export default function CriarPostScreen() {
                                             criarPostStyles.topo
                                         }
                                     >
-
 
                                         <Pressable
                                             style={({ pressed }) => [
@@ -215,6 +543,9 @@ export default function CriarPostScreen() {
                                             ]}
                                             onPress={() =>
                                                 router.back()
+                                            }
+                                            disabled={
+                                                publicando
                                             }
                                         >
 
@@ -245,7 +576,6 @@ export default function CriarPostScreen() {
                                                 criarPostStyles.espacoTopo
                                             }
                                         />
-
 
                                     </View>
 
@@ -310,23 +640,25 @@ export default function CriarPostScreen() {
 
 
                                         <TextInput
-                                            value={titulo}
-
+                                            value={
+                                                titulo
+                                            }
                                             onChangeText={
                                                 setTitulo
                                             }
-
                                             style={
                                                 criarPostStyles.input
                                             }
-
                                             placeholder="Digite um texto claro e objetivo"
-
                                             placeholderTextColor={
                                                 "#777777"
                                             }
-
-                                            maxLength={55}
+                                            maxLength={
+                                                55
+                                            }
+                                            editable={
+                                                !publicando
+                                            }
                                         />
 
 
@@ -369,18 +701,12 @@ export default function CriarPostScreen() {
                                                 criarPostStyles.areaImagemPressed,
 
                                             ]}
-                                            onPress={() => {
-
-                                                /*
-                                                    Ainda não liguei aqui porque
-                                                    precisamos decidir qual solução
-                                                    de seleção de imagem o projeto
-                                                    vai usar.
-
-                                                    Não vou inventar dependência.
-                                                */
-
-                                            }}
+                                            onPress={
+                                                selecionarImagem
+                                            }
+                                            disabled={
+                                                publicando
+                                            }
                                         >
 
                                             <Image
@@ -398,7 +724,17 @@ export default function CriarPostScreen() {
                                                     criarPostStyles.txtImagem
                                                 }
                                             >
-                                                Selecione uma foto para o post
+
+                                                {
+                                                    imagemSelecionada
+
+                                                        ? imagemSelecionada
+                                                            .fileName ??
+                                                        "Foto selecionada"
+
+                                                        : "Selecione uma foto para o post"
+                                                }
+
                                             </Text>
 
                                         </Pressable>
@@ -426,27 +762,27 @@ export default function CriarPostScreen() {
 
 
                                         <TextInput
-                                            value={descricao}
-
+                                            value={
+                                                descricao
+                                            }
                                             onChangeText={
                                                 setDescricao
                                             }
-
                                             style={
                                                 criarPostStyles.inputDescricao
                                             }
-
                                             placeholder="Digite um texto claro e objetivo"
-
                                             placeholderTextColor={
                                                 "#777777"
                                             }
-
                                             multiline
-
                                             textAlignVertical="top"
-
-                                            maxLength={150}
+                                            maxLength={
+                                                150
+                                            }
+                                            editable={
+                                                !publicando
+                                            }
                                         />
 
 
@@ -486,32 +822,38 @@ export default function CriarPostScreen() {
                                             }
                                         >
 
+                                            {tags.map(
+                                                (tag) => (
 
-                                            {tags.map((tag) => (
-
-                                                <Pressable
-                                                    key={tag}
-
-                                                    style={
-                                                        criarPostStyles.tag
-                                                    }
-
-                                                    onPress={() =>
-                                                        removerTag(tag)
-                                                    }
-                                                >
-
-                                                    <Text
+                                                    <Pressable
+                                                        key={
+                                                            tag
+                                                        }
                                                         style={
-                                                            criarPostStyles.txtTag
+                                                            criarPostStyles.tag
+                                                        }
+                                                        onPress={() =>
+                                                            removerTag(
+                                                                tag
+                                                            )
+                                                        }
+                                                        disabled={
+                                                            publicando
                                                         }
                                                     >
-                                                        {tag} ×
-                                                    </Text>
 
-                                                </Pressable>
+                                                        <Text
+                                                            style={
+                                                                criarPostStyles.txtTag
+                                                            }
+                                                        >
+                                                            {tag} ×
+                                                        </Text>
 
-                                            ))}
+                                                    </Pressable>
+
+                                                )
+                                            )}
 
 
                                             <Pressable
@@ -520,8 +862,12 @@ export default function CriarPostScreen() {
                                                 }
                                                 onPress={() =>
                                                     setMostrarNovaTag(
-                                                        (current) => !current
+                                                        (current) =>
+                                                            !current
                                                     )
+                                                }
+                                                disabled={
+                                                    publicando
                                                 }
                                             >
 
@@ -534,7 +880,6 @@ export default function CriarPostScreen() {
                                                 </Text>
 
                                             </Pressable>
-
 
                                         </View>
 
@@ -555,25 +900,24 @@ export default function CriarPostScreen() {
                                                     value={
                                                         novaTag
                                                     }
-
                                                     onChangeText={
                                                         setNovaTag
                                                     }
-
                                                     style={
                                                         criarPostStyles.inputNovaTag
                                                     }
-
                                                     placeholder="Nome da tag"
-
                                                     placeholderTextColor={
                                                         "#777777"
                                                     }
-
-                                                    maxLength={30}
-
+                                                    maxLength={
+                                                        30
+                                                    }
                                                     onSubmitEditing={
                                                         adicionarTag
+                                                    }
+                                                    editable={
+                                                        !publicando
                                                     }
                                                 />
 
@@ -589,6 +933,9 @@ export default function CriarPostScreen() {
                                                     ]}
                                                     onPress={
                                                         adicionarTag
+                                                    }
+                                                    disabled={
+                                                        publicando
                                                     }
                                                 >
 
@@ -606,7 +953,6 @@ export default function CriarPostScreen() {
 
                                         )}
 
-
                                     </View>
 
 
@@ -620,7 +966,6 @@ export default function CriarPostScreen() {
                                         }
                                     >
 
-
                                         <Pressable
                                             style={({ pressed }) => [
 
@@ -633,6 +978,9 @@ export default function CriarPostScreen() {
                                             onPress={
                                                 publicarPost
                                             }
+                                            disabled={
+                                                publicando
+                                            }
                                         >
 
                                             <Text
@@ -640,7 +988,11 @@ export default function CriarPostScreen() {
                                                     criarPostStyles.txtPublicar
                                                 }
                                             >
-                                                Publicar
+                                                {
+                                                    publicando
+                                                        ? "Publicando..."
+                                                        : "Publicar"
+                                                }
                                             </Text>
 
                                         </Pressable>
@@ -658,6 +1010,9 @@ export default function CriarPostScreen() {
                                             onPress={() =>
                                                 router.back()
                                             }
+                                            disabled={
+                                                publicando
+                                            }
                                         >
 
                                             <Text
@@ -670,9 +1025,7 @@ export default function CriarPostScreen() {
 
                                         </Pressable>
 
-
                                     </View>
-
 
                                 </ScrollView>
 
@@ -683,21 +1036,15 @@ export default function CriarPostScreen() {
 
                                 <MenuSreen />
 
-
                             </KeyboardAvoidingView>
-
 
                         </View>
 
-
                     </SafeAreaView>
-
 
                 </ImageBackground>
 
-
             </View>
-
 
         </View>
 

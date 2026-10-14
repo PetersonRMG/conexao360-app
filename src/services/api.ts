@@ -1,6 +1,6 @@
 export const API_URL = "http://localhost:8081";
-// export const API_URL = "http://192.168.56.1:8081"; 
-//export const API_URL = "https://hardsettings.tipi5.smpsistema.com.br/conexao";
+// export const API_URL = "http://192.168.56.1:8081";
+// export const API_URL = "https://hardsettings.tipi5.smpsistema.com.br/conexao";
 
 type ApiOptions = RequestInit & {
   token?: string;
@@ -10,29 +10,55 @@ export async function apiFetch<T>(
   endpoint: string,
   options: ApiOptions = {},
 ): Promise<T> {
-  const { token, headers, ...rest } = options;
+  const {
+    token,
+    headers,
+    ...rest
+  } = options;
 
-  const response = await fetch(`${API_URL}${endpoint}`, {
-    ...rest,
+  const usandoFormData =
+    typeof FormData !== "undefined" &&
+    rest.body instanceof FormData;
 
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
+  const response = await fetch(
+    `${API_URL}${endpoint}`,
+    {
+      ...rest,
 
-      ...(token
-        ? {
-            Authorization: `Bearer ${token}`,
-          }
-        : {}),
+      headers: {
+        Accept: "application/json",
 
-      ...headers,
-    },
-  });
+        ...(
+          usandoFormData
+            ? {}
+            : {
+              "Content-Type":
+                "application/json",
+            }
+        ),
 
-  const data = await response.json();
+        ...(
+          token
+            ? {
+              Authorization:
+                `Bearer ${token}`,
+            }
+            : {}
+        ),
+
+        ...headers,
+      },
+    }
+  );
+
+  const data =
+    await response.json();
 
   if (!response.ok) {
-    throw new Error(data.message || "Erro ao realizar requisição.");
+    throw new Error(
+      data.message ||
+      "Erro ao realizar requisição."
+    );
   }
 
   return data;
