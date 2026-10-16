@@ -1,20 +1,16 @@
-import {
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import {
   Animated,
   FlatList,
   Image,
-  ImageSourcePropType,
+  type ImageSourcePropType,
   Modal,
+  Platform,
   Pressable,
   Text,
   useWindowDimensions,
   View,
-  Platform,
 } from "react-native";
 
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -25,594 +21,512 @@ import { useTema } from "@/contexts/TemaContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { criarHeaderStyles } from "@/styles/headerStyles";
 import { getUrlFotoUsuario } from "@/services/usuarioService";
-import MenuModalScreen from "@/components/menuModal";
 
+import {
+  buscarNotificacoes,
+  marcarNotificacaoComoLida,
+  marcarTodasNotificacoesComoLidas,
+  type NotificacaoApi,
+} from "@/services/notificacoeService";
+
+import MenuModalScreen from "@/components/menuModal";
 
 type HeaderProps = {
   fotoUsuario?: string | null;
 };
 
-
-type FiltroNotificacao =
-  | "todas"
-  | "naoLidas";
-
+type FiltroNotificacao = "todas" | "naoLidas";
 
 type Notificacao = {
   id: string;
-
   titulo: string;
-
   descricao?: string;
-
   tempo: string;
-
   lida: boolean;
-
   icone: ImageSourcePropType;
+
+  idUsuarioOrigem: number | null;
+  tipo: string;
+  idReferencia: number | null;
+  tipoReferencia: string | null;
 };
 
+function getIconeNotificacao(tipo: string): ImageSourcePropType {
+  switch (tipo) {
+    case "NOVO_COMENTARIO":
+      return require("@/assets/images/img/coment.png");
 
-const NOTIFICACOES_INICIAIS: Notificacao[] = [
-  {
-    id: "1",
+    case "NOVA_ENQUETE":
+      return require("@/assets/images/img/enquete.png");
 
-    titulo:
-      "Carlos enviou uma solicitação de conexão",
+    case "SOLICITACAO_CONEXAO":
+    case "CONEXAO_ACEITA":
+    default:
+      return require("@/assets/images/img/usuario.png");
+  }
+}
 
-    descricao:
-      "Você recebeu uma nova solicitação para ampliar sua rede.",
+function formatarTempoNotificacao(data: string | null) {
+  if (!data) {
+    return "";
+  }
 
-    tempo:
-      "há 5 minutos",
+  const criadaEm = new Date(data);
 
-    lida:
-      false,
+  if (Number.isNaN(criadaEm.getTime())) {
+    return "";
+  }
 
-    icone:
-      require("@/assets/images/img/usuario.png"),
-  },
+  const agora = new Date();
 
-  {
-    id: "2",
+  const diferenca = Math.max(0, agora.getTime() - criadaEm.getTime());
 
-    titulo:
-      "Juliana comentou na sua publicação",
+  const minutos = Math.floor(diferenca / 60000);
 
-    descricao:
-      "“Muito interessante esse ponto...”",
+  if (minutos < 1) {
+    return "agora";
+  }
 
-    tempo:
-      "há 20 minutos",
+  if (minutos < 60) {
+    return `há ${minutos} min`;
+  }
 
-    lida:
-      false,
+  const horas = Math.floor(minutos / 60);
 
-    icone:
-      require("@/assets/images/img/coment.png"),
-  },
+  if (horas < 24) {
+    return horas === 1 ? "há 1 hora" : `há ${horas} horas`;
+  }
 
-  {
-    id: "3",
+  const dias = Math.floor(horas / 24);
 
-    titulo:
-      "Nova enquete disponível",
+  if (dias === 1) {
+    return "ontem";
+  }
 
-    descricao:
-      "Participe da nova enquete da Conexão 360°.",
+  if (dias < 7) {
+    return `há ${dias} dias`;
+  }
 
-    tempo:
-      "há 1 hora",
+  return criadaEm.toLocaleDateString("pt-BR");
+}
 
-    lida:
-      false,
+function adaptarNotificacao(item: NotificacaoApi): Notificacao {
+  return {
+    id: String(item.id_notificacao),
 
-    icone:
-      require("@/assets/images/img/enquete.png"),
-  },
+    titulo: item.titulo_notificacao,
 
-  {
-    id: "4",
+    descricao: item.mensagem_notificacao ?? undefined,
 
-    titulo:
-      "Fernanda aceitou sua solicitação de conexão",
+    tempo: formatarTempoNotificacao(item.criado_em_notificacao),
 
-    descricao:
-      "Vocês agora fazem parte da mesma rede de conexões.",
+    lida: item.lida_notificacao === true || item.lida_notificacao === 1,
 
-    tempo:
-      "ontem",
+    icone: getIconeNotificacao(item.tipo_notificacao),
 
-    lida:
-      true,
+    idUsuarioOrigem: item.id_usuario_origem,
 
-    icone:
-      require("@/assets/images/img/usuario.png"),
-  },
-];
+    tipo: item.tipo_notificacao,
 
+    idReferencia: item.id_referencia,
 
-export default function HeaderScreen({
-  fotoUsuario,
-}: HeaderProps) {
-
-  const { coresTema } =
-    useTema();
-
-  const {
-    usuario,
-  } = useAuth();
-
-
-  const fotoUsuarioContexto =
-    getUrlFotoUsuario(
-      usuario?.foto_usuario ??
-      null
-    );
-
-
-  const fotoExibida =
-    fotoUsuario ??
-    fotoUsuarioContexto;
-
-
-  const {
-    width: larguraTela,
-  } = useWindowDimensions();
-
-
-  const headerStyles =
-    criarHeaderStyles(
-      coresTema
-    );
-
-
-  const [
-    modalLinkSenha,
-    setModalLinkSenha,
-  ] = useState(
-    false
-  );
-
-
-  const [
-    notificacoesVisiveis,
-    setNotificacoesVisiveis,
-  ] = useState(
-    false
-  );
-
-
-  const [
-    notificacoes,
-    setNotificacoes,
-  ] = useState<Notificacao[]>(
-    NOTIFICACOES_INICIAIS
-  );
-
-
-  const [
-    filtroNotificacao,
-    setFiltroNotificacao,
-  ] = useState<FiltroNotificacao>(
-    "todas"
-  );
-
-
-  const larguraOffcanvas =
-    Math.min(
-      larguraTela * 0.88,
-      380
-    );
-
-
-  const translateX =
-    useRef(
-      new Animated.Value(
-        larguraOffcanvas
-      )
-    ).current;
-
-
-  const quantidadeNaoLidas =
-    useMemo(
-      () =>
-        notificacoes.filter(
-          (item) =>
-            !item.lida
-        ).length,
-      [
-        notificacoes,
-      ]
-    );
-
-
-  const notificacoesFiltradas =
-    useMemo(
-      () => {
-
-        if (
-          filtroNotificacao ===
-          "naoLidas"
-        ) {
-
-          return notificacoes.filter(
-            (item) =>
-              !item.lida
-          );
-
-        }
-
-
-        return notificacoes;
-
-      },
-      [
-        filtroNotificacao,
-        notificacoes,
-      ]
-    );
-
-
-  const abrirNotificacoes =
-    () => {
-
-      translateX.setValue(
-        larguraOffcanvas
-      );
-
-
-      setNotificacoesVisiveis(
-        true
-      );
-
-
-      requestAnimationFrame(
-        () => {
-
-          Animated.timing(
-            translateX,
-            {
-              toValue:
-                0,
-
-              duration:
-                260,
-
-              useNativeDriver:
-                Platform.OS !==
-                "web",
-            }
-          ).start();
-
-        }
-      );
-
-    };
-
-
-  const fecharNotificacoes =
-    () => {
-
-      Animated.timing(
-        translateX,
-        {
-          toValue:
-            larguraOffcanvas,
-
-          duration:
-            220,
-
-          useNativeDriver:
-            Platform.OS !==
-            "web",
-        }
-      ).start(
-        () =>
-          setNotificacoesVisiveis(
-            false
-          )
-      );
-
-    };
-
-
-  const marcarComoLida = (
-    id: string
-  ) => {
-
-    setNotificacoes(
-      (atuais) =>
-        atuais.map(
-          (item) =>
-            item.id ===
-              id
-              ? {
-                ...item,
-
-                lida:
-                  true,
-              }
-              : item
-        )
-    );
-
+    tipoReferencia: item.tipo_referencia,
   };
+}
 
+export default function HeaderScreen({ fotoUsuario }: HeaderProps) {
+  const { coresTema } = useTema();
 
-  const marcarTodasComoLidas =
-    () => {
+  const { token, usuario } = useAuth();
 
-      setNotificacoes(
-        (atuais) =>
-          atuais.map(
-            (item) => ({
+  const { width: larguraTela } = useWindowDimensions();
+
+  const headerStyles = criarHeaderStyles(coresTema);
+
+  const fotoUsuarioContexto = getUrlFotoUsuario(usuario?.foto_usuario ?? null);
+
+  const fotoExibida = fotoUsuario ?? fotoUsuarioContexto;
+
+  const [modalLinkSenha, setModalLinkSenha] = useState(false);
+
+  const [notificacoesVisiveis, setNotificacoesVisiveis] = useState(false);
+
+  const [notificacoes, setNotificacoes] = useState<Notificacao[]>([]);
+
+  const [filtroNotificacao, setFiltroNotificacao] =
+    useState<FiltroNotificacao>("todas");
+
+  const larguraOffcanvas = Math.min(larguraTela * 0.88, 380);
+
+  const translateX = useRef(new Animated.Value(larguraOffcanvas)).current;
+
+  // =====================================
+  // CARREGAR NOTIFICAÇÕES
+  // =====================================
+
+  async function carregarNotificacoes() {
+    if (!token) {
+      setNotificacoes([]);
+      return;
+    }
+
+    try {
+      const resposta = await buscarNotificacoes(token);
+
+      if (resposta.success) {
+        setNotificacoes(resposta.data.map(adaptarNotificacao));
+      }
+    } catch (error) {
+      console.log("ERRO BUSCAR NOTIFICAÇÕES:", error);
+    }
+  }
+
+  useEffect(() => {
+    carregarNotificacoes();
+  }, [token]);
+
+  // =====================================
+  // QUANTIDADE NÃO LIDA
+  // =====================================
+
+  const quantidadeNaoLidas = useMemo(
+    () => notificacoes.filter((item) => !item.lida).length,
+    [notificacoes],
+  );
+
+  // =====================================
+  // FILTRO
+  // =====================================
+
+  const notificacoesFiltradas = useMemo(() => {
+    if (filtroNotificacao === "naoLidas") {
+      return notificacoes.filter((item) => !item.lida);
+    }
+
+    return notificacoes;
+  }, [filtroNotificacao, notificacoes]);
+
+  // =====================================
+  // ABRIR NOTIFICAÇÕES
+  // =====================================
+
+  function abrirNotificacoes() {
+    carregarNotificacoes();
+
+    translateX.setValue(larguraOffcanvas);
+
+    setNotificacoesVisiveis(true);
+
+    requestAnimationFrame(() => {
+      Animated.timing(translateX, {
+        toValue: 0,
+
+        duration: 260,
+
+        useNativeDriver: Platform.OS !== "web",
+      }).start();
+    });
+  }
+
+  // =====================================
+  // FECHAR NOTIFICAÇÕES
+  // =====================================
+
+  function fecharNotificacoes() {
+    Animated.timing(translateX, {
+      toValue: larguraOffcanvas,
+
+      duration: 220,
+
+      useNativeDriver: Platform.OS !== "web",
+    }).start(() => {
+      setNotificacoesVisiveis(false);
+    });
+  }
+
+  // =====================================
+  // MARCAR UMA COMO LIDA
+  // =====================================
+
+  async function marcarComoLida(id: string) {
+    if (!token) {
+      return;
+    }
+
+    const notificacao = notificacoes.find((item) => item.id === id);
+
+    if (!notificacao || notificacao.lida) {
+      return;
+    }
+
+    setNotificacoes((atuais) =>
+      atuais.map((item) =>
+        item.id === id
+          ? {
               ...item,
 
-              lida:
-                true,
-            })
-          )
+              lida: true,
+            }
+          : item,
+      ),
+    );
+
+    try {
+      await marcarNotificacaoComoLida(token, Number(id));
+    } catch (error) {
+      console.log("ERRO MARCAR NOTIFICAÇÃO:", error);
+
+      setNotificacoes((atuais) =>
+        atuais.map((item) =>
+          item.id === id
+            ? {
+                ...item,
+
+                lida: false,
+              }
+            : item,
+        ),
       );
+    }
+  }
 
-    };
+  // =====================================
+  // ABRIR DESTINO DA NOTIFICAÇÃO
+  // =====================================
 
+  async function abrirDestinoNotificacao(notificacao: Notificacao) {
+    if (!notificacao.lida) {
+      await marcarComoLida(notificacao.id);
+    }
+
+    setNotificacoesVisiveis(false);
+
+    translateX.setValue(larguraOffcanvas);
+
+    // =================================
+    // SOLICITAÇÃO DE CONEXÃO
+    // CONEXÃO ACEITA
+    // =================================
+
+    if (
+      (notificacao.tipo === "SOLICITACAO_CONEXAO" ||
+        notificacao.tipo === "CONEXAO_ACEITA") &&
+      notificacao.idUsuarioOrigem
+    ) {
+      router.push({
+        pathname: "/perfil",
+
+        params: {
+          idUsuario: String(notificacao.idUsuarioOrigem),
+        },
+      });
+
+      return;
+    }
+
+    // =================================
+    // NOVO COMENTÁRIO
+    // =================================
+    //
+    // idReferencia = id_publicacao
+    // =================================
+
+    if (notificacao.tipo === "NOVO_COMENTARIO" && notificacao.idReferencia) {
+      router.push({
+        pathname: "/home",
+
+        params: {
+          idPublicacao: String(notificacao.idReferencia),
+        },
+      });
+
+      return;
+    }
+
+    // =================================
+    // NOVA MENSAGEM
+    // FUTURO
+    // =================================
+    //
+    // idReferencia = id_conversa
+    // =================================
+
+    if (notificacao.tipo === "NOVA_MENSAGEM" && notificacao.idReferencia) {
+      router.push({
+        pathname: "/conversa",
+
+        params: {
+          idConversa: String(notificacao.idReferencia),
+        },
+      });
+    }
+  }
+
+  // =====================================
+  // MARCAR TODAS COMO LIDAS
+  // =====================================
+
+  async function marcarTodasComoLidas() {
+    if (!token) {
+      return;
+    }
+
+    const anteriores = notificacoes;
+
+    setNotificacoes((atuais) =>
+      atuais.map((item) => ({
+        ...item,
+
+        lida: true,
+      })),
+    );
+
+    try {
+      await marcarTodasNotificacoesComoLidas(token);
+    } catch (error) {
+      console.log("ERRO MARCAR TODAS AS NOTIFICAÇÕES:", error);
+
+      setNotificacoes(anteriores);
+    }
+  }
 
   return (
-
-    <View
-      style={
-        headerStyles.header
-      }
-    >
-
+    <View style={headerStyles.header}>
       {/* =========================
                 LADO ESQUERDO
             ========================= */}
 
-      <View
-        style={
-          headerStyles.ladoHeader
-        }
-      >
-
+      <View style={headerStyles.ladoHeader}>
         <Pressable
           style={({ pressed }) => [
-
             headerStyles.perfil,
 
-            pressed &&
-            headerStyles.btnPressed,
-
+            pressed && headerStyles.btnPressed,
           ]}
-          onPress={() =>
-            router.push(
-              "/perfil"
-            )
-          }
+          onPress={() => router.push("/perfil")}
           accessibilityRole="button"
           accessibilityLabel="Abrir meu perfil"
         >
-
           <Image
             source={
               fotoExibida
                 ? {
-                  uri:
-                    fotoExibida,
-                }
-                : require(
-                  "@/assets/images/img/avatar.png"
-                )
+                    uri: fotoExibida,
+                  }
+                : require("@/assets/images/img/avatar.png")
             }
-            style={
-              headerStyles.fotoPerfil
-            }
+            style={headerStyles.fotoPerfil}
             resizeMode="cover"
           />
-
         </Pressable>
-
       </View>
 
-
       {/* =========================
-                LOGO / NOME
+                LOGO
             ========================= */}
 
-      <View
-        style={
-          headerStyles.logoContainer
-        }
-      >
-
+      <View style={headerStyles.logoContainer}>
         <Image
-          source={require(
-            "@/assets/images/img/logo.svg"
-          )}
-          style={
-            headerStyles.logo
-          }
+          source={require("@/assets/images/img/logo.svg")}
+          style={headerStyles.logo}
         />
 
-        <Text
-          style={
-            headerStyles.nomeProjeto
-          }
-        >
-          Conexão 360°
-        </Text>
-
+        <Text style={headerStyles.nomeProjeto}>Conexão 360°</Text>
       </View>
 
-
       {/* =========================
-                AÇÕES DO HEADER
+                AÇÕES
             ========================= */}
 
-      <View
-        style={
-          headerStyles.acoesHeader
-        }
-      >
+      <View style={headerStyles.acoesHeader}>
+        {/* NOTIFICAÇÕES */}
 
         <Pressable
           style={({ pressed }) => [
-
             headerStyles.btnHeader,
 
-            pressed &&
-            headerStyles.btnPressed,
-
+            pressed && headerStyles.btnPressed,
           ]}
-          onPress={
-            abrirNotificacoes
-          }
+          onPress={abrirNotificacoes}
           accessibilityRole="button"
           accessibilityLabel={
-            quantidadeNaoLidas >
-              0
+            quantidadeNaoLidas > 0
               ? `Notificações, ${quantidadeNaoLidas} não lidas`
               : "Notificações"
           }
         >
-
           <SymbolView
             name={{
-              ios:
-                "bell",
+              ios: "bell",
 
-              android:
-                "notifications_none",
+              android: "notifications_none",
 
-              web:
-                "notifications_none",
+              web: "notifications_none",
             }}
-            size={
-              24
-            }
-            tintColor={
-              coresTema.destaque
-            }
+            size={24}
+            tintColor={coresTema.destaque}
           />
 
-
-          {quantidadeNaoLidas >
-            0 && (
-
-              <View
-                style={
-                  headerStyles.badgeNotificacao
-                }
-              >
-
-                <Text
-                  style={
-                    headerStyles.badgeNotificacaoTexto
-                  }
-                >
-                  {
-                    quantidadeNaoLidas >
-                      9
-                      ? "9+"
-                      : quantidadeNaoLidas
-                  }
-                </Text>
-
-              </View>
-
-            )}
-
+          {quantidadeNaoLidas > 0 && (
+            <View style={headerStyles.badgeNotificacao}>
+              <Text style={headerStyles.badgeNotificacaoTexto}>
+                {quantidadeNaoLidas > 9 ? "9+" : quantidadeNaoLidas}
+              </Text>
+            </View>
+          )}
         </Pressable>
 
+        {/* MENU */}
 
         <Pressable
           style={({ pressed }) => [
-
             headerStyles.btnHeader,
 
-            pressed &&
-            headerStyles.btnPressed,
-
+            pressed && headerStyles.btnPressed,
           ]}
-          onPress={() =>
-            setModalLinkSenha(
-              true
-            )
-          }
+          onPress={() => setModalLinkSenha(true)}
           accessibilityRole="button"
           accessibilityLabel="Abrir menu"
         >
-
           <Image
-            source={require(
-              "@/assets/images/img/menu.png"
-            )}
-            style={
-              headerStyles.iconeHeader
-            }
+            source={require("@/assets/images/img/menu.png")}
+            style={headerStyles.iconeHeader}
           />
-
         </Pressable>
-
       </View>
 
-
       {/* =========================
-                MENU EXISTENTE
+                MENU MODAL
             ========================= */}
 
       <MenuModalScreen
-        visible={
-          modalLinkSenha
-        }
-        onClose={() =>
-          setModalLinkSenha(
-            false
-          )
-        }
+        visible={modalLinkSenha}
+        onClose={() => setModalLinkSenha(false)}
       />
 
-
       {/* =========================
-                OFFCANVAS DE NOTIFICAÇÕES
+                NOTIFICAÇÕES
             ========================= */}
 
       <Modal
-        visible={
-          notificacoesVisiveis
-        }
+        visible={notificacoesVisiveis}
         transparent
         animationType="none"
         statusBarTranslucent
-        onRequestClose={
-          fecharNotificacoes
-        }
+        onRequestClose={fecharNotificacoes}
       >
-
-        <View
-          style={
-            headerStyles.offcanvasOverlay
-          }
-        >
-
+        <View style={headerStyles.offcanvasOverlay}>
           <Pressable
-            style={
-              headerStyles.offcanvasBackdrop
-            }
-            onPress={
-              fecharNotificacoes
-            }
+            style={headerStyles.offcanvasBackdrop}
+            onPress={fecharNotificacoes}
           />
-
 
           <Animated.View
             style={[
               headerStyles.offcanvas,
 
               {
-                width:
-                  larguraOffcanvas,
+                width: larguraOffcanvas,
 
                 transform: [
                   {
@@ -622,386 +536,187 @@ export default function HeaderScreen({
               },
             ]}
           >
-
-            <SafeAreaView
-              style={
-                headerStyles.offcanvasSafeArea
-              }
-            >
-
+            <SafeAreaView style={headerStyles.offcanvasSafeArea}>
               {/* CABEÇALHO */}
 
-              <View
-                style={
-                  headerStyles.offcanvasHeader
-                }
-              >
+              <View style={headerStyles.offcanvasHeader}>
+                <View style={headerStyles.offcanvasTituloArea}>
+                  <Text style={headerStyles.offcanvasTitulo}>Notificações</Text>
 
-                <View
-                  style={
-                    headerStyles.offcanvasTituloArea
-                  }
-                >
-
-                  <Text
-                    style={
-                      headerStyles.offcanvasTitulo
-                    }
-                  >
-                    Notificações
-                  </Text>
-
-
-                  {quantidadeNaoLidas >
-                    0 && (
-
-                      <View
-                        style={
-                          headerStyles.contadorNotificacoes
-                        }
-                      >
-
-                        <Text
-                          style={
-                            headerStyles.contadorNotificacoesTexto
-                          }
-                        >
-                          {quantidadeNaoLidas}
-                        </Text>
-
-                      </View>
-
-                    )}
-
+                  {quantidadeNaoLidas > 0 && (
+                    <View style={headerStyles.contadorNotificacoes}>
+                      <Text style={headerStyles.contadorNotificacoesTexto}>
+                        {quantidadeNaoLidas}
+                      </Text>
+                    </View>
+                  )}
                 </View>
-
 
                 <Pressable
                   style={({ pressed }) => [
-
                     headerStyles.btnFechar,
 
-                    pressed &&
-                    headerStyles.btnPressed,
-
+                    pressed && headerStyles.btnPressed,
                   ]}
-                  onPress={
-                    fecharNotificacoes
-                  }
+                  onPress={fecharNotificacoes}
                   accessibilityRole="button"
                   accessibilityLabel="Fechar notificações"
                 >
-
-                  <Text
-                    style={
-                      headerStyles.btnFecharTexto
-                    }
-                  >
-                    ×
-                  </Text>
-
+                  <Text style={headerStyles.btnFecharTexto}>×</Text>
                 </Pressable>
-
               </View>
-
 
               {/* FILTROS */}
 
-              <View
-                style={
-                  headerStyles.filtrosLinha
-                }
-              >
-
-                <View
-                  style={
-                    headerStyles.filtros
-                  }
-                >
-
+              <View style={headerStyles.filtrosLinha}>
+                <View style={headerStyles.filtros}>
                   <Pressable
                     style={[
                       headerStyles.filtro,
 
-                      filtroNotificacao ===
-                      "todas" &&
-                      headerStyles.filtroAtivo,
+                      filtroNotificacao === "todas" && headerStyles.filtroAtivo,
                     ]}
-                    onPress={() =>
-                      setFiltroNotificacao(
-                        "todas"
-                      )
-                    }
+                    onPress={() => setFiltroNotificacao("todas")}
                   >
-
                     <Text
                       style={[
                         headerStyles.filtroTexto,
 
-                        filtroNotificacao ===
-                        "todas" &&
-                        headerStyles.filtroTextoAtivo,
+                        filtroNotificacao === "todas" &&
+                          headerStyles.filtroTextoAtivo,
                       ]}
                     >
                       Todas
                     </Text>
-
                   </Pressable>
-
 
                   <Pressable
                     style={[
                       headerStyles.filtro,
 
-                      filtroNotificacao ===
-                      "naoLidas" &&
-                      headerStyles.filtroAtivo,
+                      filtroNotificacao === "naoLidas" &&
+                        headerStyles.filtroAtivo,
                     ]}
-                    onPress={() =>
-                      setFiltroNotificacao(
-                        "naoLidas"
-                      )
-                    }
+                    onPress={() => setFiltroNotificacao("naoLidas")}
                   >
-
                     <Text
                       style={[
                         headerStyles.filtroTexto,
 
-                        filtroNotificacao ===
-                        "naoLidas" &&
-                        headerStyles.filtroTextoAtivo,
+                        filtroNotificacao === "naoLidas" &&
+                          headerStyles.filtroTextoAtivo,
                       ]}
                     >
                       Não lidas
                     </Text>
-
                   </Pressable>
-
                 </View>
 
-
-                {quantidadeNaoLidas >
-                  0 && (
-
-                    <Pressable
-                      style={({ pressed }) => [
-                        pressed &&
-                        headerStyles.textoPressed,
-                      ]}
-                      onPress={
-                        marcarTodasComoLidas
-                      }
-                    >
-
-                      <Text
-                        style={
-                          headerStyles.marcarTodasTexto
-                        }
-                      >
-                        Marcar todas
-                        {"\n"}
-                        como lidas
-                      </Text>
-
-                    </Pressable>
-
-                  )}
-
+                {quantidadeNaoLidas > 0 && (
+                  <Pressable
+                    style={({ pressed }) => [
+                      pressed && headerStyles.textoPressed,
+                    ]}
+                    onPress={marcarTodasComoLidas}
+                  >
+                    <Text style={headerStyles.marcarTodasTexto}>
+                      Marcar todas
+                      {"\n"}
+                      como lidas
+                    </Text>
+                  </Pressable>
+                )}
               </View>
-
 
               {/* LISTA */}
 
               <FlatList
-                data={
-                  notificacoesFiltradas
-                }
-                keyExtractor={
-                  (item) =>
-                    item.id
-                }
-                style={
-                  headerStyles.listaNotificacoes
-                }
-                contentContainerStyle={
-                  headerStyles.listaNotificacoesConteudo
-                }
-                showsVerticalScrollIndicator={
-                  false
-                }
+                data={notificacoesFiltradas}
+                keyExtractor={(item) => item.id}
+                style={headerStyles.listaNotificacoes}
+                contentContainerStyle={headerStyles.listaNotificacoesConteudo}
+                showsVerticalScrollIndicator={false}
                 renderItem={({ item }) => (
-
                   <Pressable
                     style={({ pressed }) => [
-
                       headerStyles.notificacaoItem,
 
-                      !item.lida &&
-                      headerStyles.notificacaoNaoLida,
+                      !item.lida && headerStyles.notificacaoNaoLida,
 
-                      pressed &&
-                      headerStyles.notificacaoPressed,
-
+                      pressed && headerStyles.notificacaoPressed,
                     ]}
-                    onPress={() =>
-                      marcarComoLida(
-                        item.id
-                      )
-                    }
+                    onPress={() => abrirDestinoNotificacao(item)}
                   >
-
-                    <View
-                      style={
-                        headerStyles.notificacaoIconeArea
-                      }
-                    >
-
+                    <View style={headerStyles.notificacaoIconeArea}>
                       <Image
-                        source={
-                          item.icone
-                        }
-                        style={
-                          headerStyles.notificacaoIcone
-                        }
+                        source={item.icone}
+                        style={headerStyles.notificacaoIcone}
                       />
-
                     </View>
 
-
-                    <View
-                      style={
-                        headerStyles.notificacaoConteudo
-                      }
-                    >
-
+                    <View style={headerStyles.notificacaoConteudo}>
                       <Text
                         style={[
                           headerStyles.notificacaoTitulo,
 
-                          !item.lida &&
-                          headerStyles.notificacaoTituloNaoLida,
+                          !item.lida && headerStyles.notificacaoTituloNaoLida,
                         ]}
                       >
                         {item.titulo}
                       </Text>
 
-
                       {item.descricao && (
-
                         <Text
-                          style={
-                            headerStyles.notificacaoDescricao
-                          }
-                          numberOfLines={
-                            2
-                          }
+                          style={headerStyles.notificacaoDescricao}
+                          numberOfLines={2}
                         >
                           {item.descricao}
                         </Text>
-
                       )}
 
-
-                      <Text
-                        style={
-                          headerStyles.notificacaoTempo
-                        }
-                      >
+                      <Text style={headerStyles.notificacaoTempo}>
                         {item.tempo}
                       </Text>
-
                     </View>
 
-
-                    <View
-                      style={
-                        headerStyles.notificacaoStatusArea
-                      }
-                    >
-
+                    <View style={headerStyles.notificacaoStatusArea}>
                       {!item.lida && (
-
-                        <View
-                          style={
-                            headerStyles.notificacaoPonto
-                          }
-                        />
-
+                        <View style={headerStyles.notificacaoPonto} />
                       )}
-
                     </View>
-
                   </Pressable>
-
                 )}
                 ItemSeparatorComponent={() => (
-
-                  <View
-                    style={
-                      headerStyles.separadorNotificacao
-                    }
-                  />
-
+                  <View style={headerStyles.separadorNotificacao} />
                 )}
                 ListEmptyComponent={
-
-                  <View
-                    style={
-                      headerStyles.notificacoesVazio
-                    }
-                  >
-
+                  <View style={headerStyles.notificacoesVazio}>
                     <SymbolView
                       name={{
-                        ios:
-                          "bell.slash",
+                        ios: "bell.slash",
 
-                        android:
-                          "notifications_off",
+                        android: "notifications_off",
 
-                        web:
-                          "notifications_off",
+                        web: "notifications_off",
                       }}
-                      size={
-                        32
-                      }
-                      tintColor={
-                        coresTema.textoSecundario
-                      }
+                      size={32}
+                      tintColor={coresTema.textoSecundario}
                     />
 
-                    <Text
-                      style={
-                        headerStyles.notificacoesVazioTitulo
-                      }
-                    >
+                    <Text style={headerStyles.notificacoesVazioTitulo}>
                       Tudo em dia
                     </Text>
 
-                    <Text
-                      style={
-                        headerStyles.notificacoesVazioTexto
-                      }
-                    >
+                    <Text style={headerStyles.notificacoesVazioTexto}>
                       Você não possui notificações não lidas.
                     </Text>
-
                   </View>
-
                 }
               />
-
             </SafeAreaView>
-
           </Animated.View>
-
         </View>
-
       </Modal>
-
     </View>
-
   );
-
 }
