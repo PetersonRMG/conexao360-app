@@ -9,6 +9,12 @@ export type Usuario = {
   perfil_usuario: string;
   estado_usuario: string;
   sobre_usuario: string;
+  instagram_usuario?: string | null;
+  linkedin_usuario?: string | null;
+  youtube_usuario?: string | null;
+  tiktok_usuario?: string | null;
+  facebook_usuario?: string | null;
+  site_usuario?: string | null;
 };
 
 type UsuarioResponse = {
@@ -24,9 +30,7 @@ export async function buscarUsuario(token: string) {
 }
 
 export function getUrlFotoUsuario(foto: string | null) {
-  if (!foto) {
-    return null;
-  }
+  if (!foto) return null;
 
   if (foto.startsWith("http://") || foto.startsWith("https://")) {
     return foto;

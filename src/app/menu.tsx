@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { router } from "expo-router";
+import { router, usePathname } from "expo-router";
 import {
     View,
     Text,
@@ -16,6 +16,12 @@ import { useTema } from "@/contexts/TemaContext";
 export default function MenuSreen() {
     const { coresTema } = useTema();
     const menuStyles = criarMenuStyles(coresTema);
+
+    const pathname = usePathname();
+
+    function menuAtivo(rota: string) {
+        return pathname === rota;
+    }
 
     const [modalPublicar, setModalPublicar] = useState(false);
 
@@ -39,7 +45,7 @@ export default function MenuSreen() {
                     ]}
                 />
 
-                <Text style={menuStyles.txtMenuAtivo}>
+                <Text style={[menuStyles.txtMenu, menuAtivo("/home") && menuStyles.txtMenuAtivo]}>
                     Home
                 </Text>
             </Pressable>
@@ -58,8 +64,8 @@ export default function MenuSreen() {
                     source={require("@/assets/images/img/chat.png")}
                     style={menuStyles.iconeMenu}
                 />
+                <Text style={[menuStyles.txtMenu, menuAtivo("/chat") && menuStyles.txtMenuAtivo]}>
 
-                <Text style={menuStyles.txtMenu}>
                     Chat
                 </Text>
             </Pressable>
@@ -100,7 +106,7 @@ export default function MenuSreen() {
                     style={menuStyles.iconeMenu}
                 />
 
-                <Text style={menuStyles.txtMenu}>
+                <Text style={[menuStyles.txtMenu, menuAtivo("/eventos") && menuStyles.txtMenuAtivo]}>
                     Eventos
                 </Text>
             </Pressable>
@@ -120,7 +126,7 @@ export default function MenuSreen() {
                     style={menuStyles.iconeMenu}
                 />
 
-                <Text style={menuStyles.txtMenu}>
+                <Text style={[menuStyles.txtMenu, menuAtivo("/galeria") && menuStyles.txtMenuAtivo]}>
                     Galeria
                 </Text>
             </Pressable>
