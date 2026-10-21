@@ -6,59 +6,37 @@ type ApiOptions = RequestInit & {
   token?: string;
 };
 
-export async function apiFetch<T>(
-  endpoint: string,
-  options: ApiOptions = {},
-): Promise<T> {
-  const {
-    token,
-    headers,
-    ...rest
-  } = options;
+export async function apiFetch<T>(endpoint: string, options: ApiOptions = {}): Promise<T> {
+  const { token, headers, ...rest } = options;
 
-  const usandoFormData =
-    typeof FormData !== "undefined" &&
-    rest.body instanceof FormData;
+  const usandoFormData = typeof FormData !== "undefined" && rest.body instanceof FormData;
 
-  const response = await fetch(
-    `${API_URL}${endpoint}`,
-    {
-      ...rest,
+  const response = await fetch(`${API_URL}${endpoint}`, {
+    ...rest,
 
-      headers: {
-        Accept: "application/json",
+    headers: {
+      Accept: "application/json",
 
-        ...(
-          usandoFormData
-            ? {}
-            : {
-              "Content-Type":
-                "application/json",
-            }
-        ),
+      ...(usandoFormData
+        ? {}
+        : {
+            "Content-Type": "application/json",
+          }),
 
-        ...(
-          token
-            ? {
-              Authorization:
-                `Bearer ${token}`,
-            }
-            : {}
-        ),
+      ...(token
+        ? {
+            Authorization: `Bearer ${token}`,
+          }
+        : {}),
 
-        ...headers,
-      },
-    }
-  );
+      ...headers,
+    },
+  });
 
-  const data =
-    await response.json();
+  const data = await response.json();
 
   if (!response.ok) {
-    throw new Error(
-      data.message ||
-      "Erro ao realizar requisição."
-    );
+    throw new Error(data.message || "Erro ao realizar requisição.");
   }
 
   return data;
