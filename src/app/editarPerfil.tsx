@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { router } from "expo-router";
 import * as ImagePicker from "expo-image-picker";
+import * as FileSystem from "expo-file-system/legacy";
 import {
     ActivityIndicator,
     Alert,
@@ -22,7 +23,8 @@ import { useTema } from "@/contexts/TemaContext";
 import { criarEditarPerfilStyles } from "@/styles/editarPerfilStyles";
 import globalStyle from "@/styles/globalStyles";
 import { buscarUsuario, getUrlFotoUsuario } from "@/services/usuarioService";
-import { atualizarMeuPerfil } from "@/services/edicaoPerfilService";
+import { atualizarMeuPerfil, type DadosEdicaoPerfil } from "@/services/edicaoPerfilService";
+import AjustarFotoPerfilModal from "@/components/AjustarFotoPerfilModal";
 
 const ESTADOS_BRASIL = [
     { uf: "AC", nome: "Acre" },
@@ -74,7 +76,11 @@ export default function EditarPerfilScreen() {
     const [fotoAtual, setFotoAtual] = useState<string | null>(
         usuario?.foto_usuario ?? null,
     );
-    const [fotoNova, setFotoNova] = useState<ImagePicker.ImagePickerAsset | null>(null);
+    // Cópia dos dados já salvos, para que salvar a foto não grave alterações não confirmadas do formulário.
+    const [camposPersistidos, setCamposPersistidos] = useState<DadosEdicaoPerfil | null>(null);
+    const [fotoParaAjustar, setFotoParaAjustar] = useState<ImagePicker.ImagePickerAsset | null>(null);
+    const [preparandoFoto, setPreparandoFoto] = useState(false);
+    const urlTemporariaRef = useRef<string | null>(null);
     const [carregando, setCarregando] = useState(true);
     const [dadosCarregados, setDadosCarregados] = useState(false);
     const [salvando, setSalvando] = useState(false);
@@ -104,6 +110,18 @@ export default function EditarPerfilScreen() {
                 }
 
                 const dados = resposta.data;
+                setCamposPersistidos({
+                    nome_usuario: dados.nome_usuario ?? "",
+                    area_atuacao_usuario: dados.area_atuacao_usuario ?? "",
+                    estado_usuario: dados.estado_usuario ?? "",
+                    sobre_usuario: dados.sobre_usuario ?? "",
+                    instagram_usuario: dados.instagram_usuario ?? "",
+                    linkedin_usuario: dados.linkedin_usuario ?? "",
+                    youtube_usuario: dados.youtube_usuario ?? "",
+                    tiktok_usuario: dados.tiktok_usuario ?? "",
+                    facebook_usuario: dados.facebook_usuario ?? "",
+                    site_usuario: dados.site_usuario ?? "",
+                });
                 setNome(dados.nome_usuario ?? "");
                 setArea(dados.area_atuacao_usuario ?? "");
                 setEstado(dados.estado_usuario ?? "");
@@ -143,9 +161,10 @@ export default function EditarPerfilScreen() {
 
             const selecao = await ImagePicker.launchImageLibraryAsync({
                 mediaTypes: ["images"],
-                allowsEditing: true,
-                aspect: [1, 1],
-                quality: 0.8,
+                // Usamos o mesmo editor em Web, Android e iOS.
+                // O recorte nativo não funciona no navegador.
+                allowsEditing: false,
+                quality: 0.95,
             });
 
             if (!selecao.canceled && selecao.assets.length > 0) {
@@ -159,12 +178,102 @@ export default function EditarPerfilScreen() {
                     setErro("A imagem deve ter no máximo 3 MB.");
                     return;
                 }
-                setFotoNova(arquivo);
+                setFotoParaAjustar(arquivo);
                 setErro(null);
             }
         } catch (e) {
             setErro(e instanceof Error ? e.message : "Não foi possível selecionar a foto.");
         }
+    }
+
+    // Ao editar a foto já salva no perfil, precisamos abrir uma cópia local.
+    // O ImageManipulator não deve receber uma URL HTTP diretamente.
+    function liberarUrlTemporaria() {
+        if (Platform.OS === "web" && urlTemporariaRef.current) {
+            URL.revokeObjectURL(urlTemporariaRef.current);
+            urlTemporariaRef.current = null;
+        }
+    }
+
+    useEffect(() => () => {
+        if (Platform.OS === "web" && urlTemporariaRef.current) {
+            URL.revokeObjectURL(urlTemporariaRef.current);
+            urlTemporariaRef.current = null;
+        }
+    }, []);
+
+    async function ajustarFotoAtual() {
+        const url = getUrlFotoUsuario(fotoAtual);
+        if (!url || salvando || preparandoFoto) return;
+
+        setPreparandoFoto(true);
+        setErro(null);
+
+        try {
+            liberarUrlTemporaria();
+            let uriLocal = url;
+
+            if (/^https?:\/\//i.test(url)) {
+                if (Platform.OS === "web") {
+                    // A requisição exige CORS permitido se a foto estiver em outro domínio.
+                    const resposta = await fetch(url);
+                    if (!resposta.ok) throw new Error("Não foi possível carregar a foto atual.");
+                    const blob = await resposta.blob();
+                    uriLocal = URL.createObjectURL(blob);
+                    urlTemporariaRef.current = uriLocal;
+                } else {
+                    if (!FileSystem.cacheDirectory) throw new Error("Cache de imagens indisponível.");
+                    const destino = `${FileSystem.cacheDirectory}foto-atual-${Date.now()}.jpg`;
+                    const download = await FileSystem.downloadAsync(url, destino);
+                    if (download.status !== 200) throw new Error("Não foi possível baixar a foto atual.");
+                    uriLocal = download.uri;
+                }
+            }
+
+            const tamanhoFoto = await new Promise<{ width: number; height: number }>((resolve, reject) => {
+                Image.getSize(
+                    uriLocal,
+                    (width, height) => resolve({ width, height }),
+                    () => reject(new Error("Não foi possível identificar as dimensões da foto."))
+                );
+            });
+
+            setFotoParaAjustar({
+                uri: uriLocal,
+                width: tamanhoFoto.width,
+                height: tamanhoFoto.height,
+                fileName: "foto-perfil-atual.jpg",
+                mimeType: "image/jpeg",
+                type: "image",
+            });
+        } catch (e) {
+            liberarUrlTemporaria();
+            const detalhe = e instanceof Error ? e.message : "Não foi possível abrir a foto.";
+            setErro(Platform.OS === "web" && /^https?:\/\//i.test(url)
+                ? `Não foi possível editar a foto atual (${detalhe}). Confira se o servidor permite CORS para imagens.`
+                : detalhe);
+        } finally {
+            setPreparandoFoto(false);
+        }
+    }
+
+    // Chamado pelo modal: o arquivo recortado é enviado imediatamente ao Laravel.
+    // Enviamos os valores já persistidos para não salvar campos de texto ainda em edição.
+    async function salvarFotoAjustada(imagemAjustada: ImagePicker.ImagePickerAsset): Promise<void> {
+        if (!token || !usuario || !dadosCarregados || !camposPersistidos) {
+            throw new Error("Não foi possível identificar a sessão ou os dados do perfil.");
+        }
+
+        const resposta = await atualizarMeuPerfil(token, camposPersistidos, imagemAjustada);
+        if (!resposta.success || !resposta.data) {
+            throw new Error(resposta.message ?? "Não foi possível salvar a foto.");
+        }
+
+        await definirSessao(token, { ...usuario, ...resposta.data });
+        setFotoAtual(resposta.data.foto_usuario ?? null);
+        setFotoParaAjustar(null);
+        liberarUrlTemporaria();
+        setErro(null);
     }
 
     async function salvar() {
@@ -193,7 +302,7 @@ export default function EditarPerfilScreen() {
                 tiktok_usuario: tiktok,
                 facebook_usuario: facebook,
                 site_usuario: site,
-            }, fotoNova);
+            });
 
             if (!resposta.success || !resposta.data) {
                 throw new Error(resposta.message ?? "Não foi possível salvar o perfil.");
@@ -210,7 +319,7 @@ export default function EditarPerfilScreen() {
         }
     }
 
-    const fotoExibida = fotoNova?.uri ?? getUrlFotoUsuario(fotoAtual);
+    const fotoExibida = getUrlFotoUsuario(fotoAtual);
 
     function campo(
         titulo: string,
@@ -333,6 +442,23 @@ export default function EditarPerfilScreen() {
                                                         Trocar foto
                                                     </Text>
                                                 </Pressable>
+                                                {fotoExibida ? (
+                                                    <Pressable
+                                                        onPress={ajustarFotoAtual}
+                                                        disabled={salvando || preparandoFoto}
+                                                        accessibilityRole="button"
+                                                        accessibilityLabel="Ajustar o enquadramento da foto atual"
+                                                        style={{ minHeight: 38, justifyContent: "center", marginTop: 4 }}
+                                                    >
+                                                        {preparandoFoto ? (
+                                                            <ActivityIndicator color={coresTema.destaque} size="small" />
+                                                        ) : (
+                                                            <Text style={{ color: coresTema.destaque, fontSize: 15, textAlign: "center" }}>
+                                                                Ajustar foto atual
+                                                            </Text>
+                                                        )}
+                                                    </Pressable>
+                                                ) : null}
                                             </View>
 
                                             <Text style={styles.tituloGrupo}>Informações pessoais</Text>
@@ -488,6 +614,14 @@ export default function EditarPerfilScreen() {
                     </View>
                 </View>
             </Modal>
+            <AjustarFotoPerfilModal
+                imagem={fotoParaAjustar}
+                aoCancelar={() => {
+                    setFotoParaAjustar(null);
+                    liberarUrlTemporaria();
+                }}
+                aoConfirmar={salvarFotoAjustada}
+            />
         </View>
     );
 }
