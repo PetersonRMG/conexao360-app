@@ -569,16 +569,53 @@ export default function HomeScreen() {
                     {/* ================= FILTROS ================= */}
 
                     <View style={homeStyle.filtros}>
-                        {["Todas", "Recentes", "Em alta", "Meus posts"].map((item) => {
-                            const ativo = filtro === item;
+                        {[
+                            "Todas",
+                            "Recentes",
+                            "Em alta",
+                            "Meus posts",
+                            "Enquetes",
+                        ].map((item) => {
+
+                            const ativo =
+                                item !== "Enquetes" &&
+                                filtro === item;
 
                             return (
                                 <Pressable
                                     key={item}
-                                    style={[homeStyle.filtro, ativo && homeStyle.filtroAtivo]}
-                                    onPress={() => setFiltro(item as Filtro)}
+                                    style={[
+                                        homeStyle.filtro,
+                                        ativo &&
+                                        homeStyle.filtroAtivo,
+                                    ]}
+                                    onPress={() => {
+
+                                        if (
+                                            item === "Enquetes"
+                                        ) {
+
+                                            router.push(
+                                                "/enquetes"
+                                            );
+
+                                            return;
+                                        }
+
+                                        setFiltro(
+                                            item as Filtro
+                                        );
+                                    }}
                                 >
-                                    <Text style={[homeStyle.txtFiltro, ativo && homeStyle.txtFiltroAtivo]}>{item}</Text>
+                                    <Text
+                                        style={[
+                                            homeStyle.txtFiltro,
+                                            ativo &&
+                                            homeStyle.txtFiltroAtivo,
+                                        ]}
+                                    >
+                                        {item}
+                                    </Text>
                                 </Pressable>
                             );
                         })}
