@@ -1,5 +1,4 @@
 export const cores = {
-
   // =========================
   // MARCA
   // =========================
@@ -12,29 +11,27 @@ export const cores = {
   douradoTextoClaro: "#A77B2B",
   branco: "#FFFDFC",
 
-
   // =========================
-  // ESCURO
+  // ESCURO — NOVA PALETA UX V3
   // =========================
 
   preto: "#000000",
-  pretoPrincipal: "#0A0909",
+  pretoPrincipal: "#0A1013",
 
-  fundoEscuro: "#0A0909",
+  fundoEscuro: "#0A1013",
 
-  cardEscuro: "#141414",
-  cardSecundarioEscuro: "#1B1B1B",
+  cardEscuro: "#171D20",
+  cardSecundarioEscuro: "#222A2D",
 
-  inputEscuro: "#202020",
+  inputEscuro: "#222A2D",
 
-  bordaEscura: "#2B2B2B",
-  linhaEscura: "#2B2B2B",
+  bordaEscura: "#2B3438",
+  linhaEscura: "#2B3438",
 
   textoEscuro: "#F6F3ED",
-  textoSecundarioEscuro: "#AAA49A",
+  textoSecundarioEscuro: "#ABB3B0",
 
   bgPreto80: "#00000080",
-
 
   // =========================
   // CLARO
@@ -44,7 +41,6 @@ export const cores = {
 
   headerClaro: "#FFFDFC",
   footerClaro: "#FFFDFC",
- 
 
   cardClaro: "#FFFFFF",
   cardSecundarioClaro: "#ECE6DC",
@@ -57,7 +53,6 @@ export const cores = {
   textoClaro: "#24201C",
   textoSecundarioClaro: "#746E66",
 
-
   // =========================
   // ESTADOS
   // =========================
@@ -67,7 +62,6 @@ export const cores = {
   erro: "#D86B6B",
 
   overlayEscuro: "rgba(0,0,0,0.60)",
-
 
   // =========================
   // LEGADO
@@ -82,13 +76,11 @@ export const cores = {
   roxoPrincipal: "#141414",
   roxoPrincipal80: "#1B1B1BCC",
 
-
   // =========================
   // INTERAÇÃO
   // =========================
 
   btnPress: [{ scale: 0.97 }],
-
 };
 
 

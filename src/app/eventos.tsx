@@ -1,835 +1,573 @@
-import { useMemo, useState } from "react";
-
+import React, { useMemo, useRef, useState } from "react";
 import {
-    View,
-    Text,
     Image,
     ImageBackground,
-    TextInput,
+    Linking,
+    Modal,
     Pressable,
     ScrollView,
+    Text,
+    TextInput,
+    View,
 } from "react-native";
-
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import HeaderScreen from "@/app/header";
+import MenuScreen from "@/app/menu";
+import { useTema } from "@/contexts/TemaContext";
 import globalStyle from "@/styles/globalStyles";
 import { criarEventosStyles } from "@/styles/evetosStyles";
-import { useTema } from "@/contexts/TemaContext";
+import {
+    EVENTOS_APP,
+    EVENTOS_SAO_DEMONSTRATIVOS,
+    type EventoApp,
+} from "@/data/eventoDados";
+import {
+    ALBUNS_GALERIA,
+    VIDEOS_GALERIA,
+    DADOS_GALERIA_SAO_DEMONSTRATIVOS,
+    type AlbumGaleria,
+} from "@/data/galeriaDados";
 
-import HeaderCreen from "./header";
-import MenuSreen from "./menu";
+type FiltroEventos = "todos" | "andamento" | "proximos" | "encerrados";
+type AbaEvento = "programacao" | "enquetes" | "galeria";
+type AbaMidia = "fotos" | "videos";
+type SituacaoEvento = "andamento" | "proximos" | "encerrados";
 
-
-type FiltroEvento =
-    | "Próximos"
-    | "Hoje"
-    | "Meus ingressos"
-    | "Encerrados";
-
-
-interface Evento {
-    id: number;
-    titulo: string;
-    descricao: string;
-    data: string;
-    horario: string;
-    local: string;
-    status: "proximo" | "hoje" | "encerrado";
-    inscrito: boolean;
-}
-
-
-interface Programacao {
-    id: number;
-    horario: string;
-    titulo: string;
-    local: string;
-}
-
-
-interface Palestrante {
-    id: number;
-    nome: string;
-    cargo: string;
-}
-
-
-const EVENTOS: Evento[] = [
-    {
-        id: 1,
-        titulo: "3ª Ed. Conexão 360",
-        descricao:
-            "Uma experiência presencial de conhecimento, conexões e estratégias para profissionais da advocacia.",
-        data: "21 SET",
-        horario: "09:00 às 18:00",
-        local: "São Paulo - SP",
-        status: "hoje",
-        inscrito: true,
-    },
-    {
-        id: 2,
-        titulo: "Advocacia Exponencial",
-        descricao:
-            "Estratégia, gestão e posicionamento para escritórios que querem crescer.",
-        data: "18 OUT",
-        horario: "09:00 às 17:00",
-        local: "São Paulo - SP",
-        status: "proximo",
-        inscrito: false,
-    },
-    {
-        id: 3,
-        titulo: "Networking 360",
-        descricao:
-            "Encontro voltado à construção de conexões profissionais e novas oportunidades.",
-        data: "12 NOV",
-        horario: "19:00 às 22:00",
-        local: "São Paulo - SP",
-        status: "proximo",
-        inscrito: false,
-    },
+const FILTROS: { id: FiltroEventos; titulo: string }[] = [
+    { id: "todos", titulo: "Todos" },
+    { id: "andamento", titulo: "Em andamento" },
+    { id: "proximos", titulo: "Próximos" },
+    { id: "encerrados", titulo: "Encerrados" },
 ];
 
-
-const PROGRAMACAO: Programacao[] = [
-    {
-        id: 1,
-        horario: "09:00",
-        titulo: "Abertura e boas-vindas",
-        local: "Auditório principal",
-    },
-    {
-        id: 2,
-        horario: "10:00",
-        titulo: "Advocacia, posicionamento e autoridade",
-        local: "Auditório principal",
-    },
-    {
-        id: 3,
-        horario: "11:30",
-        titulo: "Networking estratégico",
-        local: "Espaço Conexões",
-    },
+const ABAS: { id: AbaEvento; titulo: string }[] = [
+    { id: "programacao", titulo: "Programação" },
+    { id: "enquetes", titulo: "Enquetes" },
+    { id: "galeria", titulo: "Galeria" },
 ];
 
+function situacaoEvento(evento: EventoApp): SituacaoEvento {
+    const agora = Date.now();
+    const inicio = new Date(evento.inicio).getTime();
+    const termino = new Date(evento.termino).getTime();
+    if (Number.isNaN(inicio) || Number.isNaN(termino)) return "encerrados";
+    if (agora < inicio) return "proximos";
+    if (agora > termino) return "encerrados";
+    return "andamento";
+}
 
-const PALESTRANTES: Palestrante[] = [
-    {
-        id: 1,
-        nome: "Dra. Simone Baptista",
-        cargo: "Palestrante",
-    },
-    {
-        id: 2,
-        nome: "Dr. Rafael Menezes",
-        cargo: "Convidado",
-    },
-    {
-        id: 3,
-        nome: "Dra. Camila Ribeiro",
-        cargo: "Convidada",
-    },
-];
+function descricaoSituacao(situacao: SituacaoEvento) {
+    if (situacao === "andamento") return "EM ANDAMENTO";
+    if (situacao === "proximos") return "EM BREVE";
+    return "ENCERRADO";
+}
 
+function dataLegivel(iso: string) {
+    const data = new Date(iso);
+    if (Number.isNaN(data.getTime())) return "Data a confirmar";
+    return new Intl.DateTimeFormat("pt-BR", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+    }).format(data);
+}
+
+function correspondeBusca(evento: EventoApp, busca: string) {
+    const alvo = `${evento.titulo} ${evento.edicao ?? ""} ${evento.local} ${evento.descricao}`
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase();
+    const termo = busca.trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+    return alvo.includes(termo);
+}
 
 export default function EventosScreen() {
-
     const { coresTema } = useTema();
+    const styles = criarEventosStyles(coresTema);
+    const scrollRef = useRef<ScrollView>(null);
 
-    const eventosStyles =
-        criarEventosStyles(coresTema);
+    const [busca, setBusca] = useState("");
+    const [filtro, setFiltro] = useState<FiltroEventos>("todos");
+    const [eventoSelecionado, setEventoSelecionado] = useState<EventoApp | null>(null);
+    const [aba, setAba] = useState<AbaEvento>("programacao");
+    const [abaMidia, setAbaMidia] = useState<AbaMidia>("fotos");
+    const [albumAberto, setAlbumAberto] = useState<AlbumGaleria | null>(null);
+    const [indiceFoto, setIndiceFoto] = useState<number | null>(null);
+    const [erroVideo, setErroVideo] = useState("");
 
-    const [busca, setBusca] =
-        useState("");
+    const eventosVisiveis = useMemo(() => EVENTOS_APP.filter(evento => {
+        const situacao = situacaoEvento(evento);
+        return (filtro === "todos" || filtro === situacao) && correspondeBusca(evento, busca);
+    }), [filtro, busca]);
 
-    const [filtro, setFiltro] =
-        useState<FiltroEvento>("Próximos");
+    const situacaoSelecionado = eventoSelecionado ? situacaoEvento(eventoSelecionado) : null;
+    const encerrado = situacaoSelecionado === "encerrados";
 
+    const albuns = useMemo(() => eventoSelecionado
+        ? ALBUNS_GALERIA.filter(item => item.eventoId === eventoSelecionado.id)
+        : [], [eventoSelecionado]);
+    const videos = useMemo(() => eventoSelecionado
+        ? VIDEOS_GALERIA.filter(item => item.eventoId === eventoSelecionado.id)
+        : [], [eventoSelecionado]);
+    const fotoAtual = indiceFoto === null ? null : albumAberto?.fotos[indiceFoto] ?? null;
 
-    // =========================
-    // EVENTOS FILTRADOS
-    // =========================
+    function irParaTopo() {
+        scrollRef.current?.scrollTo({ y: 0, animated: true });
+    }
 
-    const eventosFiltrados =
-        useMemo(() => {
+    function abrirEvento(evento: EventoApp) {
+        setEventoSelecionado(evento);
+        // Depois do evento, a Galeria é mais relevante que a agenda passada.
+        const status = situacaoEvento(evento);
+        setAba(status === "encerrados" ? "galeria" : "programacao");
+        setAbaMidia("fotos");
+        setAlbumAberto(null);
+        setIndiceFoto(null);
+        setErroVideo("");
+        irParaTopo();
+    }
 
-            return EVENTOS.filter((evento) => {
+    function voltar() {
+        if (indiceFoto !== null) {
+            setIndiceFoto(null);
+        } else if (albumAberto !== null) {
+            setAlbumAberto(null);
+        } else {
+            setEventoSelecionado(null);
+        }
+        irParaTopo();
+    }
 
-                const correspondeBusca =
-                    evento.titulo
-                        .toLowerCase()
-                        .includes(
-                            busca.toLowerCase()
-                        );
+    async function abrirVideo(url: string) {
+        if (!/^https:\/\//i.test(url)) {
+            setErroVideo("O vídeo ainda não possui um link válido.");
+            return;
+        }
+        try {
+            await Linking.openURL(url);
+        } catch {
+            setErroVideo("Não foi possível abrir o vídeo neste dispositivo.");
+        }
+    }
 
-                let correspondeFiltro = true;
-
-                if (filtro === "Hoje") {
-                    correspondeFiltro =
-                        evento.status === "hoje";
-                }
-
-                if (filtro === "Próximos") {
-                    correspondeFiltro =
-                        evento.status === "proximo" ||
-                        evento.status === "hoje";
-                }
-
-                if (filtro === "Meus ingressos") {
-                    correspondeFiltro =
-                        evento.inscrito;
-                }
-
-                if (filtro === "Encerrados") {
-                    correspondeFiltro =
-                        evento.status === "encerrado";
-                }
-
-                return (
-                    correspondeBusca &&
-                    correspondeFiltro
-                );
-
-            });
-
-        }, [busca, filtro]);
-
-
-    const eventoPrincipal =
-        EVENTOS[0];
-
+    function abrirAlbum(album: AlbumGaleria) {
+        setAlbumAberto(album);
+        setIndiceFoto(null);
+        irParaTopo();
+    }
 
     return (
-
         <View style={globalStyle.container}>
-
-            <View
-                style={[
-                    globalStyle.background,
-                    eventosStyles.container,
-                ]}
-            >
-
-                <SafeAreaView
-                    style={
-                        globalStyle.areaConteudo
-                    }
-                >
-
-                    {/* =========================
-                        HEADER PADRÃO
-                    ========================= */}
-
-                    <HeaderCreen />
-
-
-                    {/* =========================
-                        BUSCA
-                    ========================= */}
-
-                    <View
-                        style={
-                            eventosStyles.areaBusca
-                        }
-                    >
-
-                        <View
-                            style={
-                                eventosStyles.inputBuscaContainer
-                            }
-                        >
-
-                            <Image
-                                source={require(
-                                    "@/assets/images/img/search.png"
-                                )}
-                                style={
-                                    eventosStyles.iconeBusca
-                                }
-                            />
-
-                            <TextInput
-                                value={busca}
-                                onChangeText={setBusca}
-                                style={
-                                    eventosStyles.inputBusca
-                                }
-                                placeholder="Buscar eventos"
-                                placeholderTextColor={
-                                    coresTema.textoSecundario
-                                }
-                            />
-
-                        </View>
-
-                    </View>
-
-
-                    {/* =========================
-                        FILTROS
-                    ========================= */}
-
-                    <View
-                        style={
-                            eventosStyles.filtros
-                        }
-                    >
-
-                        {([
-                            "Próximos",
-                            "Hoje",
-                            "Meus ingressos",
-                            "Encerrados",
-                        ] as FiltroEvento[]).map(
-                            (item) => {
-
-                                const ativo =
-                                    filtro === item;
-
-                                return (
-
-                                    <Pressable
-                                        key={item}
-                                        onPress={() =>
-                                            setFiltro(item)
-                                        }
-                                        style={[
-                                            eventosStyles.filtro,
-                                            ativo &&
-                                            eventosStyles.filtroAtivo,
-                                        ]}
-                                    >
-
-                                        <Text
-                                            style={[
-                                                eventosStyles.txtFiltro,
-                                                ativo &&
-                                                eventosStyles.txtFiltroAtivo,
-                                            ]}
-                                        >
-                                            {item}
-                                        </Text>
-
-                                    </Pressable>
-
-                                );
-
-                            }
-                        )}
-
-                    </View>
-
-
-                    {/* =========================
-                        CONTEÚDO
-                    ========================= */}
+            <View style={[globalStyle.background, styles.container]}>
+                <SafeAreaView style={globalStyle.areaConteudo}>
+                    <HeaderScreen />
 
                     <ScrollView
-                        style={
-                            eventosStyles.scroll
-                        }
-                        contentContainerStyle={
-                            eventosStyles.scrollConteudo
-                        }
-                        showsVerticalScrollIndicator={
-                            false
-                        }
+                        ref={scrollRef}
+                        style={styles.scroll}
+                        contentContainerStyle={styles.scrollConteudo}
+                        showsVerticalScrollIndicator={false}
+                        keyboardShouldPersistTaps="handled"
                     >
+                        {!eventoSelecionado ? (
+                            <>
+                                <Text style={styles.titulo} accessibilityRole="header">Eventos</Text>
+                                <Text style={styles.subtitulo}>
+                                    Palestras, enquetes e registros de cada edição em um só lugar.
+                                </Text>
 
-                        {/* =========================
-                            EVENTO PRINCIPAL
-                        ========================= */}
-
-                        <Text
-                            style={
-                                eventosStyles.tituloSecao
-                            }
-                        >
-                            Evento em destaque
-                        </Text>
-
-
-                        <View
-                            style={
-                                eventosStyles.hero
-                            }
-                        >
-
-                            <ImageBackground
-                                source={require(
-                                    "@/assets/images/img/imagem.png"
-                                )}
-                                resizeMode="stretch"
-                                style={
-                                    eventosStyles.heroImagem
-                                }
-                                imageStyle={
-                                    eventosStyles.heroImagemInterna
-                                }
-                            >
-
-                                <View
-                                    style={
-                                        eventosStyles.heroOverlay
-                                    }
-                                >
-
-                                    <View
-                                        style={
-                                            eventosStyles.statusEvento
-                                        }
-                                    >
-
-                                        <Text
-                                            style={
-                                                eventosStyles.txtStatusEvento
-                                            }
-                                        >
-                                            EM ANDAMENTO
-                                        </Text>
-
-                                    </View>
-
-
-                                    <View
-                                        style={
-                                            eventosStyles.heroConteudo
-                                        }
-                                    >
-
-                                        <Text
-                                            style={
-                                                eventosStyles.heroTitulo
-                                            }
-                                        >
-                                            {
-                                                eventoPrincipal.titulo
-                                            }
-                                        </Text>
-
-                                        <Text
-                                            style={
-                                                eventosStyles.heroDescricao
-                                            }
-                                            numberOfLines={3}
-                                        >
-                                            {
-                                                eventoPrincipal.descricao
-                                            }
-                                        </Text>
-
-
-                                        <View
-                                            style={
-                                                eventosStyles.heroInfos
-                                            }
-                                        >
-
-                                            <View
-                                                style={
-                                                    eventosStyles.infoLinha
-                                                }
-                                            >
-
-                                                <Image
-                                                    source={require(
-                                                        "@/assets/images/img/evento.png"
-                                                    )}
-                                                    style={
-                                                        eventosStyles.infoIcone
-                                                    }
-                                                />
-
-                                                <Text
-                                                    style={
-                                                        eventosStyles.infoTexto
-                                                    }
-                                                >
-                                                    {
-                                                        eventoPrincipal.data
-                                                    }
-                                                </Text>
-
-                                                <Text
-                                                    style={
-                                                        eventosStyles.infoSeparador
-                                                    }
-                                                >
-                                                    •
-                                                </Text>
-
-                                                <Text
-                                                    style={
-                                                        eventosStyles.infoTexto
-                                                    }
-                                                >
-                                                    {
-                                                        eventoPrincipal.horario
-                                                    }
-                                                </Text>
-
-                                            </View>
-
-
-                                            <View
-                                                style={
-                                                    eventosStyles.infoLinha
-                                                }
-                                            >
-
-                                                <Image
-                                                    source={require(
-                                                        "@/assets/images/img/evento.png"
-                                                    )}
-                                                    style={
-                                                        eventosStyles.infoIcone
-                                                    }
-                                                />
-
-                                                <Text
-                                                    style={
-                                                        eventosStyles.infoTexto
-                                                    }
-                                                >
-                                                    {
-                                                        eventoPrincipal.local
-                                                    }
-                                                </Text>
-
-                                            </View>
-
-                                        </View>
-
-
+                                <View style={styles.barraBusca}>
+                                    <Text style={styles.iconeBusca} accessible={false}>⌕</Text>
+                                    <TextInput
+                                        value={busca}
+                                        onChangeText={setBusca}
+                                        placeholder="Buscar eventos"
+                                        placeholderTextColor={coresTema.textoSecundario}
+                                        accessibilityLabel="Buscar eventos por nome ou local"
+                                        style={styles.campoBusca}
+                                        returnKeyType="search"
+                                    />
+                                    {busca.length > 0 ? (
                                         <Pressable
-                                            style={({ pressed }) => [
-                                                eventosStyles.btnPrincipal,
-                                                pressed &&
-                                                eventosStyles.btnPrincipalPressed,
-                                            ]}
-                                            onPress={() => {
-                                                // Futuramente:
-                                                // router.push(`/evento/${eventoPrincipal.id}`);
-                                            }}
+                                            onPress={() => setBusca("")}
+                                            style={styles.limparBusca}
+                                            accessibilityRole="button"
+                                            accessibilityLabel="Limpar busca"
                                         >
-
-                                            <Text
-                                                style={
-                                                    eventosStyles.txtBtnPrincipal
-                                                }
-                                            >
-                                                Ver detalhes
-                                            </Text>
-
+                                            <Text style={styles.limparTexto}>×</Text>
                                         </Pressable>
-
-                                    </View>
-
+                                    ) : null}
                                 </View>
 
-                            </ImageBackground>
-
-                        </View>
-
-
-                        {/* =========================
-                            PROGRAMAÇÃO
-                        ========================= */}
-
-                        <View
-                            style={
-                                eventosStyles.cabecalhoSecao
-                            }
-                        >
-
-                            <View>
-
-                                <Text
-                                    style={
-                                        eventosStyles.tituloSecao
-                                    }
+                                <ScrollView
+                                    horizontal
+                                    showsHorizontalScrollIndicator={false}
+                                    contentContainerStyle={styles.filtros}
+                                    accessibilityLabel="Filtrar eventos por situação"
                                 >
-                                    Programação de hoje
-                                </Text>
-
-                                <Text
-                                    style={
-                                        eventosStyles.subtituloSecao
-                                    }
-                                >
-                                    Acompanhe o que está acontecendo.
-                                </Text>
-
-                            </View>
-
-                        </View>
-
-
-                        <View
-                            style={
-                                eventosStyles.cardProgramacao
-                            }
-                        >
-
-                            {PROGRAMACAO.map(
-                                (item, index) => (
-
-                                    <View
-                                        key={item.id}
-                                        style={[
-                                            eventosStyles.programacaoItem,
-                                            index !==
-                                            PROGRAMACAO.length - 1 &&
-                                            eventosStyles.programacaoItemBorda,
-                                        ]}
-                                    >
-
-                                        <View
-                                            style={
-                                                eventosStyles.horarioArea
-                                            }
+                                    {FILTROS.map(item => (
+                                        <Pressable
+                                            key={item.id}
+                                            onPress={() => setFiltro(item.id)}
+                                            style={[styles.filtro, filtro === item.id && styles.filtroAtivo]}
+                                            accessibilityRole="button"
+                                            accessibilityState={{ selected: filtro === item.id }}
+                                            accessibilityLabel={`Filtrar: ${item.titulo}`}
                                         >
-
-                                            <Text
-                                                style={
-                                                    eventosStyles.horario
-                                                }
-                                            >
-                                                {item.horario}
-                                            </Text>
-
-                                            <View
-                                                style={
-                                                    eventosStyles.pontoTimeline
-                                                }
-                                            />
-
-                                        </View>
-
-
-                                        <View
-                                            style={
-                                                eventosStyles.programacaoConteudo
-                                            }
-                                        >
-
-                                            <Text
-                                                style={
-                                                    eventosStyles.programacaoTitulo
-                                                }
-                                            >
+                                            <Text style={[styles.filtroTexto, filtro === item.id && styles.filtroTextoAtivo]}>
                                                 {item.titulo}
                                             </Text>
+                                        </Pressable>
+                                    ))}
+                                </ScrollView>
 
-                                            <Text
-                                                style={
-                                                    eventosStyles.programacaoLocal
-                                                }
-                                            >
-                                                {item.local}
-                                            </Text>
+                                {EVENTOS_SAO_DEMONSTRATIVOS && (
+                                    <Text style={styles.marcaDemo}>
+                                        Prévia de navegação: eventos e programação demonstrativos, ainda sem integração à API.
+                                    </Text>
+                                )}
 
-                                        </View>
-
+                                <Text style={styles.tituloSecao} accessibilityRole="header">
+                                    {filtro === "todos" ? "Edições do evento" : FILTROS.find(item => item.id === filtro)?.titulo}
+                                </Text>
+                                {eventosVisiveis.length === 0 ? (
+                                    <View style={styles.vazio}>
+                                        <Text style={styles.vazioTitulo}>Nenhum evento encontrado</Text>
+                                        <Text style={styles.vazioTexto}>
+                                            Ajuste sua busca ou selecione outra categoria.
+                                        </Text>
                                     </View>
-
-                                )
-                            )}
-
-                        </View>
-
-
-                        {/* =========================
-                            PALESTRANTES
-                        ========================= */}
-
-                        <Text
-                            style={
-                                eventosStyles.tituloSecao
-                            }
-                        >
-                            Palestrantes
-                        </Text>
-
-
-                        <ScrollView
-                            horizontal
-                            showsHorizontalScrollIndicator={
-                                false
-                            }
-                            contentContainerStyle={
-                                eventosStyles.palestrantes
-                            }
-                        >
-
-                            {PALESTRANTES.map(
-                                (palestrante) => (
-
-                                    <View
-                                        key={palestrante.id}
-                                        style={
-                                            eventosStyles.palestrante
-                                        }
-                                    >
-
-                                        <Image
-                                            source={require(
-                                                "@/assets/images/img/avatar.png"
+                                ) : eventosVisiveis.map(evento => {
+                                    const situacao = situacaoEvento(evento);
+                                    return (
+                                        <View key={evento.id} style={styles.cartaoEvento}>
+                                            {evento.imagem ? (
+                                                <ImageBackground
+                                                    source={evento.imagem}
+                                                    style={styles.imagemEvento}
+                                                    resizeMode="cover"
+                                                    imageStyle={{ opacity: 0.94 }}
+                                                >
+                                                    <View style={styles.imagemSombra} pointerEvents="none" />
+                                                    <View style={styles.selo}>
+                                                        <Text style={styles.seloTexto}>{descricaoSituacao(situacao)}</Text>
+                                                    </View>
+                                                    <Text style={styles.capaTexto}>{evento.titulo}</Text>
+                                                </ImageBackground>
+                                            ) : (
+                                                <View style={styles.semImagem}>
+                                                    <Text style={styles.semImagemTexto}>Imagem do evento</Text>
+                                                </View>
                                             )}
-                                            style={
-                                                eventosStyles.palestranteAvatar
-                                            }
-                                        />
-
-                                        <Text
-                                            style={
-                                                eventosStyles.palestranteNome
-                                            }
-                                            numberOfLines={2}
-                                        >
-                                            {
-                                                palestrante.nome
-                                            }
-                                        </Text>
-
-                                        <Text
-                                            style={
-                                                eventosStyles.palestranteCargo
-                                            }
-                                        >
-                                            {
-                                                palestrante.cargo
-                                            }
-                                        </Text>
-
-                                    </View>
-
-                                )
-                            )}
-
-                        </ScrollView>
-
-
-                        {/* =========================
-                            OUTROS EVENTOS
-                        ========================= */}
-
-                        <Text
-                            style={
-                                eventosStyles.tituloSecao
-                            }
-                        >
-                            Outros eventos
-                        </Text>
-
-
-                        {eventosFiltrados
-                            .filter(
-                                (evento) =>
-                                    evento.id !==
-                                    eventoPrincipal.id
-                            )
-                            .map((evento) => (
-
+                                            <View style={styles.cartaoInfo}>
+                                                <Text numberOfLines={3} style={styles.resumo}>{evento.descricao}</Text>
+                                                <View style={styles.linhaMeta}>
+                                                    <Text style={styles.ponto} accessible={false}>•</Text>
+                                                    <Text style={styles.meta}>{dataLegivel(evento.inicio)}</Text>
+                                                </View>
+                                                <View style={styles.linhaMeta}>
+                                                    <Text style={styles.ponto} accessible={false}>•</Text>
+                                                    <Text style={styles.meta}>{evento.local}</Text>
+                                                </View>
+                                                <Pressable
+                                                    style={styles.botaoPrincipal}
+                                                    onPress={() => abrirEvento(evento)}
+                                                    accessibilityRole="button"
+                                                    accessibilityLabel={`${situacao === "encerrados" ? "Reviver edição" : "Ver detalhes"} ${evento.titulo}`}
+                                                >
+                                                    <Text style={styles.botaoPrincipalTexto}>
+                                                        {situacao === "encerrados" ? "Reviver edição" : "Ver detalhes"}
+                                                    </Text>
+                                                </Pressable>
+                                            </View>
+                                        </View>
+                                    );
+                                })}
+                            </>
+                        ) : (
+                            <>
                                 <Pressable
-                                    key={evento.id}
-                                    style={({ pressed }) => [
-                                        eventosStyles.cardEvento,
-                                        pressed &&
-                                        eventosStyles.cardEventoPressed,
-                                    ]}
+                                    style={styles.voltar}
+                                    onPress={voltar}
+                                    accessibilityRole="button"
+                                    accessibilityLabel="Voltar à lista de eventos"
                                 >
-
-                                    <View
-                                        style={
-                                            eventosStyles.dataEvento
-                                        }
-                                    >
-
-                                        <Text
-                                            style={
-                                                eventosStyles.txtDataEvento
-                                            }
-                                        >
-                                            {evento.data}
-                                        </Text>
-
-                                    </View>
-
-
-                                    <View
-                                        style={
-                                            eventosStyles.eventoConteudo
-                                        }
-                                    >
-
-                                        <Text
-                                            style={
-                                                eventosStyles.eventoTitulo
-                                            }
-                                            numberOfLines={1}
-                                        >
-                                            {evento.titulo}
-                                        </Text>
-
-                                        <Text
-                                            style={
-                                                eventosStyles.eventoDescricao
-                                            }
-                                            numberOfLines={2}
-                                        >
-                                            {evento.descricao}
-                                        </Text>
-
-                                        <Text
-                                            style={
-                                                eventosStyles.eventoMeta
-                                            }
-                                        >
-                                            {evento.horario}
-                                            {"  •  "}
-                                            {evento.local}
-                                        </Text>
-
-                                    </View>
-
+                                    <Text style={styles.voltarTexto}>‹  Todos os eventos</Text>
                                 </Pressable>
 
-                            ))}
+                                <Text style={styles.detalheTitulo} accessibilityRole="header">{eventoSelecionado.titulo}</Text>
+                                <Text style={styles.detalheSubtitulo}>{eventoSelecionado.descricao}</Text>
+                                <View style={styles.miniMeta}>
+                                    <Text style={styles.metaBloco}>{dataLegivel(eventoSelecionado.inicio)}</Text>
+                                    <Text style={styles.metaBloco}>{eventoSelecionado.local}</Text>
+                                </View>
 
+                                <View style={styles.abas}>
+                                    {ABAS.map(item => (
+                                        <Pressable
+                                            key={item.id}
+                                            style={[styles.aba, aba === item.id && styles.abaAtiva]}
+                                            onPress={() => {
+                                                setAba(item.id);
+                                                setAlbumAberto(null);
+                                                setIndiceFoto(null);
+                                            }}
+                                            accessibilityRole="button"
+                                            accessibilityLabel={`Abrir ${item.titulo.toLowerCase()} do evento`}
+                                            accessibilityState={{ selected: aba === item.id }}
+                                        >
+                                            <Text style={[styles.abaTexto, aba === item.id && styles.abaTextoAtivo]}>
+                                                {item.titulo}
+                                            </Text>
+                                        </Pressable>
+                                    ))}
+                                </View>
 
-                        {eventosFiltrados
-                            .filter(
-                                (evento) =>
-                                    evento.id !==
-                                    eventoPrincipal.id
-                            ).length === 0 && (
+                                {aba === "programacao" ? (
+                                    <>
+                                        <Text style={styles.tituloSecao} accessibilityRole="header">
+                                            {encerrado ? "Programação realizada" : "Programação"}
+                                        </Text>
+                                        {eventoSelecionado.programacao.length === 0 ? (
+                                            <View style={styles.vazio}>
+                                                <Text style={styles.vazioTitulo}>Programação em preparação</Text>
+                                                <Text style={styles.vazioTexto}>As atividades serão exibidas quando a organização publicá-las.</Text>
+                                            </View>
+                                        ) : (
+                                            <View style={styles.painel}>
+                                                {eventoSelecionado.programacao.map(item => (
+                                                    <View style={styles.itemProgramacao} key={item.id}>
+                                                        <Text style={styles.horario}>{item.horario}</Text>
+                                                        <View style={styles.atividade}>
+                                                            <Text style={styles.atividadeTitulo}>{item.titulo}</Text>
+                                                            {item.local ? <Text style={styles.atividadeLocal}>{item.local}</Text> : null}
+                                                        </View>
+                                                    </View>
+                                                ))}
+                                            </View>
+                                        )}
+                                        {eventoSelecionado.palestrantes.length > 0 ? (
+                                            <>
+                                                <Text style={styles.menuSecao} accessibilityRole="header">Palestrantes</Text>
+                                                {eventoSelecionado.palestrantes.map(palestrante => (
+                                                    <View style={[styles.painel, styles.painelConteudo]} key={palestrante.id}>
+                                                        <Text style={styles.painelTitulo}>{palestrante.nome}</Text>
+                                                        {palestrante.assunto && (
+                                                            <Text style={styles.painelTexto}>{palestrante.assunto}</Text>
+                                                        )}
+                                                    </View>
+                                                ))}
+                                            </>
+                                        ) : null}
+                                    </>
+                                ) : aba === "enquetes" ? (
+                                    <>
+                                        <Text style={styles.tituloSecao} accessibilityRole="header">Enquetes do evento</Text>
+                                        {eventoSelecionado.enquetes.length === 0 ? (
+                                            <View style={styles.vazio}>
+                                                <Text style={styles.vazioTitulo}>Nenhuma enquete publicada</Text>
+                                                <Text style={styles.vazioTexto}>
+                                                    As enquetes dos palestrantes e da organização aparecerão nesta edição.
+                                                </Text>
+                                            </View>
+                                        ) : eventoSelecionado.enquetes.map(enquete => (
+                                            <View key={enquete.id} style={[styles.painel, styles.painelConteudo]}>
+                                                <Text style={styles.painelTitulo}>{enquete.pergunta}</Text>
+                                                <Text style={styles.painelTexto}>
+                                                    {enquete.encerrada || encerrado
+                                                        ? "Enquete encerrada. Os resultados só aparecerão quando forem divulgados pela organização."
+                                                        : "Enquete disponível. A votação será ativada após integração com o endpoint de respostas."}
+                                                </Text>
+                                            </View>
+                                        ))}
+                                        {encerrado && (
+                                            <View style={styles.aviso}>
+                                                <Text style={styles.avisoTitulo}>Esta edição foi encerrada</Text>
+                                                <Text style={styles.avisoTexto}>Novos votos não são aceitos depois do encerramento do evento.</Text>
+                                            </View>
+                                        )}
+                                    </>
+                                ) : (
+                                    <>
+                                        <Text style={styles.tituloSecao} accessibilityRole="header">Memórias do evento</Text>
+                                        <Text style={styles.detalheSubtitulo}>
+                                            Fotos oficiais, gravações das palestras e melhores momentos desta edição.
+                                        </Text>
+                                        <View style={styles.abas}>
+                                            {(["fotos", "videos"] as const).map(item => (
+                                                <Pressable
+                                                    key={item}
+                                                    style={[styles.aba, abaMidia === item && styles.abaAtiva]}
+                                                    onPress={() => {
+                                                        setAbaMidia(item);
+                                                        setAlbumAberto(null);
+                                                        setIndiceFoto(null);
+                                                    }}
+                                                    accessibilityRole="button"
+                                                    accessibilityLabel={item === "fotos" ? "Ver fotos oficiais" : "Ver gravações das palestras"}
+                                                    accessibilityState={{ selected: abaMidia === item }}
+                                                >
+                                                    <Text style={[styles.abaTexto, abaMidia === item && styles.abaTextoAtivo]}>
+                                                        {item === "fotos" ? "Fotos" : "Vídeos"}
+                                                    </Text>
+                                                </Pressable>
+                                            ))}
+                                        </View>
 
-                                <Text
-                                    style={
-                                        eventosStyles.semEventos
-                                    }
-                                >
-                                    Nenhum outro evento encontrado.
-                                </Text>
-
-                            )}
-
+                                        {abaMidia === "fotos" ? (
+                                            albumAberto ? (
+                                                <>
+                                                    <Pressable
+                                                        onPress={() => setAlbumAberto(null)}
+                                                        style={styles.linhaVoltar}
+                                                        accessibilityRole="button"
+                                                        accessibilityLabel="Voltar para os álbuns"
+                                                    >
+                                                        <Text style={styles.voltarTexto}>‹  Voltar aos álbuns</Text>
+                                                    </Pressable>
+                                                    <Text style={styles.menuSecao}>{albumAberto.titulo}</Text>
+                                                    <View style={styles.grade}>
+                                                        {albumAberto.fotos.map((foto, indice) => (
+                                                            <Pressable
+                                                                key={foto.id}
+                                                                style={styles.cardFoto}
+                                                                onPress={() => setIndiceFoto(indice)}
+                                                                accessibilityRole="button"
+                                                                accessibilityLabel={`Ampliar ${foto.titulo}, ${indice + 1} de ${albumAberto.fotos.length}`}
+                                                            >
+                                                                <Image source={foto.source} style={styles.imagemFoto} resizeMode="cover" />
+                                                                <Text numberOfLines={2} style={styles.descricaoFoto}>{foto.titulo}</Text>
+                                                            </Pressable>
+                                                        ))}
+                                                    </View>
+                                                </>
+                                            ) : albuns.length === 0 ? (
+                                                <View style={styles.vazio}>
+                                                    <Text style={styles.vazioTitulo}>Fotos em breve</Text>
+                                                    <Text style={styles.vazioTexto}>A organização ainda não disponibilizou álbuns para esta edição.</Text>
+                                                </View>
+                                            ) : (
+                                                <View style={styles.listaAlbuns}>
+                                                    {DADOS_GALERIA_SAO_DEMONSTRATIVOS && (
+                                                        <Text style={styles.marcaDemo}>Fotografia de demonstração, não é cobertura oficial.</Text>
+                                                    )}
+                                                    {albuns.map(album => (
+                                                        <Pressable
+                                                            key={album.id}
+                                                            onPress={() => abrirAlbum(album)}
+                                                            style={styles.album}
+                                                            accessibilityRole="button"
+                                                            accessibilityLabel={`Abrir álbum ${album.titulo}, ${album.fotos.length} fotos`}
+                                                        >
+                                                            {album.fotos[0] ? (
+                                                                <Image source={album.fotos[0].source} style={styles.albumCapa} resizeMode="cover" />
+                                                            ) : (
+                                                                <View style={styles.albumCapa}><Text style={styles.meta}>Sem capa</Text></View>
+                                                            )}
+                                                            <View style={styles.albumInfo}>
+                                                                <Text style={styles.albumTitulo}>{album.titulo}</Text>
+                                                                <Text style={styles.albumDescricao}>{album.descricao}</Text>
+                                                            </View>
+                                                        </Pressable>
+                                                    ))}
+                                                </View>
+                                            )
+                                        ) : videos.length === 0 ? (
+                                            <View style={styles.vazio}>
+                                                <Text style={styles.vazioTitulo}>Vídeos em breve</Text>
+                                                <Text style={styles.vazioTexto}>As gravações serão exibidas quando estiverem disponíveis na área de conteúdos.</Text>
+                                            </View>
+                                        ) : (
+                                            <>
+                                                {videos.map(video => (
+                                                    <Pressable
+                                                        key={video.id}
+                                                        onPress={() => void abrirVideo(video.url)}
+                                                        style={styles.videoRow}
+                                                        accessibilityRole="button"
+                                                        accessibilityLabel={`Assistir vídeo ${video.titulo}`}
+                                                    >
+                                                        <View style={styles.videoCapa}>
+                                                            {video.imagem ? (
+                                                                <Image source={video.imagem} resizeMode="cover" style={{ width: "100%", height: "100%" }} />
+                                                            ) : <Text style={styles.play}>▶</Text>}
+                                                        </View>
+                                                        <View style={styles.videoInfo}>
+                                                            <Text style={styles.videoTitulo} numberOfLines={2}>{video.titulo}</Text>
+                                                            <Text style={styles.videoDescricao} numberOfLines={2}>
+                                                                {video.palestrante ?? video.descricao ?? "Conteúdo oficial"}
+                                                            </Text>
+                                                        </View>
+                                                    </Pressable>
+                                                ))}
+                                                {erroVideo ? <Text style={styles.avisoTexto}>{erroVideo}</Text> : null}
+                                            </>
+                                        )}
+                                    </>
+                                )}
+                            </>
+                        )}
                     </ScrollView>
 
-
-                    {/* =========================
-                        FOOTER
-                    ========================= */}
-
-                    <MenuSreen />
-
+                    <MenuScreen />
                 </SafeAreaView>
-
             </View>
 
+            <Modal
+                visible={fotoAtual !== null}
+                transparent={false}
+                animationType="fade"
+                onRequestClose={() => setIndiceFoto(null)}
+                statusBarTranslucent
+            >
+                <SafeAreaView style={styles.visualizador}>
+                    <View style={styles.visualizadorTopo}>
+                        <Text style={styles.visualizadorNumero}>
+                            {indiceFoto === null ? "Galeria" : `${indiceFoto + 1} de ${albumAberto?.fotos.length ?? 0}`}
+                        </Text>
+                        <Pressable
+                            onPress={() => setIndiceFoto(null)}
+                            style={styles.fechar}
+                            accessibilityRole="button"
+                            accessibilityLabel="Fechar fotografia"
+                        >
+                            <Text style={styles.fecharTexto}>×</Text>
+                        </Pressable>
+                    </View>
+                    {fotoAtual && (
+                        <Image
+                            source={fotoAtual.source}
+                            resizeMode="contain"
+                            style={styles.fotoVisualizador}
+                            accessibilityLabel={fotoAtual.descricao ?? fotoAtual.titulo}
+                        />
+                    )}
+                    <Text style={styles.legenda}>{fotoAtual?.titulo ?? ""}</Text>
+                    <View style={styles.controlesFoto}>
+                        <Pressable
+                            onPress={() => setIndiceFoto(indice => indice === null ? null : Math.max(0, indice - 1))}
+                            disabled={indiceFoto === null || indiceFoto === 0}
+                            style={[styles.controlarFoto, (indiceFoto === null || indiceFoto === 0) && styles.controlarFotoInativo]}
+                            accessibilityRole="button"
+                            accessibilityLabel="Fotografia anterior"
+                        >
+                            <Text style={styles.controlarFotoTexto}>‹  Anterior</Text>
+                        </Pressable>
+                        <Pressable
+                            onPress={() => setIndiceFoto(indice => indice === null ? null : Math.min((albumAberto?.fotos.length ?? 1) - 1, indice + 1))}
+                            disabled={indiceFoto === null || indiceFoto >= (albumAberto?.fotos.length ?? 0) - 1}
+                            style={[styles.controlarFoto, (indiceFoto === null || indiceFoto >= (albumAberto?.fotos.length ?? 0) - 1) && styles.controlarFotoInativo]}
+                            accessibilityRole="button"
+                            accessibilityLabel="Próxima fotografia"
+                        >
+                            <Text style={styles.controlarFotoTexto}>Próxima  ›</Text>
+                        </Pressable>
+                    </View>
+                </SafeAreaView>
+            </Modal>
         </View>
-
     );
-
 }

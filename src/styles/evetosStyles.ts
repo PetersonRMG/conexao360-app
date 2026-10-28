@@ -1,564 +1,518 @@
 import { StyleSheet } from "react-native";
 
-import { cores, fontes } from "./variaveis";
-import { CoresTema } from "./temas";
+type PaletaEvento = {
+  fundo: string;
+  card: string;
+  cardSecundario: string;
+  texto: string;
+  textoSecundario: string;
+  borda: string;
+  destaque: string;
+};
 
-
-export const criarEventosStyles = (
-    tema: CoresTema
-) => StyleSheet.create({
-
-    // =========================
-    // ESTRUTURA
-    // =========================
-
+export function criarEventosStyles(cores: PaletaEvento) {
+  return StyleSheet.create({
     container: {
-        flex: 1,
-        backgroundColor: tema.fundo,
+      flex: 1,
+      backgroundColor: cores.fundo,
     },
-
     scroll: {
-        flex: 1,
+      flex: 1,
     },
-
     scrollConteudo: {
-        paddingHorizontal: 16,
-        paddingTop: 12,
-        paddingBottom: 110,
+      paddingHorizontal: 17,
+      paddingTop: 17,
+      paddingBottom: 32,
     },
-
-
-    // =========================
-    // BUSCA
-    // =========================
-
-    areaBusca: {
-        width: "100%",
-
-        paddingHorizontal: 16,
-        paddingTop: 8,
-        paddingBottom: 4,
-
-        backgroundColor: tema.fundo,
+    titulo: {
+      color: cores.texto,
+      fontSize: 26,
+      fontWeight: "800",
+      lineHeight: 34,
     },
-
-    inputBuscaContainer: {
-        width: "100%",
-        height: 40,
-
-        flexDirection: "row",
-        alignItems: "center",
-
-        backgroundColor: tema.cardSecundario,
-
-        borderRadius: 20,
-
-        paddingHorizontal: 13,
+    subtitulo: {
+      color: cores.textoSecundario,
+      fontSize: 14,
+      lineHeight: 20,
+      marginTop: 4,
+      marginBottom: 17,
     },
-
-    iconeBusca: {
-        width: 18,
-        height: 18,
-
-        resizeMode: "contain",
-
-        marginRight: 9,
-
-        opacity: 0.65,
+    marcaDemo: {
+      color: cores.textoSecundario,
+      fontSize: 12,
+      lineHeight: 17,
+      marginBottom: 14,
     },
-
-    inputBusca: {
-        flex: 1,
-
-        height: "100%",
-
-        color: tema.texto,
-
-        fontSize: 12,
-        fontFamily: fontes.normal,
-
-        paddingVertical: 0,
-    },
-
-
-    // =========================
-    // FILTROS
-    // =========================
-
     filtros: {
-        width: "100%",
-        height: 48,
-
-        flexDirection: "row",
-        alignItems: "center",
-
-        paddingHorizontal: 12,
-
-        backgroundColor: tema.fundo,
-
-        borderBottomWidth: 1,
-        borderBottomColor: tema.cardSecundario,
+      flexDirection: "row",
+      gap: 8,
+      paddingBottom: 15,
     },
-
     filtro: {
-        flex: 1,
-        height: "100%",
-
-        alignItems: "center",
-        justifyContent: "center",
-
-        paddingHorizontal: 3,
+      minHeight: 44,
+      borderWidth: 1,
+      borderColor: cores.borda,
+      borderRadius: 12,
+      backgroundColor: cores.card,
+      paddingHorizontal: 15,
+      alignItems: "center",
+      justifyContent: "center",
     },
-
     filtroAtivo: {
-        borderBottomWidth: 2,
-        borderBottomColor: tema.destaque,
+      backgroundColor: cores.destaque,
+      borderColor: cores.destaque,
     },
-
-    txtFiltro: {
-        color: tema.textoSecundario,
-
-        fontSize: 9,
-        fontFamily: fontes.normal,
-
-        textAlign: "center",
-
-        opacity: 0.8,
+    filtroTexto: {
+      color: cores.textoSecundario,
+      fontSize: 14,
+      fontWeight: "700",
     },
-
-    txtFiltroAtivo: {
-        color: tema.destaque,
-
-        fontFamily: fontes.negrito,
-
-        opacity: 1,
+    filtroTextoAtivo: {
+      color: "#17130A",
     },
-
-
-    // =========================
-    // SEÇÕES
-    // =========================
-
-    cabecalhoSecao: {
-        width: "100%",
-
-        marginTop: 4,
+    barraBusca: {
+      minHeight: 48,
+      borderRadius: 14,
+      backgroundColor: cores.card,
+      borderColor: cores.borda,
+      borderWidth: 1,
+      flexDirection: "row",
+      alignItems: "center",
+      paddingHorizontal: 13,
+      gap: 9,
+      marginBottom: 13,
     },
-
+    iconeBusca: {
+      color: cores.destaque,
+      fontSize: 21,
+    },
+    campoBusca: {
+      color: cores.texto,
+      fontSize: 15,
+      flex: 1,
+      minHeight: 46,
+    },
+    limparBusca: {
+      minWidth: 40,
+      minHeight: 44,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    limparTexto: {
+      color: cores.textoSecundario,
+      fontSize: 19,
+    },
     tituloSecao: {
-        color: tema.destaque,
-
-        fontSize: 18,
-        fontFamily: fontes.negrito,
-
-        marginTop: 16,
-        marginBottom: 7,
+      color: cores.texto,
+      fontSize: 18,
+      fontWeight: "800",
+      marginBottom: 11,
     },
-
-    subtituloSecao: {
-        color: tema.textoSecundario,
-
-        fontSize: 10,
-        fontFamily: fontes.normal,
-
-        marginTop: -3,
-        marginBottom: 8,
+    cartaoEvento: {
+      borderRadius: 18,
+      borderWidth: 1,
+      borderColor: cores.borda,
+      backgroundColor: cores.card,
+      overflow: "hidden",
+      marginBottom: 13,
     },
-
-
-    // =========================
-    // EVENTO PRINCIPAL
-    // =========================
-
-    hero: {
-        width: "100%",
-        height: 330,
-
-        borderRadius: 15,
-
-        overflow: "hidden",
-
-        borderWidth: 1,
-        borderColor: tema.borda,
-
-        backgroundColor: tema.card,
+    imagemEvento: {
+      height: 180,
+      justifyContent: "space-between",
     },
-
-    heroImagem: {
-        width: "100%",
-        height: "100%",
+    semImagem: {
+      height: 180,
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: cores.cardSecundario,
     },
-
-    heroImagemInterna: {
-        borderRadius: 15,
+    semImagemTexto: {
+      color: cores.textoSecundario,
+      fontSize: 14,
     },
-
-    heroOverlay: {
-        flex: 1,
-
-        justifyContent: "space-between",
-
-        backgroundColor: "rgba(0,0,0,0.58)",
-
-        padding: 14,
+    imagemSombra: {
+      position: "absolute",
+      top: 0,
+      right: 0,
+      bottom: 0,
+      left: 0,
+      backgroundColor: "rgba(0,0,0,0.42)",
     },
-
-    statusEvento: {
-        alignSelf: "flex-start",
-
-        minHeight: 25,
-
-        alignItems: "center",
-        justifyContent: "center",
-
-        paddingHorizontal: 10,
-
-        borderRadius: 13,
-
-        backgroundColor: "rgba(0,214,107,0.16)",
-
-        borderWidth: 1,
-        borderColor: cores.verdeOnline,
+    selo: {
+      alignSelf: "flex-start",
+      margin: 12,
+      backgroundColor: "rgba(10,10,10,0.83)",
+      borderRadius: 20,
+      paddingHorizontal: 11,
+      paddingVertical: 7,
     },
-
-    txtStatusEvento: {
-        color: cores.verdeOnline,
-
-        fontSize: 8,
-        fontFamily: fontes.negrito,
+    seloTexto: {
+      color: "#F1D291",
+      fontSize: 11,
+      fontWeight: "800",
     },
-
-    heroConteudo: {
-        width: "100%",
+    capaTexto: {
+      color: "#FFFFFF",
+      fontSize: 22,
+      fontWeight: "800",
+      lineHeight: 27,
+      marginHorizontal: 14,
+      marginBottom: 13,
     },
-
-    heroTitulo: {
-        color: cores.branco,
-
-        fontSize: 26,
-        lineHeight: 30,
-
-        fontFamily: fontes.extraNegrito,
-
-        marginBottom: 7,
+    cartaoInfo: {
+      paddingHorizontal: 15,
+      paddingVertical: 14,
     },
-
-    heroDescricao: {
-        color: cores.branco,
-
-        fontSize: 11,
-        lineHeight: 15,
-
-        fontFamily: fontes.normal,
-
-        opacity: 0.88,
-
-        marginBottom: 12,
+    resumo: {
+      color: cores.textoSecundario,
+      fontSize: 14,
+      lineHeight: 21,
+      marginBottom: 8,
     },
-
-    heroInfos: {
-        width: "100%",
-
-        gap: 7,
-
-        marginBottom: 13,
+    linhaMeta: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 7,
+      marginBottom: 9,
     },
-
-    infoLinha: {
-        flexDirection: "row",
-        alignItems: "center",
-
-        minHeight: 20,
+    meta: {
+      color: cores.textoSecundario,
+      fontSize: 13,
+      flexShrink: 1,
     },
-
-    infoIcone: {
-        width: 17,
-        height: 17,
-
-        resizeMode: "contain",
-
-        marginRight: 7,
-
-        tintColor: cores.douradoPrincipal,
+    ponto: {
+      color: cores.destaque,
+      fontSize: 16,
+      fontWeight: "800",
     },
-
-    infoTexto: {
-        color: cores.branco,
-
-        fontSize: 10,
-        fontFamily: fontes.normal,
+    botaoPrincipal: {
+      backgroundColor: cores.destaque,
+      borderRadius: 13,
+      minHeight: 48,
+      justifyContent: "center",
+      alignItems: "center",
+      marginTop: 5,
     },
-
-    infoSeparador: {
-        color: cores.douradoPrincipal,
-
-        marginHorizontal: 7,
+    botaoPrincipalTexto: {
+      color: "#17130A",
+      fontSize: 15,
+      fontWeight: "800",
     },
-
-    btnPrincipal: {
-        width: "100%",
-        height: 43,
-
-        alignItems: "center",
-        justifyContent: "center",
-
-        borderRadius: 22,
-
-        backgroundColor: tema.destaque,
+    vazio: {
+      paddingVertical: 30,
+      paddingHorizontal: 20,
+      borderWidth: 1,
+      borderColor: cores.borda,
+      borderRadius: 16,
+      backgroundColor: cores.card,
+      alignItems: "center",
     },
-
-    btnPrincipalPressed: {
-        opacity: 0.82,
-
-        transform: cores.btnPress,
+    vazioTitulo: {
+      color: cores.texto,
+      fontSize: 16,
+      fontWeight: "800",
+      textAlign: "center",
     },
-
-    txtBtnPrincipal: {
-        color: cores.pretoPrincipal,
-
-        fontSize: 13,
-        fontFamily: fontes.extraNegrito,
+    vazioTexto: {
+      color: cores.textoSecundario,
+      fontSize: 14,
+      lineHeight: 20,
+      marginTop: 8,
+      textAlign: "center",
     },
-
-
-    // =========================
-    // PROGRAMAÇÃO
-    // =========================
-
-    cardProgramacao: {
-        width: "100%",
-
-        backgroundColor: tema.card,
-
-        borderWidth: 1,
-        borderColor: tema.borda,
-
-        borderRadius: 13,
-
-        paddingHorizontal: 12,
-        paddingVertical: 4,
+    voltar: {
+      minHeight: 45,
+      flexDirection: "row",
+      alignItems: "center",
+      alignSelf: "flex-start",
+      marginBottom: 8,
     },
-
-    programacaoItem: {
-        minHeight: 67,
-
-        flexDirection: "row",
-        alignItems: "center",
-
-        paddingVertical: 10,
+    voltarTexto: {
+      color: cores.destaque,
+      fontSize: 15,
+      fontWeight: "700",
     },
-
-    programacaoItemBorda: {
-        borderBottomWidth: 1,
-        borderBottomColor: tema.cardSecundario,
+    detalheTitulo: {
+      fontSize: 24,
+      lineHeight: 31,
+      color: cores.texto,
+      fontWeight: "800",
+      marginBottom: 6,
     },
-
-    horarioArea: {
-        width: 66,
-
-        alignItems: "flex-start",
+    detalheSubtitulo: {
+      color: cores.textoSecundario,
+      fontSize: 14,
+      lineHeight: 21,
+      marginBottom: 12,
     },
-
+    miniMeta: {
+      flexDirection: "row",
+      flexWrap: "wrap",
+      gap: 11,
+      marginVertical: 11,
+    },
+    metaBloco: {
+      color: cores.textoSecundario,
+      fontSize: 13,
+    },
+    abas: {
+      backgroundColor: cores.card,
+      borderColor: cores.borda,
+      borderWidth: 1,
+      borderRadius: 14,
+      flexDirection: "row",
+      padding: 4,
+      marginBottom: 19,
+      gap: 3,
+    },
+    aba: {
+      flex: 1,
+      minHeight: 46,
+      borderRadius: 11,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    abaAtiva: {
+      backgroundColor: cores.destaque,
+    },
+    abaTexto: {
+      color: cores.textoSecundario,
+      fontWeight: "700",
+      fontSize: 13,
+    },
+    abaTextoAtivo: {
+      color: "#17130A",
+      fontWeight: "800",
+    },
+    painel: {
+      borderWidth: 1,
+      borderColor: cores.borda,
+      backgroundColor: cores.card,
+      borderRadius: 15,
+      overflow: "hidden",
+      marginBottom: 12,
+    },
+    painelConteudo: {
+      padding: 14,
+    },
+    painelTitulo: {
+      color: cores.texto,
+      fontSize: 16,
+      fontWeight: "800",
+      marginBottom: 5,
+    },
+    painelTexto: {
+      color: cores.textoSecundario,
+      fontSize: 14,
+      lineHeight: 20,
+    },
+    itemProgramacao: {
+      flexDirection: "row",
+      padding: 15,
+      gap: 12,
+      borderBottomColor: cores.borda,
+      borderBottomWidth: StyleSheet.hairlineWidth,
+    },
     horario: {
-        color: tema.destaque,
-
-        fontSize: 13,
-        fontFamily: fontes.negrito,
-
-        marginBottom: 5,
+      minWidth: 51,
+      color: cores.destaque,
+      fontSize: 14,
+      fontWeight: "800",
     },
-
-    pontoTimeline: {
-        width: 7,
-        height: 7,
-
-        borderRadius: 4,
-
-        backgroundColor: tema.destaque,
+    atividade: {
+      flex: 1,
     },
-
-    programacaoConteudo: {
-        flex: 1,
+    atividadeTitulo: {
+      color: cores.texto,
+      fontSize: 15,
+      fontWeight: "700",
+      lineHeight: 21,
     },
-
-    programacaoTitulo: {
-        color: tema.texto,
-
-        fontSize: 12,
-        fontFamily: fontes.negrito,
-
-        marginBottom: 4,
+    atividadeLocal: {
+      color: cores.textoSecundario,
+      fontSize: 13,
+      lineHeight: 19,
+      marginTop: 4,
     },
-
-    programacaoLocal: {
-        color: tema.textoSecundario,
-
-        fontSize: 9,
-        fontFamily: fontes.normal,
+    menuSecao: {
+      color: cores.texto,
+      fontSize: 17,
+      fontWeight: "800",
+      marginTop: 11,
+      marginBottom: 11,
     },
-
-
-    // =========================
-    // PALESTRANTES
-    // =========================
-
-    palestrantes: {
-        gap: 10,
-
-        paddingVertical: 4,
-        paddingRight: 8,
+    aviso: {
+      borderWidth: 1,
+      borderColor: cores.borda,
+      borderRadius: 14,
+      backgroundColor: cores.cardSecundario,
+      padding: 16,
+      marginBottom: 12,
     },
-
-    palestrante: {
-        width: 110,
-        minHeight: 145,
-
-        alignItems: "center",
-
-        backgroundColor: tema.card,
-
-        borderWidth: 1,
-        borderColor: tema.cardSecundario,
-
-        borderRadius: 12,
-
-        paddingHorizontal: 9,
-        paddingVertical: 12,
+    avisoTitulo: {
+      color: cores.texto,
+      fontSize: 16,
+      fontWeight: "800",
+      marginBottom: 5,
     },
-
-    palestranteAvatar: {
-        width: 62,
-        height: 62,
-
-        borderRadius: 31,
-
-        borderWidth: 1,
-        borderColor: tema.destaque,
-
-        resizeMode: "cover",
-
-        marginBottom: 8,
+    avisoTexto: {
+      color: cores.textoSecundario,
+      lineHeight: 21,
+      fontSize: 14,
     },
-
-    palestranteNome: {
-        color: tema.texto,
-
-        fontSize: 10,
-        lineHeight: 13,
-
-        textAlign: "center",
-
-        fontFamily: fontes.negrito,
+    listaAlbuns: {
+      gap: 12,
     },
-
-    palestranteCargo: {
-        color: tema.textoSecundario,
-
-        fontSize: 8,
-
-        textAlign: "center",
-
-        fontFamily: fontes.normal,
-
-        marginTop: 3,
+    album: {
+      borderColor: cores.borda,
+      borderWidth: 1,
+      borderRadius: 14,
+      backgroundColor: cores.card,
+      overflow: "hidden",
     },
-
-
-    // =========================
-    // OUTROS EVENTOS
-    // =========================
-
-    cardEvento: {
-        width: "100%",
-        minHeight: 96,
-
-        flexDirection: "row",
-        alignItems: "center",
-
-        backgroundColor: tema.card,
-
-        borderWidth: 1,
-        borderColor: tema.cardSecundario,
-
-        borderRadius: 12,
-
-        padding: 10,
-
-        marginBottom: 9,
+    albumCapa: {
+      height: 140,
+      backgroundColor: cores.cardSecundario,
+      alignItems: "center",
+      justifyContent: "center",
     },
-
-    cardEventoPressed: {
-        opacity: 0.8,
+    albumInfo: {
+      padding: 13,
     },
-
-    dataEvento: {
-        width: 58,
-        height: 66,
-
-        alignItems: "center",
-        justifyContent: "center",
-
-        borderRadius: 10,
-
-        backgroundColor: tema.cardSecundario,
-
-        borderWidth: 1,
-        borderColor: tema.destaque,
-
-        marginRight: 10,
+    albumTitulo: {
+      fontSize: 15,
+      color: cores.texto,
+      fontWeight: "800",
     },
-
-    txtDataEvento: {
-        color: tema.destaque,
-
-        fontSize: 13,
-        lineHeight: 16,
-
-        textAlign: "center",
-
-        fontFamily: fontes.extraNegrito,
+    albumDescricao: {
+      fontSize: 13,
+      color: cores.textoSecundario,
+      lineHeight: 18,
+      marginTop: 4,
     },
-
-    eventoConteudo: {
-        flex: 1,
+    linhaVoltar: {
+      flexDirection: "row",
+      alignItems: "center",
+      marginBottom: 11,
     },
-
-    eventoTitulo: {
-        color: tema.texto,
-
-        fontSize: 12,
-        fontFamily: fontes.negrito,
-
-        marginBottom: 4,
+    grade: {
+      flexDirection: "row",
+      flexWrap: "wrap",
+      justifyContent: "space-between",
     },
-
-    eventoDescricao: {
-        color: tema.textoSecundario,
-
-        fontSize: 9,
-        lineHeight: 12,
-
-        fontFamily: fontes.normal,
-
-        marginBottom: 5,
+    cardFoto: {
+      width: "48.5%",
+      marginBottom: 14,
     },
-
-    eventoMeta: {
-        color: tema.destaque,
-
-        fontSize: 8,
-        fontFamily: fontes.normal,
+    imagemFoto: {
+      width: "100%",
+      aspectRatio: 1,
+      borderRadius: 12,
+      backgroundColor: cores.cardSecundario,
     },
-
-    semEventos: {
-        color: tema.textoSecundario,
-
-        fontSize: 11,
-        fontFamily: fontes.normal,
-
-        textAlign: "center",
-
-        paddingVertical: 30,
+    descricaoFoto: {
+      color: cores.texto,
+      fontSize: 13,
+      fontWeight: "700",
+      marginTop: 6,
     },
-
-});
+    videoRow: {
+      padding: 13,
+      borderWidth: 1,
+      borderColor: cores.borda,
+      borderRadius: 14,
+      backgroundColor: cores.card,
+      flexDirection: "row",
+      gap: 11,
+      alignItems: "center",
+      marginBottom: 10,
+    },
+    videoCapa: {
+      width: 96,
+      height: 72,
+      borderRadius: 10,
+      backgroundColor: cores.cardSecundario,
+      alignItems: "center",
+      justifyContent: "center",
+      overflow: "hidden",
+    },
+    videoInfo: {
+      flex: 1,
+    },
+    videoTitulo: {
+      color: cores.texto,
+      fontWeight: "800",
+      fontSize: 14,
+      lineHeight: 19,
+    },
+    videoDescricao: {
+      color: cores.textoSecundario,
+      fontSize: 13,
+      lineHeight: 18,
+      marginTop: 4,
+    },
+    play: {
+      color: cores.destaque,
+      fontSize: 25,
+    },
+    visualizador: {
+      flex: 1,
+      backgroundColor: "#080808",
+      paddingTop: 32,
+      paddingHorizontal: 15,
+      paddingBottom: 20,
+    },
+    visualizadorTopo: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      minHeight: 48,
+    },
+    visualizadorNumero: {
+      fontSize: 14,
+      color: "#FFFFFF",
+    },
+    fechar: {
+      minWidth: 48,
+      minHeight: 48,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    fecharTexto: {
+      color: "#FFFFFF",
+      fontSize: 25,
+    },
+    fotoVisualizador: {
+      width: "100%",
+      flex: 1,
+    },
+    legenda: {
+      color: "#FFFFFF",
+      fontSize: 14,
+      lineHeight: 20,
+      textAlign: "center",
+      marginVertical: 10,
+    },
+    controlesFoto: {
+      flexDirection: "row",
+      gap: 12,
+    },
+    controlarFoto: {
+      minHeight: 48,
+      flex: 1,
+      borderWidth: 1,
+      borderColor: "#65605A",
+      borderRadius: 11,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    controlarFotoInativo: {
+      opacity: 0.3,
+    },
+    controlarFotoTexto: {
+      color: "#FFFFFF",
+      fontSize: 14,
+      fontWeight: "700",
+    },
+  });
+}
