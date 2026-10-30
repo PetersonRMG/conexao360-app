@@ -1,5 +1,6 @@
-import React, { useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
+    ActivityIndicator,
     Image,
     ImageBackground,
     Linking,
@@ -15,13 +16,11 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import HeaderScreen from "@/app/header";
 import MenuScreen from "@/app/menu";
 import { useTema } from "@/contexts/TemaContext";
+import { useAuth } from "@/contexts/AuthContext";
 import globalStyle from "@/styles/globalStyles";
 import { criarEventosStyles } from "@/styles/evetosStyles";
-import {
-    EVENTOS_APP,
-    EVENTOS_SAO_DEMONSTRATIVOS,
-    type EventoApp,
-} from "@/data/eventoDados";
+import type { EventoApp } from "@/data/eventoDados";
+import { buscarEventos } from "@/services/eventosService";
 import {
     ALBUNS_GALERIA,
     VIDEOS_GALERIA,
@@ -86,9 +85,14 @@ function correspondeBusca(evento: EventoApp, busca: string) {
 
 export default function EventosScreen() {
     const { coresTema } = useTema();
+    const { token, carregandoSessao } = useAuth();
     const styles = criarEventosStyles(coresTema);
     const scrollRef = useRef<ScrollView>(null);
 
+    const [eventos, setEventos] = useState<EventoApp[]>([]);
+    const [carregandoEventos, setCarregandoEventos] = useState(true);
+    const [erroEventos, setErroEventos] = useState("");
+    const [tentativa, setTentativa] = useState(0);
     const [busca, setBusca] = useState("");
     const [filtro, setFiltro] = useState<FiltroEventos>("todos");
     const [eventoSelecionado, setEventoSelecionado] = useState<EventoApp | null>(null);
@@ -98,10 +102,43 @@ export default function EventosScreen() {
     const [indiceFoto, setIndiceFoto] = useState<number | null>(null);
     const [erroVideo, setErroVideo] = useState("");
 
-    const eventosVisiveis = useMemo(() => EVENTOS_APP.filter(evento => {
+    useEffect(() => {
+        if (carregandoSessao) return;
+
+        if (!token) {
+            setEventos([]);
+            setErroEventos("Faça login para consultar os eventos.");
+            setCarregandoEventos(false);
+            return;
+        }
+
+        let ativo = true;
+        setCarregandoEventos(true);
+        setErroEventos("");
+
+        buscarEventos(token)
+            .then(resultado => {
+                if (!ativo) return;
+                setEventos(resultado);
+            })
+            .catch(error => {
+                if (!ativo) return;
+                setEventos([]);
+                setErroEventos(error instanceof Error
+                    ? error.message
+                    : "Não foi possível carregar os eventos.");
+            })
+            .finally(() => {
+                if (ativo) setCarregandoEventos(false);
+            });
+
+        return () => { ativo = false; };
+    }, [token, carregandoSessao, tentativa]);
+
+    const eventosVisiveis = useMemo(() => eventos.filter(evento => {
         const situacao = situacaoEvento(evento);
         return (filtro === "todos" || filtro === situacao) && correspondeBusca(evento, busca);
-    }), [filtro, busca]);
+    }), [eventos, filtro, busca]);
 
     const situacaoSelecionado = eventoSelecionado ? situacaoEvento(eventoSelecionado) : null;
     const encerrado = situacaoSelecionado === "encerrados";
@@ -224,16 +261,28 @@ export default function EventosScreen() {
                                     ))}
                                 </ScrollView>
 
-                                {EVENTOS_SAO_DEMONSTRATIVOS && (
-                                    <Text style={styles.marcaDemo}>
-                                        Prévia de navegação: eventos e programação demonstrativos, ainda sem integração à API.
-                                    </Text>
-                                )}
-
                                 <Text style={styles.tituloSecao} accessibilityRole="header">
                                     {filtro === "todos" ? "Edições do evento" : FILTROS.find(item => item.id === filtro)?.titulo}
                                 </Text>
-                                {eventosVisiveis.length === 0 ? (
+                                {carregandoSessao || carregandoEventos ? (
+                                    <View style={styles.vazio}>
+                                        <ActivityIndicator color={coresTema.destaque} size="small" />
+                                        <Text style={styles.vazioTexto}>Carregando eventos...</Text>
+                                    </View>
+                                ) : erroEventos ? (
+                                    <View style={styles.vazio}>
+                                        <Text style={styles.vazioTitulo}>Não foi possível carregar os eventos</Text>
+                                        <Text style={styles.vazioTexto}>{erroEventos}</Text>
+                                        <Pressable
+                                            style={[styles.botaoPrincipal, { paddingHorizontal: 24, marginTop: 15 }]}
+                                            onPress={() => setTentativa(valor => valor + 1)}
+                                            accessibilityRole="button"
+                                            accessibilityLabel="Tentar carregar eventos novamente"
+                                        >
+                                            <Text style={styles.botaoPrincipalTexto}>Tentar novamente</Text>
+                                        </Pressable>
+                                    </View>
+                                ) : eventosVisiveis.length === 0 ? (
                                     <View style={styles.vazio}>
                                         <Text style={styles.vazioTitulo}>Nenhum evento encontrado</Text>
                                         <Text style={styles.vazioTexto}>
@@ -243,7 +292,13 @@ export default function EventosScreen() {
                                 ) : eventosVisiveis.map(evento => {
                                     const situacao = situacaoEvento(evento);
                                     return (
-                                        <View key={evento.id} style={styles.cartaoEvento}>
+                                        <Pressable
+                                            key={evento.id}
+                                            style={({ pressed }) => [styles.cartaoEvento, pressed && { opacity: 0.93 }]}
+                                            onPress={() => abrirEvento(evento)}
+                                            accessibilityRole="button"
+                                            accessibilityLabel={`Ver detalhes de ${evento.titulo}`}
+                                        >
                                             {evento.imagem ? (
                                                 <ImageBackground
                                                     source={evento.imagem}
@@ -272,18 +327,13 @@ export default function EventosScreen() {
                                                     <Text style={styles.ponto} accessible={false}>•</Text>
                                                     <Text style={styles.meta}>{evento.local}</Text>
                                                 </View>
-                                                <Pressable
-                                                    style={styles.botaoPrincipal}
-                                                    onPress={() => abrirEvento(evento)}
-                                                    accessibilityRole="button"
-                                                    accessibilityLabel={`${situacao === "encerrados" ? "Reviver edição" : "Ver detalhes"} ${evento.titulo}`}
-                                                >
+                                                <View style={styles.botaoPrincipal}>
                                                     <Text style={styles.botaoPrincipalTexto}>
                                                         {situacao === "encerrados" ? "Reviver edição" : "Ver detalhes"}
                                                     </Text>
-                                                </Pressable>
+                                                </View>
                                             </View>
-                                        </View>
+                                        </Pressable>
                                     );
                                 })}
                             </>
@@ -333,8 +383,8 @@ export default function EventosScreen() {
                                         </Text>
                                         {eventoSelecionado.programacao.length === 0 ? (
                                             <View style={styles.vazio}>
-                                                <Text style={styles.vazioTitulo}>Programação em preparação</Text>
-                                                <Text style={styles.vazioTexto}>As atividades serão exibidas quando a organização publicá-las.</Text>
+                                                <Text style={styles.vazioTitulo}>Programação ainda não integrada</Text>
+                                                <Text style={styles.vazioTexto}>A programação deste evento será exibida quando o módulo estiver integrado à API.</Text>
                                             </View>
                                         ) : (
                                             <View style={styles.painel}>
@@ -368,9 +418,9 @@ export default function EventosScreen() {
                                         <Text style={styles.tituloSecao} accessibilityRole="header">Enquetes do evento</Text>
                                         {eventoSelecionado.enquetes.length === 0 ? (
                                             <View style={styles.vazio}>
-                                                <Text style={styles.vazioTitulo}>Nenhuma enquete publicada</Text>
+                                                <Text style={styles.vazioTitulo}>Enquetes ainda não integradas</Text>
                                                 <Text style={styles.vazioTexto}>
-                                                    As enquetes dos palestrantes e da organização aparecerão nesta edição.
+                                                    As enquetes vinculadas a este evento aparecerão após a integração com a API.
                                                 </Text>
                                             </View>
                                         ) : eventoSelecionado.enquetes.map(enquete => (
@@ -386,7 +436,7 @@ export default function EventosScreen() {
                                         {encerrado && (
                                             <View style={styles.aviso}>
                                                 <Text style={styles.avisoTitulo}>Esta edição foi encerrada</Text>
-                                                <Text style={styles.avisoTexto}>Novos votos não são aceitos depois do encerramento do evento.</Text>
+                                                <Text style={styles.avisoTexto}>A votação dependerá das regras de encerramento definidas na API de enquetes.</Text>
                                             </View>
                                         )}
                                     </>
@@ -447,7 +497,7 @@ export default function EventosScreen() {
                                             ) : albuns.length === 0 ? (
                                                 <View style={styles.vazio}>
                                                     <Text style={styles.vazioTitulo}>Fotos em breve</Text>
-                                                    <Text style={styles.vazioTexto}>A organização ainda não disponibilizou álbuns para esta edição.</Text>
+                                                    <Text style={styles.vazioTexto}>Os álbuns oficiais deste evento aparecerão após a integração da Galeria.</Text>
                                                 </View>
                                             ) : (
                                                 <View style={styles.listaAlbuns}>
@@ -478,7 +528,7 @@ export default function EventosScreen() {
                                         ) : videos.length === 0 ? (
                                             <View style={styles.vazio}>
                                                 <Text style={styles.vazioTitulo}>Vídeos em breve</Text>
-                                                <Text style={styles.vazioTexto}>As gravações serão exibidas quando estiverem disponíveis na área de conteúdos.</Text>
+                                                <Text style={styles.vazioTexto}>Os vídeos vinculados a este evento aparecerão após a integração com Conteúdos.</Text>
                                             </View>
                                         ) : (
                                             <>

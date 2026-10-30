@@ -1,92 +1,126 @@
 import { StyleSheet } from "react-native";
 
-import { cores, fontes } from "./variaveis";
-import { CoresTema, temaEscuro } from "./temas";
+type CoresPublicarModal = {
+  card: string;
+  cardSecundario: string;
+  borda: string;
+  destaque: string;
+  texto: string;
+  textoSecundario: string;
+};
 
-export const criarPublicarModalStyles = (tema: CoresTema) => StyleSheet.create({
-
-    // =========================
-    // FUNDO DO MODAL
-    // =========================
-
+export function criarPublicarModalStyles(cores: CoresPublicarModal) {
+  return StyleSheet.create({
     overlay: {
-        flex: 1,
-
-        backgroundColor: tema.overlay,
-
-        justifyContent: "flex-end",
-        alignItems: "center",
-
-        // sobe a caixa para ficar acima do footer
-        paddingBottom: 72,
+      flex: 1,
+      justifyContent: "flex-end",
+      backgroundColor: "rgba(0, 0, 0, 0.62)",
     },
-
-
-    // =========================
-    // CAIXA
-    // =========================
-
+    areaExterna: {
+      position: "absolute",
+      top: 0,
+      right: 0,
+      bottom: 0,
+      left: 0,
+    },
     caixaMenu: {
-        width: 180,
-
-        backgroundColor: tema.card,
-
-        borderWidth: 1,
-        borderColor: tema.destaque,
-
-        borderRadius: 8,
-
-        paddingHorizontal: 14,
-        paddingVertical: 12,
-
-        marginBottom: 5,
+      width: "100%",
+      maxWidth: 440,
+      alignSelf: "center",
+      backgroundColor: cores.card,
+      borderTopLeftRadius: 24,
+      borderTopRightRadius: 24,
+      borderWidth: 1,
+      borderBottomWidth: 0,
+      borderColor: cores.borda,
+      paddingHorizontal: 20,
+      paddingTop: 10,
+      paddingBottom: 12,
     },
-
-
-    // =========================
-    // BOTÃO
-    // =========================
-
+    indicador: {
+      width: 42,
+      height: 4,
+      borderRadius: 4,
+      alignSelf: "center",
+      backgroundColor: cores.borda,
+      marginBottom: 18,
+    },
+    cabecalho: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      gap: 12,
+      marginBottom: 20,
+    },
+    textosCabecalho: {
+      flex: 1,
+    },
+    titulo: {
+      fontSize: 20,
+      lineHeight: 27,
+      fontWeight: "700",
+      color: cores.texto,
+    },
+    subtitulo: {
+      fontSize: 13,
+      lineHeight: 19,
+      marginTop: 4,
+      color: cores.textoSecundario,
+    },
+    botaoFechar: {
+      width: 44,
+      height: 44,
+      borderRadius: 22,
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: cores.cardSecundario,
+    },
+    listaOpcoes: {
+      gap: 10,
+    },
     btnMenu: {
-        width: "100%",
-        height: 42,
-
-        flexDirection: "row",
-        alignItems: "center",
-
-        columnGap: 10,
-
-        paddingHorizontal: 5,
-
-        borderRadius: 5,
+      minHeight: 76,
+      borderRadius: 16,
+      backgroundColor: cores.cardSecundario,
+      borderWidth: 1,
+      borderColor: cores.borda,
+      paddingHorizontal: 13,
+      paddingVertical: 12,
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 12,
     },
-
-
-    // =========================
-    // ÍCONE
-    // =========================
-
+    iconeContainer: {
+      width: 48,
+      height: 48,
+      borderRadius: 13,
+      backgroundColor: cores.card,
+      borderWidth: 1,
+      borderColor: cores.borda,
+      alignItems: "center",
+      justifyContent: "center",
+    },
     imagemMenu: {
-        width: 25,
-        height: 25,
-
-        resizeMode: "contain",
+      width: 26,
+      height: 26,
+      tintColor: cores.destaque,
     },
-
-
-    // =========================
-    // TEXTO
-    // =========================
-
+    conteudoOpcao: {
+      flex: 1,
+      gap: 3,
+    },
     txtMenu: {
-        color: tema.destaque,
-
-        fontSize: 15,
-        fontFamily: fontes.normal,
+      fontSize: 16,
+      fontWeight: "700",
+      color: cores.texto,
     },
-
-});
-
-// Compatibilidade: mantém os imports atuais funcionando no tema escuro.
-// Para tema dinâmico, use criarPublicarModalStyles(coresTema) dentro do componente.
-export const publicarModalStyles = criarPublicarModalStyles(temaEscuro);
+    descricaoOpcao: {
+      fontSize: 13,
+      lineHeight: 18,
+      color: cores.textoSecundario,
+    },
+    botaoPressionado: {
+      opacity: 0.75,
+    },
+  });
+}

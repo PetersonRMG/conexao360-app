@@ -1,12 +1,8 @@
-import {
-    View,
-    Text,
-    Pressable,
-    Modal,
-} from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { Modal, Pressable, Text, View } from "react-native";
 
-import { sairModalStyles } from "@/styles/sairModalStyles";
-import globalStyle from "@/styles/globalStyles";
+import { useTema } from "@/contexts/TemaContext";
+import { criarSairModalStyles } from "@/styles/sairModalStyles";
 
 interface SairModalProps {
     visible: boolean;
@@ -19,6 +15,8 @@ export default function SairModalScreen({
     onClose,
     onConfirm,
 }: SairModalProps) {
+    const { coresTema } = useTema();
+    const styles = criarSairModalStyles(coresTema);
 
     return (
         <Modal
@@ -26,64 +24,64 @@ export default function SairModalScreen({
             transparent
             animationType="fade"
             onRequestClose={onClose}
+            statusBarTranslucent
         >
-
-            {/* CLICAR FORA = MESMO QUE NÃO */}
-            <Pressable
-                style={sairModalStyles.overlay}
-                onPress={onClose}
-            >
-
-                {/* BLOQUEIA CLIQUE INTERNO */}
+            <View style={styles.overlay}>
+                {/* Toque no fundo para cancelar. */}
                 <Pressable
-                    style={sairModalStyles.caixaSair}
-                    onPress={(event) => event.stopPropagation()}
-                >
+                    style={styles.areaExterna}
+                    onPress={onClose}
+                    accessibilityRole="button"
+                    accessibilityLabel="Cancelar saída"
+                />
 
-                    <Text style={sairModalStyles.tituloSair}>
-                        Deseja sair?
+                {/* Caixa centralizada, sem animação de baixo para cima. */}
+                <View style={styles.caixaSair} accessibilityViewIsModal>
+                    <Pressable
+                        onPress={onClose}
+                        style={({ pressed }) => [
+                            styles.botaoFechar,
+                            pressed && styles.botaoPressionado,
+                        ]}
+                        hitSlop={8}
+                        accessibilityRole="button"
+                        accessibilityLabel="Fechar confirmação de saída"
+                    >
+                        <Ionicons name="close" size={22} color={coresTema.texto} />
+                    </Pressable>
+
+                    <Text style={styles.tituloSair}>Deseja sair?</Text>
+                    <Text style={styles.subtituloSair}>
+                        Você será desconectado da sua conta.
                     </Text>
 
-
-                    <View style={sairModalStyles.btns}>
-
-                        {/* SIM */}
-                        <Pressable
-                            onPress={onConfirm}
-                            style={({ pressed }) => [
-                                sairModalStyles.btnSair,
-                                pressed && globalStyle.pressBtn,
-                            ]}
-                        >
-
-                            <Text style={sairModalStyles.iconesMenu}>
-                                Sim
-                            </Text>
-
-                        </Pressable>
-
-
-                        {/* NÃO */}
+                    <View style={styles.btns}>
                         <Pressable
                             onPress={onClose}
                             style={({ pressed }) => [
-                                sairModalStyles.btnSair,
-                                pressed && globalStyle.pressBtn,
+                                styles.btnCancelar,
+                                pressed && styles.botaoPressionado,
                             ]}
+                            accessibilityRole="button"
+                            accessibilityLabel="Não, continuar conectado"
                         >
-
-                            <Text style={sairModalStyles.iconesMenu}>
-                                Não
-                            </Text>
-
+                            <Text style={styles.txtCancelar}>Não, continuar</Text>
                         </Pressable>
 
+                        <Pressable
+                            onPress={onConfirm}
+                            style={({ pressed }) => [
+                                styles.btnSair,
+                                pressed && styles.botaoPressionado,
+                            ]}
+                            accessibilityRole="button"
+                            accessibilityLabel="Sim, sair da conta"
+                        >
+                            <Text style={styles.iconesMenu}>Sim, sair</Text>
+                        </Pressable>
                     </View>
-
-                </Pressable>
-
-            </Pressable>
-
+                </View>
+            </View>
         </Modal>
     );
 }
