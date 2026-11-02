@@ -1,5 +1,5 @@
 import { apiFetch } from "@/services/api";
-import type { EventoApp } from "@/data/eventosDados";
+import type { EventoApp } from "@/data/eventoDados";
 
 type EventoDaApi = {
   id_evento: number;

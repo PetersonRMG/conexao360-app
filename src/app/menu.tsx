@@ -9,25 +9,47 @@ import { criarMenuStyles } from "@/styles/menuStyles";
 import { useTema } from "@/contexts/TemaContext";
 import { useAuth } from "@/contexts/AuthContext";
 
-// Mantido o nome original para não alterar imports nas outras telas.
+type AbaMenu = "home" | "chat" | "publicar" | "eventos" | "galeria";
+
+// O nome MenuSreen permanece igual ao da versão original.
 export default function MenuSreen() {
     const { coresTema } = useTema();
     const menuStyles = criarMenuStyles(coresTema);
-    const pathname = usePathname();
     const { usuario } = useAuth();
+    const pathname = usePathname();
+    const [modalPublicar, setModalPublicar] = useState(false);
 
-    // Participante publica diretamente. Palestrante/admin abre as duas opções.
     const perfil = String(usuario?.perfil_usuario ?? "").toLowerCase();
     const podeCriarTopico = perfil === "palestrante" || perfil === "administrador";
 
-    const [modalPublicar, setModalPublicar] = useState(false);
+    // Uma única fonte para o estado ativo: nunca existem duas abas selecionadas.
+    // Enquanto o palestrante estiver no modal, Publicar substitui o destaque atual.
+    const rotaAtual = pathname.replace(/\/+$/, "") || "/";
+    const abaAtiva: AbaMenu | null = modalPublicar
+        ? "publicar"
+        : rotaAtual === "/home"
+          ? "home"
+          : rotaAtual === "/chat"
+            ? "chat"
+            : rotaAtual === "/criarPost" || rotaAtual === "/criarTopico"
+              ? "publicar"
+              : rotaAtual === "/eventos"
+                ? "eventos"
+                : rotaAtual === "/galeria"
+                  ? "galeria"
+                  : null;
 
-    function menuAtivo(rota: string) {
-        return pathname === rota;
+    const ativo = (aba: AbaMenu) => abaAtiva === aba;
+    const corDoIcone = (aba: AbaMenu) =>
+        ativo(aba) ? coresTema.destaque : coresTema.textoSecundario;
+
+    function abrirPublicacao() {
+        if (podeCriarTopico) {
+            setModalPublicar(true);
+        } else {
+            router.navigate("/criarPost");
+        }
     }
-
-    const corAtiva = coresTema.destaque;
-    const corInativa = coresTema.textoSecundario;
 
     return (
         <>
@@ -41,19 +63,19 @@ export default function MenuSreen() {
                     onPress={() => router.navigate("/home")}
                     accessibilityRole="button"
                     accessibilityLabel="Home"
-                    accessibilityState={{ selected: menuAtivo("/home") }}
+                    accessibilityState={{ selected: ativo("home") }}
                 >
                     <View style={menuStyles.areaIcone}>
                         <Ionicons
-                            name={menuAtivo("/home") ? "home" : "home-outline"}
+                            name={ativo("home") ? "home" : "home-outline"}
                             size={22}
-                            color={menuAtivo("/home") ? corAtiva : corInativa}
+                            color={corDoIcone("home")}
                         />
                     </View>
-                    <Text style={[menuStyles.txtMenu, menuAtivo("/home") && menuStyles.txtMenuAtivo]}>
+                    <Text style={[menuStyles.txtMenu, ativo("home") && menuStyles.txtMenuAtivo]}>
                         Home
                     </Text>
-                    <View style={[menuStyles.indicador, menuAtivo("/home") && menuStyles.indicadorAtivo]} />
+                    <View style={[menuStyles.indicador, ativo("home") && menuStyles.indicadorAtivo]} />
                 </Pressable>
 
                 {/* CHAT */}
@@ -65,65 +87,43 @@ export default function MenuSreen() {
                     onPress={() => router.navigate("/chat")}
                     accessibilityRole="button"
                     accessibilityLabel="Chat"
-                    accessibilityState={{ selected: menuAtivo("/chat") }}
+                    accessibilityState={{ selected: ativo("chat") }}
                 >
                     <View style={menuStyles.areaIcone}>
                         <Ionicons
-                            name={menuAtivo("/chat") ? "chatbubble" : "chatbubble-outline"}
+                            name={ativo("chat") ? "chatbubble" : "chatbubble-outline"}
                             size={22}
-                            color={menuAtivo("/chat") ? corAtiva : corInativa}
+                            color={corDoIcone("chat")}
                         />
                     </View>
-                    <Text style={[menuStyles.txtMenu, menuAtivo("/chat") && menuStyles.txtMenuAtivo]}>
+                    <Text style={[menuStyles.txtMenu, ativo("chat") && menuStyles.txtMenuAtivo]}>
                         Chat
                     </Text>
-                    <View style={[menuStyles.indicador, menuAtivo("/chat") && menuStyles.indicadorAtivo]} />
+                    <View style={[menuStyles.indicador, ativo("chat") && menuStyles.indicadorAtivo]} />
                 </Pressable>
 
-                {/* PUBLICAR — preserva a diferença entre participante e palestrante */}
+                {/* PUBLICAR: participante cria post; palestrante/admin abre modal. */}
                 <Pressable
                     style={({ pressed }) => [
                         menuStyles.itemMenu,
                         pressed && globalStyle.pressBtn,
                     ]}
-                    onPress={() => {
-                        if (podeCriarTopico) {
-                            setModalPublicar(true);
-                        } else {
-                            router.navigate("/criarPost");
-                        }
-                    }}
+                    onPress={abrirPublicacao}
                     accessibilityRole="button"
                     accessibilityLabel={podeCriarTopico ? "Abrir opções de criação" : "Criar novo post"}
+                    accessibilityState={{ selected: ativo("publicar") }}
                 >
                     <View style={menuStyles.areaIcone}>
-                        {podeCriarTopico ? (
-                            <View style={menuStyles.btnPublicar}>
-                                <Ionicons
-                                    name="create-outline"
-                                    size={25}
-                                    color={coresTema.textoSobreDestaque}
-                                />
-                            </View>
-                        ) : (
-                            <Ionicons
-                                name="create-outline"
-                                size={24}
-                                color={menuAtivo("/criarPost") ? corAtiva : corInativa}
-                            />
-                        )}
+                        <Ionicons
+                            name={ativo("publicar") ? "create" : "create-outline"}
+                            size={22}
+                            color={corDoIcone("publicar")}
+                        />
                     </View>
-                    <Text style={[
-                        menuStyles.txtMenu,
-                        podeCriarTopico && menuStyles.txtPublicar,
-                        !podeCriarTopico && menuAtivo("/criarPost") && menuStyles.txtMenuAtivo,
-                    ]}>
+                    <Text style={[menuStyles.txtMenu, ativo("publicar") && menuStyles.txtMenuAtivo]}>
                         Publicar
                     </Text>
-                    <View style={[
-                        menuStyles.indicador,
-                        !podeCriarTopico && menuAtivo("/criarPost") && menuStyles.indicadorAtivo,
-                    ]} />
+                    <View style={[menuStyles.indicador, ativo("publicar") && menuStyles.indicadorAtivo]} />
                 </Pressable>
 
                 {/* EVENTOS */}
@@ -135,19 +135,19 @@ export default function MenuSreen() {
                     onPress={() => router.navigate("/eventos")}
                     accessibilityRole="button"
                     accessibilityLabel="Eventos"
-                    accessibilityState={{ selected: menuAtivo("/eventos") }}
+                    accessibilityState={{ selected: ativo("eventos") }}
                 >
                     <View style={menuStyles.areaIcone}>
                         <Ionicons
-                            name={menuAtivo("/eventos") ? "calendar" : "calendar-outline"}
+                            name={ativo("eventos") ? "calendar" : "calendar-outline"}
                             size={22}
-                            color={menuAtivo("/eventos") ? corAtiva : corInativa}
+                            color={corDoIcone("eventos")}
                         />
                     </View>
-                    <Text style={[menuStyles.txtMenu, menuAtivo("/eventos") && menuStyles.txtMenuAtivo]}>
+                    <Text style={[menuStyles.txtMenu, ativo("eventos") && menuStyles.txtMenuAtivo]}>
                         Eventos
                     </Text>
-                    <View style={[menuStyles.indicador, menuAtivo("/eventos") && menuStyles.indicadorAtivo]} />
+                    <View style={[menuStyles.indicador, ativo("eventos") && menuStyles.indicadorAtivo]} />
                 </Pressable>
 
                 {/* GALERIA */}
@@ -159,24 +159,23 @@ export default function MenuSreen() {
                     onPress={() => router.navigate("/galeria")}
                     accessibilityRole="button"
                     accessibilityLabel="Galeria"
-                    accessibilityState={{ selected: menuAtivo("/galeria") }}
+                    accessibilityState={{ selected: ativo("galeria") }}
                 >
                     <View style={menuStyles.areaIcone}>
                         <Ionicons
-                            name={menuAtivo("/galeria") ? "images" : "images-outline"}
+                            name={ativo("galeria") ? "images" : "images-outline"}
                             size={22}
-                            color={menuAtivo("/galeria") ? corAtiva : corInativa}
+                            color={corDoIcone("galeria")}
                         />
                     </View>
-                    <Text style={[menuStyles.txtMenu, menuAtivo("/galeria") && menuStyles.txtMenuAtivo]}>
+                    <Text style={[menuStyles.txtMenu, ativo("galeria") && menuStyles.txtMenuAtivo]}>
                         Galeria
                     </Text>
-                    <View style={[menuStyles.indicador, menuAtivo("/galeria") && menuStyles.indicadorAtivo]} />
+                    <View style={[menuStyles.indicador, ativo("galeria") && menuStyles.indicadorAtivo]} />
                 </Pressable>
-
             </View>
 
-            {/* Fora da linha flex: somente os cinco itens participam do alinhamento. */}
+            {/* O modal fica fora do flex do rodapé, sem alterar o alinhamento. */}
             <PublicarModalScreen
                 visible={modalPublicar && podeCriarTopico}
                 onClose={() => setModalPublicar(false)}

@@ -53,6 +53,7 @@ export const esqueciSenhaStyle = StyleSheet.create({
   },
   txtInput: {
     width: "100%",
+    color:cores.branco,
   },
   btnEnviar: {
     width: "80%",

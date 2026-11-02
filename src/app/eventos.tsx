@@ -21,12 +21,8 @@ import globalStyle from "@/styles/globalStyles";
 import { criarEventosStyles } from "@/styles/evetosStyles";
 import type { EventoApp } from "@/data/eventoDados";
 import { buscarEventos } from "@/services/eventosService";
-import {
-    ALBUNS_GALERIA,
-    VIDEOS_GALERIA,
-    DADOS_GALERIA_SAO_DEMONSTRATIVOS,
-    type AlbumGaleria,
-} from "@/data/galeriaDados";
+import type { AlbumGaleria, VideoGaleria } from "@/data/galeriaDados";
+import { buscarGaleriaEvento } from "@/services/galeriaEventoService";
 
 type FiltroEventos = "todos" | "andamento" | "proximos" | "encerrados";
 type AbaEvento = "programacao" | "enquetes" | "galeria";
@@ -101,6 +97,13 @@ export default function EventosScreen() {
     const [albumAberto, setAlbumAberto] = useState<AlbumGaleria | null>(null);
     const [indiceFoto, setIndiceFoto] = useState<number | null>(null);
     const [erroVideo, setErroVideo] = useState("");
+    const [galeria, setGaleria] = useState<{
+        eventoId: string;
+        carregando: boolean;
+        albuns: AlbumGaleria[];
+        videos: VideoGaleria[];
+        erro: string;
+    } | null>(null);
 
     useEffect(() => {
         if (carregandoSessao) return;
@@ -135,6 +138,32 @@ export default function EventosScreen() {
         return () => { ativo = false; };
     }, [token, carregandoSessao, tentativa]);
 
+    // A galeria é consultada somente para a edição selecionada.
+    // A checagem do eventoId impede mostrar conteúdo de outra edição durante a troca.
+    useEffect(() => {
+        const eventoId = eventoSelecionado?.id;
+        if (!eventoId || !token) return;
+
+        let ativo = true;
+        buscarGaleriaEvento(token, eventoId)
+            .then(resultado => {
+                if (!ativo) return;
+                setGaleria({ eventoId, carregando: false, ...resultado, erro: "" });
+            })
+            .catch(error => {
+                if (!ativo) return;
+                setGaleria({
+                    eventoId,
+                    carregando: false,
+                    albuns: [],
+                    videos: [],
+                    erro: error instanceof Error ? error.message : "Não foi possível consultar a galeria.",
+                });
+            });
+
+        return () => { ativo = false; };
+    }, [eventoSelecionado?.id, token]);
+
     const eventosVisiveis = useMemo(() => eventos.filter(evento => {
         const situacao = situacaoEvento(evento);
         return (filtro === "todos" || filtro === situacao) && correspondeBusca(evento, busca);
@@ -143,12 +172,11 @@ export default function EventosScreen() {
     const situacaoSelecionado = eventoSelecionado ? situacaoEvento(eventoSelecionado) : null;
     const encerrado = situacaoSelecionado === "encerrados";
 
-    const albuns = useMemo(() => eventoSelecionado
-        ? ALBUNS_GALERIA.filter(item => item.eventoId === eventoSelecionado.id)
-        : [], [eventoSelecionado]);
-    const videos = useMemo(() => eventoSelecionado
-        ? VIDEOS_GALERIA.filter(item => item.eventoId === eventoSelecionado.id)
-        : [], [eventoSelecionado]);
+    const galeriaDaEdicao = galeria?.eventoId === eventoSelecionado?.id ? galeria : null;
+    const albuns = galeriaDaEdicao?.albuns ?? [];
+    const videos = galeriaDaEdicao?.videos ?? [];
+    const carregandoGaleria = !!eventoSelecionado && (!galeriaDaEdicao || galeriaDaEdicao.carregando);
+    const erroGaleria = galeriaDaEdicao?.erro ?? "";
     const fotoAtual = indiceFoto === null ? null : albumAberto?.fotos[indiceFoto] ?? null;
 
     function irParaTopo() {
@@ -164,6 +192,7 @@ export default function EventosScreen() {
         setAlbumAberto(null);
         setIndiceFoto(null);
         setErroVideo("");
+        setGaleria({ eventoId: evento.id, carregando: true, albuns: [], videos: [], erro: "" });
         irParaTopo();
     }
 
@@ -467,7 +496,17 @@ export default function EventosScreen() {
                                             ))}
                                         </View>
 
-                                        {abaMidia === "fotos" ? (
+                                        {carregandoGaleria ? (
+                                            <View style={styles.vazio}>
+                                                <ActivityIndicator size="small" color={coresTema.destaque} />
+                                                <Text style={styles.vazioTexto}>Carregando galeria do evento...</Text>
+                                            </View>
+                                        ) : erroGaleria ? (
+                                            <View style={styles.vazio}>
+                                                <Text style={styles.vazioTitulo}>Galeria indisponível</Text>
+                                                <Text style={styles.vazioTexto}>{erroGaleria}</Text>
+                                            </View>
+                                        ) : abaMidia === "fotos" ? (
                                             albumAberto ? (
                                                 <>
                                                     <Pressable
@@ -501,9 +540,6 @@ export default function EventosScreen() {
                                                 </View>
                                             ) : (
                                                 <View style={styles.listaAlbuns}>
-                                                    {DADOS_GALERIA_SAO_DEMONSTRATIVOS && (
-                                                        <Text style={styles.marcaDemo}>Fotografia de demonstração, não é cobertura oficial.</Text>
-                                                    )}
                                                     {albuns.map(album => (
                                                         <Pressable
                                                             key={album.id}

@@ -35,9 +35,15 @@ export async function apiFetch<T>(endpoint: string, options: ApiOptions = {}): P
 
   const data = await response.json();
 
-  if (!response.ok) {
-    throw new Error(data.message || "Erro ao realizar requisição.");
-  }
+ if (!response.ok) {
+    const erro = new Error(
+        data?.message || "Erro ao realizar requisição."
+    ) as Error & { status?: number };
+
+    erro.status = response.status;
+
+    throw erro;
+}
 
   return data;
 }
