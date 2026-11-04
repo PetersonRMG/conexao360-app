@@ -102,3 +102,21 @@ export async function responderEnquete(token: string, idEnquete: number, respost
     }),
   });
 }
+
+// =====================================
+// CRIAR ENQUETE / TÓPICO
+// =====================================
+
+export type CriarEnqueteResponse = {
+  success: boolean;
+  message: string;
+  data: Enquete;
+};
+
+export async function criarEnquete(token: string, pergunta: string) {
+  return apiFetch<CriarEnqueteResponse>("/api/v1/enquetes", {
+    method: "POST",
+    token,
+    body: JSON.stringify({ pergunta_enquete: pergunta.trim() }),
+  });
+}

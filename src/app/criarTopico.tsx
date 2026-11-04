@@ -1,775 +1,175 @@
 import { useState } from "react";
+import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
-
 import {
-    View,
-    Text,
-    Image,
-    ImageBackground,
-    Pressable,
-    ScrollView,
-    TextInput,
+    ActivityIndicator,
     KeyboardAvoidingView,
     Platform,
+    Pressable,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TextInput,
+    View,
 } from "react-native";
-
 import { SafeAreaView } from "react-native-safe-area-context";
-
-import globalStyle from "@/styles/globalStyles";
-import { criarTopicosStyle } from "@/styles/criarTopicos";
+import { useAuth } from "@/contexts/AuthContext";
 import { useTema } from "@/contexts/TemaContext";
+import { criarEnquete } from "@/services/enqueteService";
 
-import MenuSreen from "./menu";
+const estilos = StyleSheet.create({
+    container: { flex: 1 },
+    teclado: { flex: 1 },
+    conteudo: { paddingHorizontal: 18, paddingTop: 12, paddingBottom: 100 },
+    topo: { flexDirection: "row", alignItems: "center", gap: 12, marginBottom: 24 },
+    voltar: { width: 42, height: 42, borderRadius: 21, alignItems: "center", justifyContent: "center" },
+    titulo: { flex: 1, fontSize: 23, fontWeight: "800" },
+    subtitulo: { fontSize: 14, lineHeight: 21, marginBottom: 18 },
+    card: { borderWidth: 1, borderRadius: 14, padding: 16, marginBottom: 18 },
+    label: { fontSize: 16, fontWeight: "700", marginBottom: 12 },
+    campo: { minHeight: 96, borderWidth: 1, borderRadius: 11, fontSize: 15, padding: 12 },
+    contador: { fontSize: 12, marginTop: 8, textAlign: "right" },
+    opcao: { flexDirection: "row", alignItems: "center", gap: 10, paddingVertical: 10 },
+    textoOpcao: { fontSize: 15 },
+    explicacao: { fontSize: 12, lineHeight: 18, marginTop: 10 },
+    erro: { fontSize: 13, marginBottom: 16, lineHeight: 19 },
+    botao: { minHeight: 48, borderRadius: 11, alignItems: "center", justifyContent: "center", flexDirection: "row", gap: 9 },
+    textoBotao: { fontSize: 15, fontWeight: "800" },
+});
 
-
+// "Tópico" é o nome da tela no app. No banco, tudo é uma enquete:
+// tbl_enquetes + tbl_respostas, com Sim, Não e Outro.
 export default function CriarTopicosScreen() {
-        const { coresTema } = useTema();
-    
-    const criarTopicosStyles = criarTopicosStyle(coresTema);
+    const { coresTema, tema } = useTema();
+    const { token, usuario } = useAuth();
+    const [pergunta, setPergunta] = useState("");
+    const [publicando, setPublicando] = useState(false);
+    const [erro, setErro] = useState("");
 
-    // =========================
-    // DADOS DO TÓPICO
-    // =========================
+    const perfil = String(usuario?.perfil_usuario ?? "").toLowerCase();
+    const podeCriar = perfil === "palestrante" || perfil === "administrador";
 
-    const [titulo, setTitulo] = useState("");
-
-    const [descricao, setDescricao] = useState("");
-
-
-    // =========================
-    // OPÇÕES
-    // =========================
-
-    const [opcoes, setOpcoes] = useState([
-        "Direito",
-        "Design",
-        "Eventos 360",
-    ]);
-
-    const [novaOpcao, setNovaOpcao] = useState("");
-
-    const [mostrarNovaOpcao, setMostrarNovaOpcao] =
-        useState(false);
-
-
-    // =========================
-    // ADICIONAR OPÇÃO
-    // =========================
-
-    const adicionarOpcao = () => {
-
-        const opcao = novaOpcao.trim();
-
-        if (!opcao) {
+    async function publicar() {
+        if (publicando) return;
+        if (!token) {
+            setErro("Sua sessão expirou. Faça login novamente.");
+            return;
+        }
+        if (!podeCriar) {
+            setErro("Somente palestrantes e administradores podem criar enquetes.");
+            return;
+        }
+        const texto = pergunta.trim();
+        if (!texto) {
+            setErro("Informe a pergunta da enquete.");
+            return;
+        }
+        if (texto.length > 80) {
+            setErro("A pergunta deve ter no máximo 80 caracteres.");
             return;
         }
 
-        if (opcoes.includes(opcao)) {
-            return;
+        try {
+            setPublicando(true);
+            setErro("");
+            const resposta = await criarEnquete(token, texto);
+            if (!resposta.success) throw new Error(resposta.message || "Não foi possível publicar.");
+            // A tela Tópicos busca as mesmas enquetes que a tela Enquetes.
+            router.replace("/enquetes");
+        } catch (falha) {
+            setErro(falha instanceof Error ? falha.message : "Falha ao publicar enquete.");
+        } finally {
+            setPublicando(false);
         }
-
-        setOpcoes((current) => [
-            ...current,
-            opcao,
-        ]);
-
-        setNovaOpcao("");
-
-        setMostrarNovaOpcao(false);
-
-    };
-
-
-    // =========================
-    // REMOVER OPÇÃO
-    // =========================
-
-    const removerOpcao = (
-        opcaoRemover: string
-    ) => {
-
-        setOpcoes((current) =>
-            current.filter(
-                (opcao) =>
-                    opcao !== opcaoRemover
-            )
-        );
-
-    };
-
-
-    // =========================
-    // PUBLICAR
-    // =========================
-
-    const publicarTopico = () => {
-
-        if (!titulo.trim()) {
-
-            console.log(
-                "Informe um título."
-            );
-
-            return;
-
-        }
-
-
-        if (!descricao.trim()) {
-
-            console.log(
-                "Informe uma descrição."
-            );
-
-            return;
-
-        }
-
-
-        if (opcoes.length < 2) {
-
-            console.log(
-                "Adicione pelo menos duas opções."
-            );
-
-            return;
-
-        }
-
-
-        console.log({
-
-            titulo,
-            descricao,
-            opcoes,
-
-        });
-
-
-        // futuramente:
-        // enviar tópico para API
-
-        // após salvar:
-        // router.replace("/home");
-
-    };
-
+    }
 
     return (
-
-        // =========================================
-        // FUNDO EXTERNO
-        // =========================================
-
-        <View style={globalStyle.container}>
-
-
-            {/* =====================================
-                ÁREA MOBILE - MÁXIMO 440px
-            ===================================== */}
-
-            <View
-                style={[
-                    globalStyle.background,
-                    criarTopicosStyles.container,
-                ]}
+        <SafeAreaView style={[estilos.container, { backgroundColor: tema === "claro" ? "#FFFFFF" : coresTema.fundo }]}>
+            <KeyboardAvoidingView
+                style={estilos.teclado}
+                behavior={Platform.OS === "ios" ? "padding" : undefined}
             >
-
-
-                {/* =================================
-                    FUNDO
-                ================================= */}
-
-                <ImageBackground
-                    source={require(
-                        "@/assets/images/img/fundoLogin.png"
-                    )}
-                    style={
-                        criarTopicosStyles.background
-                    }
-                    resizeMode="cover"
+                <ScrollView
+                    contentContainerStyle={estilos.conteudo}
+                    keyboardShouldPersistTaps="handled"
+                    showsVerticalScrollIndicator={false}
                 >
-
-
-                    {/* =============================
-                        SAFE AREA
-                    ============================= */}
-
-                    <SafeAreaView
-                        style={
-                            globalStyle.areaConteudo
-                        }
-                    >
-
-
-                        <View
-                            style={
-                                criarTopicosStyles.overlay
-                            }
+                    <View style={estilos.topo}>
+                        <Pressable
+                            onPress={() => router.back()}
+                            style={[estilos.voltar, { backgroundColor: coresTema.cardSecundario }]}
+                            accessibilityRole="button"
+                            accessibilityLabel="Voltar"
                         >
-
-
-                            {/* =====================
-                                TECLADO
-                            ===================== */}
-
-                            <KeyboardAvoidingView
-                                style={
-                                    criarTopicosStyles.keyboard
-                                }
-                                behavior={
-                                    Platform.OS === "ios"
-                                        ? "padding"
-                                        : "height"
-                                }
-                            >
-
-
-                                {/* =================
-                                    CONTEÚDO
-                                ================= */}
-
-                                <ScrollView
-                                    style={
-                                        criarTopicosStyles.scroll
-                                    }
-                                    contentContainerStyle={
-                                        criarTopicosStyles.scrollConteudo
-                                    }
-                                    showsVerticalScrollIndicator={
-                                        false
-                                    }
-                                    keyboardShouldPersistTaps="handled"
-                                >
-
-
-                                    {/* =================
-                                        TOPO
-                                    ================= */}
-
-                                    <View
-                                        style={
-                                            criarTopicosStyles.topo
-                                        }
-                                    >
-
-
-                                        {/* VOLTAR */}
-
-                                        <Pressable
-                                            style={({ pressed }) => [
-
-                                                criarTopicosStyles.btnVoltar,
-
-                                                pressed &&
-                                                criarTopicosStyles.btnVoltarPressed,
-
-                                            ]}
-                                            onPress={() =>
-                                                router.back()
-                                            }
-                                        >
-
-                                            <Image
-                                                style={
-                                                    criarTopicosStyles.voltarImagem
-                                                }
-                                                source={require(
-                                                    "@/assets/images/img/left.png"
-                                                )}
-                                            />
-
-                                        </Pressable>
-
-
-                                        {/* LOGO */}
-
-                                        <Image
-                                            source={require(
-                                                "@/assets/images/img/logo.svg"
-                                            )}
-                                            style={
-                                                criarTopicosStyles.logo
-                                            }
-                                        />
-
-
-                                        {/* ESPAÇO */}
-
-                                        <View
-                                            style={
-                                                criarTopicosStyles.espacoTopo
-                                            }
-                                        />
-
-
-                                    </View>
-
-
-                                    {/* =================
-                                        APRESENTAÇÃO
-                                    ================= */}
-
-                                    <View
-                                        style={
-                                            criarTopicosStyles.apresentacao
-                                        }
-                                    >
-
-                                        <Text
-                                            style={
-                                                criarTopicosStyles.tituloPagina
-                                            }
-                                        >
-
-                                            Criar{" "}
-
-                                            <Text
-                                                style={
-                                                    criarTopicosStyles.tituloDourado
-                                                }
-                                            >
-                                                tópico
-                                            </Text>
-
-                                        </Text>
-
-
-                                        <Text
-                                            style={
-                                                criarTopicosStyles.aviso
-                                            }
-                                        >
-                                            Compartilhe um assunto relevante com a comunidade.
-                                        </Text>
-
-                                    </View>
-
-
-                                    {/* =================
-                                        TÍTULO
-                                    ================= */}
-
-                                    <View
-                                        style={
-                                            criarTopicosStyles.card
-                                        }
-                                    >
-
-                                        <Text
-                                            style={
-                                                criarTopicosStyles.label
-                                            }
-                                        >
-                                            Título do tópico
-                                        </Text>
-
-
-                                        <TextInput
-                                            value={titulo}
-
-                                            onChangeText={
-                                                setTitulo
-                                            }
-
-                                            style={
-                                                criarTopicosStyles.input
-                                            }
-
-                                            placeholder="Digite um texto claro e objetivo"
-
-                                            placeholderTextColor={
-                                                "#777777"
-                                            }
-
-                                            maxLength={55}
-                                        />
-
-
-                                        <Text
-                                            style={
-                                                criarTopicosStyles.contador
-                                            }
-                                        >
-                                            {titulo.length}/55
-                                        </Text>
-
-                                    </View>
-
-
-                                    {/* =================
-                                        ÍCONE
-                                    ================= */}
-
-                                    <View
-                                        style={
-                                            criarTopicosStyles.card
-                                        }
-                                    >
-
-                                        <Text
-                                            style={
-                                                criarTopicosStyles.label
-                                            }
-                                        >
-                                            Selecione um ícone
-                                        </Text>
-
-
-                                        <Pressable
-                                            style={({ pressed }) => [
-
-                                                criarTopicosStyles.seletor,
-
-                                                pressed &&
-                                                criarTopicosStyles.seletorPressed,
-
-                                            ]}
-                                            onPress={() => {
-
-                                                /*
-                                                    Aqui ainda não vou inventar
-                                                    modal ou seletor.
-
-                                                    Podemos montar a seleção
-                                                    usando os ícones que já
-                                                    existem no projeto.
-                                                */
-
-                                            }}
-                                        >
-
-                                            <Text
-                                                style={
-                                                    criarTopicosStyles.txtSeletor
-                                                }
-                                            >
-                                                Selecione um ícone
-                                            </Text>
-
-
-                                            <Image
-                                                source={require(
-                                                    "@/assets/images/img/galeria.png"
-                                                )}
-                                                style={
-                                                    criarTopicosStyles.iconeSeletor
-                                                }
-                                            />
-
-                                        </Pressable>
-
-                                    </View>
-
-
-                                    {/* =================
-                                        DESCRIÇÃO
-                                    ================= */}
-
-                                    <View
-                                        style={
-                                            criarTopicosStyles.card
-                                        }
-                                    >
-
-                                        <Text
-                                            style={
-                                                criarTopicosStyles.label
-                                            }
-                                        >
-                                            Descrição
-                                        </Text>
-
-
-                                        <TextInput
-                                            value={descricao}
-
-                                            onChangeText={
-                                                setDescricao
-                                            }
-
-                                            style={
-                                                criarTopicosStyles.inputDescricao
-                                            }
-
-                                            placeholder="Digite um texto claro e objetivo"
-
-                                            placeholderTextColor={
-                                                "#777777"
-                                            }
-
-                                            multiline
-
-                                            textAlignVertical="top"
-
-                                            maxLength={150}
-                                        />
-
-
-                                        <Text
-                                            style={
-                                                criarTopicosStyles.contador
-                                            }
-                                        >
-                                            {descricao.length}/150
-                                        </Text>
-
-                                    </View>
-
-
-                                    {/* =================
-                                        VOTAÇÃO
-                                    ================= */}
-
-                                    <View
-                                        style={
-                                            criarTopicosStyles.card
-                                        }
-                                    >
-
-                                        <Text
-                                            style={
-                                                criarTopicosStyles.label
-                                            }
-                                        >
-                                            Adicione opções para votação
-                                        </Text>
-
-
-                                        <View
-                                            style={
-                                                criarTopicosStyles.areaOpcoes
-                                            }
-                                        >
-
-
-                                            {/* OPÇÕES */}
-
-                                            {opcoes.map(
-                                                (opcao) => (
-
-                                                    <Pressable
-                                                        key={
-                                                            opcao
-                                                        }
-                                                        style={
-                                                            criarTopicosStyles.opcao
-                                                        }
-                                                        onPress={() =>
-                                                            removerOpcao(
-                                                                opcao
-                                                            )
-                                                        }
-                                                    >
-
-                                                        <Text
-                                                            style={
-                                                                criarTopicosStyles.txtOpcao
-                                                            }
-                                                        >
-                                                            {opcao} ×
-                                                        </Text>
-
-                                                    </Pressable>
-
-                                                )
-                                            )}
-
-
-                                            {/* NOVA OPÇÃO */}
-
-                                            <Pressable
-                                                style={
-                                                    criarTopicosStyles.btnNovaOpcao
-                                                }
-                                                onPress={() =>
-                                                    setMostrarNovaOpcao(
-                                                        (current) =>
-                                                            !current
-                                                    )
-                                                }
-                                            >
-
-                                                <Text
-                                                    style={
-                                                        criarTopicosStyles.txtNovaOpcao
-                                                    }
-                                                >
-                                                    + Nova
-                                                </Text>
-
-                                            </Pressable>
-
-
-                                        </View>
-
-
-                                        {/* =================
-                                            CAMPO NOVA OPÇÃO
-                                        ================= */}
-
-                                        {mostrarNovaOpcao && (
-
-                                            <View
-                                                style={
-                                                    criarTopicosStyles.areaNovaOpcao
-                                                }
-                                            >
-
-                                                <TextInput
-                                                    value={
-                                                        novaOpcao
-                                                    }
-
-                                                    onChangeText={
-                                                        setNovaOpcao
-                                                    }
-
-                                                    style={
-                                                        criarTopicosStyles.inputNovaOpcao
-                                                    }
-
-                                                    placeholder="Nova opção"
-
-                                                    placeholderTextColor={
-                                                        "#777777"
-                                                    }
-
-                                                    maxLength={40}
-
-                                                    onSubmitEditing={
-                                                        adicionarOpcao
-                                                    }
-                                                />
-
-
-                                                <Pressable
-                                                    style={({ pressed }) => [
-
-                                                        criarTopicosStyles.btnAdicionarOpcao,
-
-                                                        pressed &&
-                                                        criarTopicosStyles.btnAdicionarOpcaoPressed,
-
-                                                    ]}
-                                                    onPress={
-                                                        adicionarOpcao
-                                                    }
-                                                >
-
-                                                    <Text
-                                                        style={
-                                                            criarTopicosStyles.txtAdicionarOpcao
-                                                        }
-                                                    >
-                                                        Adicionar
-                                                    </Text>
-
-                                                </Pressable>
-
-                                            </View>
-
-                                        )}
-
-
-                                    </View>
-
-
-                                    {/* =================
-                                        BOTÕES
-                                    ================= */}
-
-                                    <View
-                                        style={
-                                            criarTopicosStyles.areaBotoes
-                                        }
-                                    >
-
-
-                                        {/* PUBLICAR */}
-
-                                        <Pressable
-                                            style={({ pressed }) => [
-
-                                                criarTopicosStyles.btnPublicar,
-
-                                                pressed &&
-                                                criarTopicosStyles.btnPublicarPressed,
-
-                                            ]}
-                                            onPress={
-                                                publicarTopico
-                                            }
-                                        >
-
-                                            <Text
-                                                style={
-                                                    criarTopicosStyles.txtPublicar
-                                                }
-                                            >
-                                                Publicar
-                                            </Text>
-
-                                        </Pressable>
-
-
-                                        {/* CANCELAR */}
-
-                                        <Pressable
-                                            style={({ pressed }) => [
-
-                                                criarTopicosStyles.btnCancelar,
-
-                                                pressed &&
-                                                criarTopicosStyles.btnCancelarPressed,
-
-                                            ]}
-                                            onPress={() =>
-                                                router.back()
-                                            }
-                                        >
-
-                                            <Text
-                                                style={
-                                                    criarTopicosStyles.txtCancelar
-                                                }
-                                            >
-                                                Cancelar
-                                            </Text>
-
-                                        </Pressable>
-
-
-                                    </View>
-
-
-                                </ScrollView>
-
-
-                                {/* =================
-                                    FOOTER
-                                ================= */}
-
-                                <MenuSreen />
-
-
-                            </KeyboardAvoidingView>
-
-
-                        </View>
-
-
-                    </SafeAreaView>
-
-
-                </ImageBackground>
-
-
-            </View>
-
-
-        </View>
-
+                            <Ionicons name="arrow-back" size={22} color={coresTema.destaque} />
+                        </Pressable>
+                        <Text style={[estilos.titulo, { color: coresTema.texto }]}>Criar tópico</Text>
+                    </View>
+
+                    <Text style={[estilos.subtitulo, { color: coresTema.textoSecundario }]}>
+                        O tópico será publicado como uma enquete da comunidade e aparecerá também na tela Enquetes.
+                    </Text>
+
+                    <View style={[estilos.card, { backgroundColor: coresTema.card, borderColor: coresTema.borda }]}>
+                        <Text style={[estilos.label, { color: coresTema.texto }]}>Pergunta da enquete</Text>
+                        <TextInput
+                            value={pergunta}
+                            onChangeText={(valor) => { setPergunta(valor); if (erro) setErro(""); }}
+                            placeholder="Ex.: Você participaria do próximo evento?"
+                            placeholderTextColor={coresTema.textoSecundario}
+                            maxLength={80}
+                            multiline
+                            textAlignVertical="top"
+                            editable={!publicando}
+                            style={[estilos.campo, {
+                                color: coresTema.texto,
+                                borderColor: coresTema.borda,
+                                backgroundColor: coresTema.input,
+                            }]}
+                        />
+                        <Text style={[estilos.contador, { color: coresTema.textoSecundario }]}>
+                            {pergunta.length}/80
+                        </Text>
+                    </View>
+
+                    <View style={[estilos.card, { backgroundColor: coresTema.card, borderColor: coresTema.borda }]}>
+                        <Text style={[estilos.label, { color: coresTema.texto }]}>Opções de resposta</Text>
+                        {(["Sim", "Não", "Outro"] as const).map((opcao) => (
+                            <View key={opcao} style={estilos.opcao}>
+                                <Ionicons name="radio-button-off" size={20} color={coresTema.destaque} />
+                                <Text style={[estilos.textoOpcao, { color: coresTema.texto }]}>{opcao}</Text>
+                            </View>
+                        ))}
+                        <Text style={[estilos.explicacao, { color: coresTema.textoSecundario }]}>
+                            Essas são as três respostas já utilizadas pelas enquetes do Conexão 360°.
+                        </Text>
+                    </View>
+
+                    {!!erro && (
+                        <Text accessibilityRole="alert" style={[estilos.erro, { color: coresTema.erro }]}>
+                            {erro}
+                        </Text>
+                    )}
+
+                    <Pressable
+                        onPress={() => void publicar()}
+                        disabled={publicando || !podeCriar}
+                        accessibilityRole="button"
+                        accessibilityLabel="Publicar enquete"
+                        style={[estilos.botao, {
+                            backgroundColor: coresTema.destaque,
+                            opacity: publicando || !podeCriar ? 0.5 : 1,
+                        }]}
+                    >
+                        {publicando ? <ActivityIndicator color={coresTema.textoSobreDestaque} /> : (
+                            <Ionicons name="send" size={18} color={coresTema.textoSobreDestaque} />
+                        )}
+                        <Text style={[estilos.textoBotao, { color: coresTema.textoSobreDestaque }]}>
+                            {publicando ? "Publicando..." : "Publicar tópico"}
+                        </Text>
+                    </Pressable>
+                </ScrollView>
+            </KeyboardAvoidingView>
+        </SafeAreaView>
     );
-
 }

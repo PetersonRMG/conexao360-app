@@ -242,7 +242,11 @@ export default function EnquetesScreen() {
 
   const {
     token,
+    usuario,
   } = useAuth();
+
+  const perfil = String(usuario?.perfil_usuario ?? "").toLowerCase();
+  const podeCriarEnquete = perfil === "palestrante" || perfil === "administrador";
 
 
   // =====================================
@@ -1277,6 +1281,32 @@ export default function EnquetesScreen() {
 
         </View>
 
+
+        {/* Tópicos e enquetes usam a mesma listagem: apenas um botão de criação. */}
+        {podeCriarEnquete && (
+          <Pressable
+            onPress={() => router.push("/criarTopico")}
+            accessibilityRole="button"
+            accessibilityLabel="Criar nova enquete"
+            style={{
+              borderColor: coresTema.borda,
+              borderWidth: 1,
+              borderRadius: 10,
+              backgroundColor: coresTema.card,
+              flexDirection: "row",
+              alignItems: "center",
+              gap: 10,
+              padding: 12,
+              marginBottom: 14,
+            }}
+          >
+            <Ionicons name="add-circle-outline" size={20} color={coresTema.destaque} />
+            <Text style={{ color: coresTema.texto, flex: 1, fontWeight: "700", fontSize: 13 }}>
+              Criar tópico / enquete
+            </Text>
+            <Ionicons name="chevron-forward" size={19} color={coresTema.destaque} />
+          </Pressable>
+        )}
 
         {/* FILTROS */}
 
