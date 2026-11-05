@@ -180,7 +180,7 @@ export default function Index() {
                       <Text style={loginStyle.description}>
                         Entre com seu e-mail e senha para continuar no Conexão 360°.
                       </Text>
-                      <View style={loginStyle.form}>
+                      <View style={loginStyle.form} nativeID="auth-login-form">
                         <View style={loginStyle.input}>
                           <Ionicons name="mail-outline" size={23} color="#F0C247" style={{ marginRight: 12 }} />
                           <TextInput

@@ -1,7 +1,11 @@
 import { StyleSheet } from "react-native";
 import { cores, fontes } from "./variaveis";
 
+
+
 const globalStyle = StyleSheet.create({
+
+  
   logoMenor: {
     width: 70,
     height: 70,

@@ -24,7 +24,7 @@ const loginStyle = StyleSheet.create({
   icone: { width: 22, height: 22, marginRight: 12, resizeMode: "contain" },
   txtInput: {
     flex: 1, paddingVertical: 0, color: "#FFFFFF", fontFamily: fontes.appRegular,
-    fontSize: 16,
+    fontSize: 16, backgroundColor: "transparent",
   },
   mostrarSenha: { width: 22, height: 22, resizeMode: "contain" },
   revealButton: { padding: 10, marginRight: -8 },

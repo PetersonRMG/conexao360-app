@@ -7,3 +7,28 @@
   --font-rounded: 'SF Pro Rounded', 'Hiragino Maru Gothic ProN', Meiryo, 'MS PGothic', sans-serif;
   --font-serif: Georgia, 'Times New Roman', serif;
 }
+
+
+/* Conexão 360° — login no Expo Web.
+   O Chrome aplica um fundo claro ao preencher e-mail e senha salvos.
+   As regras são restritas ao formulário de login, sem afetar outros temas. */
+#auth-login-form input {
+  background-color: transparent !important;
+  color: #f8f8fa !important;
+  -webkit-text-fill-color: #f8f8fa !important;
+  caret-color: #f8f8fa !important;
+}
+
+#auth-login-form input:autofill,
+#auth-login-form input:autofill:hover,
+#auth-login-form input:autofill:focus,
+#auth-login-form input:-webkit-autofill,
+#auth-login-form input:-webkit-autofill:hover,
+#auth-login-form input:-webkit-autofill:focus,
+#auth-login-form input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 1000px #1b1c21 inset !important;
+  box-shadow: 0 0 0 1000px #1b1c21 inset !important;
+  -webkit-text-fill-color: #f8f8fa !important;
+  caret-color: #f8f8fa !important;
+  transition: background-color 99999s ease-in-out 0s;
+}
