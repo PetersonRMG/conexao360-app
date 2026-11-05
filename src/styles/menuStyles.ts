@@ -1,5 +1,5 @@
 import { Platform, StyleSheet } from "react-native";
-import { fontes } from "./variaveis";
+import { fontes, tipografia } from "./variaveis";
 import { CoresTema, temaEscuro } from "./temas";
 
 export const criarMenuStyles = (tema: CoresTema) => {
@@ -16,7 +16,7 @@ export const criarMenuStyles = (tema: CoresTema) => {
             justifyContent: "center",
             paddingHorizontal: 6,
             paddingVertical: 3,
-            backgroundColor: escuro ? tema.fundo : tema.footer,
+            backgroundColor: tema.footer,
             borderTopWidth: StyleSheet.hairlineWidth,
             borderTopColor: tema.linha,
             ...Platform.select({
@@ -45,7 +45,7 @@ export const criarMenuStyles = (tema: CoresTema) => {
         // Área idêntica para todos os ícones do menu.
         areaIcone: {
             width: "100%",
-            height: 43,
+            height: 37,
             alignItems: "center",
             justifyContent: "center",
         },
@@ -53,18 +53,18 @@ export const criarMenuStyles = (tema: CoresTema) => {
         // A altura fixa mantém todas as legendas exatamente na mesma linha.
         txtMenu: {
             width: "100%",
-            height: 14,
+            height: 18,
             color: tema.textoSecundario,
-            fontSize: 10,
-            lineHeight: 14,
-            fontFamily: fontes.normal,
+            fontSize: tipografia.navegacao,
+            lineHeight: 18,
+            fontFamily: fontes.appRegular,
             textAlign: "center",
             includeFontPadding: false,
         },
 
         txtMenuAtivo: {
             color: tema.destaque,
-            fontFamily: fontes.negrito,
+            fontFamily: fontes.appSemiBold,
         },
 
         indicador: {

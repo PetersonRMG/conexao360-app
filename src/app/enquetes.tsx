@@ -1301,7 +1301,7 @@ export default function EnquetesScreen() {
             }}
           >
             <Ionicons name="add-circle-outline" size={20} color={coresTema.destaque} />
-            <Text style={{ color: coresTema.texto, flex: 1, fontWeight: "700", fontSize: 13 }}>
+            <Text style={{ color: coresTema.texto, flex: 1, fontFamily: "Inter_600SemiBold", fontSize: 16 }}>
               Criar tópico / enquete
             </Text>
             <Ionicons name="chevron-forward" size={19} color={coresTema.destaque} />

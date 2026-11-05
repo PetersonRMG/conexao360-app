@@ -1,23 +1,13 @@
-
 import { useState } from "react";
 import { router } from "expo-router";
-import {
-  View,
-  Text,
-  ImageBackground,
-  Image,
-  Pressable,
-  TextInput,
-  ScrollView,
-} from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { ImageBackground, KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-
 import { login } from "@/services/authService";
 import { buscarUsuario } from "@/services/usuarioService";
 import { useAuth } from "@/contexts/AuthContext";
-
+import AuthBrand from "@/components/AuthBrand";
 import loginStyle from "@/styles/loginStyles";
-import globalStyle from "@/styles/globalStyles";
 
 export default function Index() {
   const [verSenha, setVerSenha] = useState(false);
@@ -165,9 +155,6 @@ export default function Index() {
     }
   }
 
-  // =========================================
-  // TELA
-  // =========================================
   return (
     <View style={loginStyle.container}>
       <ImageBackground
@@ -175,191 +162,107 @@ export default function Index() {
         style={loginStyle.background}
         resizeMode="stretch"
       >
-        <SafeAreaView style={globalStyle.areaConteudo}>
-          <ScrollView
-            style={globalStyle.scrollConteudo}
-            keyboardShouldPersistTaps="handled"
-          >
-            <View style={loginStyle.conteudo}>
-
-              {/* TOPO */}
-              <View style={loginStyle.conteudoTopo}>
-                <Image
-                  source={require("@/assets/images/img/logo.svg")}
-                />
-
-                <Text style={loginStyle.titulo}>
-                  Advocacia {"\n"} E
-                  <Text style={loginStyle.x}>x</Text>
-                  ponencial
-                </Text>
-
-                <Text style={loginStyle.subtitulo}>
-                  Rede Exclusiva
-                </Text>
-              </View>
-
-              {/* FORMULÁRIO */}
-              <View style={loginStyle.conteudoBtns}>
-                <View style={loginStyle.form}>
-
-                  {/* E-MAIL */}
-                  <View style={loginStyle.input}>
-                    <Image
-                      source={require("@/assets/images/img/e-mail.png")}
-                      style={loginStyle.icone}
-                    />
-
-                    <TextInput
-                      style={loginStyle.txtInput}
-                      placeholder="E-mail"
-                      placeholderTextColor="#D6B26A"
-                      keyboardType="email-address"
-                      autoCapitalize="none"
-                      autoComplete="email"
-                      autoCorrect={false}
-                      value={email}
-                      editable={!carregando}
-                      onChangeText={(valor) => {
-                        setEmail(valor);
-                        if (erroLogin) setErroLogin("");
-                      }}
-                    />
+        <View style={loginStyle.overlay}>
+          <SafeAreaView style={loginStyle.safeArea}>
+            <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : undefined}>
+              <ScrollView
+                contentContainerStyle={loginStyle.scroll}
+                keyboardShouldPersistTaps="handled"
+                showsVerticalScrollIndicator={false}
+              >
+                <View style={loginStyle.conteudo}>
+                  <View>
+                    <View style={loginStyle.conteudoTopo}>
+                      <AuthBrand showAppName />
+                    </View>
+                    <View style={loginStyle.conteudoBtns}>
+                      <Text style={loginStyle.heading}>Acesse sua conta</Text>
+                      <Text style={loginStyle.description}>
+                        Entre com seu e-mail e senha para continuar no Conexão 360°.
+                      </Text>
+                      <View style={loginStyle.form}>
+                        <View style={loginStyle.input}>
+                          <Ionicons name="mail-outline" size={23} color="#F0C247" style={{ marginRight: 12 }} />
+                          <TextInput
+                            style={loginStyle.txtInput}
+                            placeholder="E-mail"
+                            placeholderTextColor="#BFC0C6"
+                            keyboardType="email-address"
+                            autoCapitalize="none"
+                            autoComplete="email"
+                            autoCorrect={false}
+                            value={email}
+                            editable={!carregando}
+                            onChangeText={(valor) => { setEmail(valor); if (erroLogin) setErroLogin(""); }}
+                          />
+                        </View>
+                        <View style={loginStyle.input}>
+                          <Ionicons name="lock-closed-outline" size={23} color="#F0C247" style={{ marginRight: 12 }} />
+                          <TextInput
+                            style={loginStyle.txtInput}
+                            placeholder="Senha"
+                            placeholderTextColor="#BFC0C6"
+                            secureTextEntry={!verSenha}
+                            autoComplete="password"
+                            autoCapitalize="none"
+                            autoCorrect={false}
+                            value={senha}
+                            editable={!carregando}
+                            onSubmitEditing={fazerLogin}
+                            onChangeText={(valor) => { setSenha(valor); if (erroLogin) setErroLogin(""); }}
+                          />
+                          <Pressable
+                            style={loginStyle.revealButton}
+                            onPress={() => setVerSenha((atual) => !atual)}
+                            accessibilityRole="button"
+                            accessibilityLabel={verSenha ? "Ocultar senha" : "Mostrar senha"}
+                          >
+                            <Ionicons name={verSenha ? "eye-off-outline" : "eye-outline"} size={23} color="#D3D4D8" />
+                          </Pressable>
+                        </View>
+                      </View>
+                      <View style={loginStyle.esquecidaRow}>
+                        <Pressable onPress={() => router.navigate("/esqueciSenha")}>
+                          <Text style={loginStyle.txtEsqueciSenha}>Esqueci minha senha</Text>
+                        </Pressable>
+                      </View>
+                      <Pressable
+                        style={({ pressed }) => [loginStyle.btnEntrar, pressed && loginStyle.btnEntrarPressed, carregando && loginStyle.btnDesabilitado]}
+                        onPress={fazerLogin}
+                        disabled={carregando}
+                        accessibilityRole="button"
+                      >
+                        <Text style={loginStyle.textBtn}>{carregando ? "Entrando..." : "Entrar"}</Text>
+                      </Pressable>
+                      {!!erroLogin && (
+                        <View accessibilityRole="alert" style={loginStyle.erroBox}>
+                          <Text style={loginStyle.erroText}>{erroLogin}</Text>
+                        </View>
+                      )}
+                      <View style={loginStyle.separator}>
+                        <View style={loginStyle.line} />
+                        <Text style={loginStyle.separatorText}>Ainda não tem uma conta?</Text>
+                        <View style={loginStyle.line} />
+                      </View>
+                      <Pressable
+                        style={({ pressed }) => [loginStyle.btnCriar, pressed && loginStyle.btnCriarPressed]}
+                        onPress={() => router.navigate("/cad-cliente")}
+                      >
+                        <Text style={loginStyle.textCriar}>Criar conta</Text>
+                      </Pressable>
+                    </View>
                   </View>
-
-                  {/* SENHA */}
-                  <View style={loginStyle.input}>
-                    <Image
-                      source={require("@/assets/images/img/trancar.png")}
-                      style={loginStyle.icone}
-                    />
-
-                    <TextInput
-                      style={loginStyle.txtInput}
-                      placeholder="Senha"
-                      placeholderTextColor="#D6B26A"
-                      secureTextEntry={!verSenha}
-                      autoComplete="password"
-                      autoCapitalize="none"
-                      autoCorrect={false}
-                      value={senha}
-                      editable={!carregando}
-                      onSubmitEditing={fazerLogin}
-                      onChangeText={(valor) => {
-                        setSenha(valor);
-                        if (erroLogin) setErroLogin("");
-                      }}
-                    />
-
-                    {/* MOSTRAR / OCULTAR SENHA */}
-                    <Pressable
-                      onPress={() =>
-                        setVerSenha((atual) => !atual)
-                      }
-                      accessibilityRole="button"
-                      accessibilityLabel={
-                        verSenha ? "Ocultar senha" : "Mostrar senha"
-                      }
-                    >
-                      <Image
-                        source={
-                          verSenha
-                            ? require("@/assets/images/img/esconder.png")
-                            : require("@/assets/images/img/olho.png")
-                        }
-                        style={loginStyle.mostrarSenha}
-                      />
-                    </Pressable>
-                  </View>
-                </View>
-
-                {/* ESQUECI SENHA */}
-                <Pressable
-                  onPress={() =>
-                    router.navigate("/esqueciSenha")
-                  }
-                >
-                  <Text style={loginStyle.txtEsqueciSenha}>
-                    Esqueci Senha
-                  </Text>
-                </Pressable>
-
-                {/* ENTRAR */}
-                <Pressable
-                  style={({ pressed }) => [
-                    loginStyle.btnEntrar,
-                    pressed && loginStyle.btnEntrarPressed,
-                  ]}
-                  onPress={fazerLogin}
-                  disabled={carregando}
-                >
-                  <Text style={loginStyle.textBtn}>
-                    {carregando ? "Entrando..." : "Entrar"}
-                  </Text>
-                </Pressable>
-
-                {/* MENSAGEM DE ERRO */}
-                {erroLogin !== "" && (
-                  <View
-                    accessibilityRole="alert"
-                    style={{
-                      marginTop: 12,
-                      paddingVertical: 12,
-                      paddingHorizontal: 14,
-                      borderRadius: 10,
-                      borderWidth: 1,
-                      borderColor: "#CA6868",
-                      backgroundColor: "#351F24",
-                    }}
-                  >
-                    <Text
-                      style={{
-                        color: "#FFD8D8",
-                        fontSize: 14,
-                        lineHeight: 20,
-                        textAlign: "center",
-                      }}
-                    >
-                      {erroLogin}
+                  <View style={loginStyle.slogan}>
+                    <Text style={loginStyle.sloganTitulo}>Networking de alto nível</Text>
+                    <Text style={loginStyle.sloganSubtitulo}>
+                      Conhecimento <Text style={loginStyle.x}>Exponencial</Text>
                     </Text>
                   </View>
-                )}
-
-                {/* CRIAR CONTA */}
-                <Pressable
-                  style={({ pressed }) => [
-                    loginStyle.btnCriar,
-                    pressed && loginStyle.btnCriarPressed,
-                  ]}
-                  onPress={() =>
-                    router.navigate("/cad-cliente")
-                  }
-                >
-                  <Text
-                    style={[
-                      loginStyle.textBtn,
-                      loginStyle.textCriar,
-                    ]}
-                  >
-                    Criar Conta
-                  </Text>
-                </Pressable>
-
-                {/* SLOGAN */}
-                <Text style={loginStyle.sloganTitulo}>
-                  Networking de alto nivel
-                </Text>
-
-                <Text style={loginStyle.sloganSubtitulo}>
-                  Conhecimento{" "}
-                  <Text style={loginStyle.x}>
-                    Exponencial
-                  </Text>
-                </Text>
-              </View>
-            </View>
-          </ScrollView>
-        </SafeAreaView>
+                </View>
+              </ScrollView>
+            </KeyboardAvoidingView>
+          </SafeAreaView>
+        </View>
       </ImageBackground>
     </View>
   );

@@ -1,433 +1,192 @@
 import { StyleSheet } from "react-native";
-import { cores, fontes } from "./variaveis";
+import { cores, fontes, tipografia } from "./variaveis";
+import type { CoresTema } from "./temas";
 
-import { CoresTema } from "./temas";
+/** Chat — mesma linguagem do feed: grafite, Inter e divisórias discretas. */
 export const criarChatStyles = (tema: CoresTema) => StyleSheet.create({
-
-    // =========================
-    // ESTRUTURA
-    // =========================
-
-    container: {
-        flex: 1,
-
-        backgroundColor: tema.fundo,
-    },
-
-
-    // =========================
-    // HEADER
-    // =========================
-
-    header: {
-        width: "100%",
-
-        backgroundColor: tema.header,
-
-        borderBottomWidth: 1,
-        borderBottomColor: tema.linha,
-
-        paddingHorizontal: 16,
-        paddingTop: 12,
-    },
-
-    headerTopo: {
-        width: "100%",
-
-        flexDirection: "row",
-
-        alignItems: "center",
-        justifyContent: "space-between",
-    },
-
-    avatarUsuario: {
-        width: 42,
-        height: 42,
-
-        borderRadius: 21,
-
-        resizeMode: "cover",
-
-        borderWidth: 1,
-        borderColor: cores.douradoPrincipal,
-    },
-
-    logoArea: {
-        flexDirection: "row",
-        alignItems: "center",
-
-        gap: 8,
-    },
-
-    logo: {
-        width: 38,
-        height: 38,
-
-        resizeMode: "contain",
-    },
-
-    logoTexto: {
-        color: cores.douradoPrincipal,
-
-        fontSize: 16,
-        fontFamily: fontes.negrito,
-    },
-
-    btnHeader: {
-        width: 40,
-        height: 40,
-
-        alignItems: "center",
-        justifyContent: "center",
-    },
-
-    iconeHeader: {
-        width: 28,
-        height: 28,
-
-        resizeMode: "contain",
-    },
-
-
-    // =========================
-    // TÍTULO
-    // =========================
-
-    tituloArea: {
-        width: "100%",
-
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-between",
-
-        paddingHorizontal: 16,
-
-        marginTop: 12,
-        marginBottom: 10,
-    },
-
-    titulo: {
-        color: cores.douradoPrincipal,
-
-        fontSize: 22,
-        fontFamily: fontes.negrito,
-    },
-
-    btnNovoChat: {
-        width: 34,
-        height: 34,
-
-        borderWidth: 2,
-        borderColor: cores.douradoPrincipal,
-
-        borderRadius: 8,
-
-        alignItems: "center",
-        justifyContent: "center",
-    },
-
-    btnNovoChatPressed: {
-        backgroundColor: tema.cardSecundario,
-
-        transform: cores.btnPress,
-    },
-
-    iconeAdicionar: {
-        width: 22,
-        height: 22,
-
-        resizeMode: "contain",
-    },
-
-
-    // =========================
-    // BUSCA
-    // =========================
-
-    areaBusca: {
-        width: "100%",
-
-        paddingHorizontal: 16,
-        paddingTop: 12,
-        paddingBottom: 10,
-
-        // removido o fundo roxo
-        backgroundColor: tema.fundo,
-    },
-
-    inputBuscaContainer: {
-        width: "100%",
-        height: 44,
-
-        flexDirection: "row",
-        alignItems: "center",
-
-        backgroundColor: tema.input,
-
-        borderWidth: 1,
-        borderColor: cores.douradoPrincipal,
-
-        borderRadius: 22,
-
-        paddingHorizontal: 14,
-    },
-
-    iconeBusca: {
-        width: 19,
-        height: 19,
-
-        resizeMode: "contain",
-
-        marginRight: 10,
-
-        opacity: 0.7,
-    },
-
-    inputBusca: {
-        flex: 1,
-
-        height: "100%",
-
-        color: tema.texto,
-
-        fontSize: 12,
-        fontFamily: fontes.normal,
-
-        paddingVertical: 0,
-    },
-
-
-    // =========================
-    // FILTROS
-    // =========================
-
-    filtros: {
-        width: "100%",
-        height: 48,
-
-        flexDirection: "row",
-
-        backgroundColor: tema.fundo,
-
-        borderBottomWidth: 1,
-        borderBottomColor: tema.linha,
-
-        paddingHorizontal: 16,
-    },
-
-    filtro: {
-        flex: 1,
-
-        flexDirection: "row",
-
-        alignItems: "center",
-        justifyContent: "center",
-
-        gap: 4,
-    },
-
-    filtroAtivo: {
-        borderBottomWidth: 2,
-        borderBottomColor: cores.douradoPrincipal,
-    },
-
-    txtFiltro: {
-        color: tema.texto,
-
-        fontSize: 10,
-        fontFamily: fontes.normal,
-
-        opacity: 0.65,
-    },
-
-    txtFiltroAtivo: {
-        color: cores.douradoPrincipal,
-
-        opacity: 1,
-    },
-
-
-    // =========================
-    // BADGE FILTRO
-    // =========================
-
-    badgeFiltro: {
-        minWidth: 17,
-        height: 17,
-
-        paddingHorizontal: 4,
-
-        borderRadius: 9,
-
-        alignItems: "center",
-        justifyContent: "center",
-
-        backgroundColor: cores.douradoPrincipal,
-    },
-
-    txtBadgeFiltro: {
-        color: tema.textoSobreDestaque,
-
-        fontSize: 8,
-        fontFamily: fontes.negrito,
-    },
-
-
-    // =========================
-    // SCROLL
-    // =========================
-
-    scroll: {
-        flex: 1,
-    },
-
-    scrollConteudo: {
-        paddingBottom: 90,
-    },
-
-
-    // =========================
-    // CONVERSA
-    // =========================
-
-    conversa: {
-        width: "100%",
-        minHeight: 80,
-
-        flexDirection: "row",
-        alignItems: "center",
-
-        paddingHorizontal: 16,
-        paddingVertical: 10,
-
-        borderBottomWidth: 1,
-        borderBottomColor: tema.linha,
-    },
-
-    conversaPressed: {
-        backgroundColor: tema.cardSecundario,
-    },
-
-
-    // =========================
-    // AVATAR CONVERSA
-    // =========================
-
-    avatarConversaContainer: {
-        width: 47,
-        height: 47,
-
-        borderRadius: 24,
-
-        alignItems: "center",
-        justifyContent: "center",
-
-        backgroundColor: cores.douradoPrincipal,
-
-        marginRight: 12,
-    },
-
-    avatarConversa: {
-        width: 32,
-        height: 32,
-
-        resizeMode: "contain",
-    },
-
-
-    // =========================
-    // DADOS CONVERSA
-    // =========================
-
-    conversaConteudo: {
-        flex: 1,
-
-        paddingRight: 10,
-    },
-
-    nome: {
-        color: cores.douradoPrincipal,
-
-        fontSize: 15,
-        fontFamily: fontes.negrito,
-
-        marginBottom: 3,
-    },
-
-    mensagem: {
-        color: tema.texto,
-
-        fontSize: 11,
-        lineHeight: 15,
-
-        fontFamily: fontes.normal,
-
-        opacity: 0.85,
-    },
-
-
-    // =========================
-    // META
-    // =========================
-
-    conversaMeta: {
-        height: 55,
-
-        alignItems: "flex-end",
-        justifyContent: "space-between",
-    },
-
-    horario: {
-        color: tema.texto,
-
-        fontSize: 9,
-        fontFamily: fontes.normal,
-
-        opacity: 0.7,
-    },
-
-    badge: {
-        minWidth: 19,
-        height: 19,
-
-        paddingHorizontal: 5,
-
-        borderRadius: 10,
-
-        alignItems: "center",
-        justifyContent: "center",
-
-        backgroundColor: cores.douradoPrincipal,
-    },
-
-    txtBadge: {
-        color: tema.textoSobreDestaque,
-
-        fontSize: 9,
-        fontFamily: fontes.negrito,
-    },
-
-
-    // =========================
-    // SEM RESULTADOS
-    // =========================
-
-    semResultados: {
-        width: "100%",
-
-        alignItems: "center",
-        justifyContent: "center",
-
-        paddingVertical: 40,
-    },
-
-    txtSemResultados: {
-        color: tema.texto,
-
-        fontSize: 12,
-        fontFamily: fontes.normal,
-
-        opacity: 0.6,
-    },
-
+  container: {
+    flex: 1,
+    backgroundColor: tema.fundo,
+  },
+  tituloArea: {
+    paddingHorizontal: 20,
+    paddingTop: 14,
+    paddingBottom: 10,
+  },
+  titulo: {
+    color: tema.texto,
+    fontSize: tipografia.titulo,
+    lineHeight: 36,
+    fontFamily: fontes.appBold,
+    letterSpacing: -0.5,
+  },
+  subtitulo: {
+    marginTop: 2,
+    color: tema.textoSecundario,
+    fontSize: tipografia.legenda,
+    lineHeight: 20,
+    fontFamily: fontes.appRegular,
+  },
+  areaBusca: {
+    paddingHorizontal: 20,
+    paddingTop: 8,
+    paddingBottom: 12,
+    backgroundColor: tema.fundo,
+  },
+  inputBuscaContainer: {
+    height: 52,
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: tema.input,
+    borderWidth: 1,
+    borderColor: tema.borda,
+    borderRadius: 26,
+    paddingHorizontal: 16,
+    gap: 12,
+  },
+  inputBusca: {
+    flex: 1,
+    height: "100%",
+    paddingVertical: 0,
+    color: tema.texto,
+    fontSize: tipografia.corpo,
+    fontFamily: fontes.appRegular,
+  },
+  filtros: {
+    minHeight: 48,
+    flexDirection: "row",
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: tema.linha,
+    paddingHorizontal: 20,
+    gap: 20,
+  },
+  filtro: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    minHeight: 48,
+    gap: 7,
+    paddingHorizontal: 3,
+    borderBottomWidth: 2,
+    borderBottomColor: "transparent",
+  },
+  filtroAtivo: { borderBottomColor: tema.destaque },
+  txtFiltro: {
+    color: tema.textoSecundario,
+    fontSize: tipografia.label,
+    fontFamily: fontes.appMedium,
+  },
+  txtFiltroAtivo: {
+    color: tema.destaque,
+    fontFamily: fontes.appSemiBold,
+  },
+  badgeFiltro: {
+    minWidth: 20,
+    height: 20,
+    paddingHorizontal: 6,
+    borderRadius: 10,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: tema.destaque,
+  },
+  txtBadgeFiltro: {
+    color: tema.textoSobreDestaque,
+    fontSize: 12,
+    fontFamily: fontes.appBold,
+  },
+  scroll: { flex: 1 },
+  scrollConteudo: {
+    paddingHorizontal: 20,
+    paddingBottom: 106, // Espaço para o menu inferior original.
+  },
+  conversa: {
+    minHeight: 92,
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 14,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: tema.linha,
+  },
+  conversaPressed: {
+    backgroundColor: tema.cardSecundario,
+  },
+  avatarConversaContainer: {
+    width: 54,
+    height: 54,
+    borderRadius: 27,
+    marginRight: 13,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: tema.cardSecundario,
+  },
+  avatarUsuario: {
+    width: 54,
+    height: 54,
+    borderRadius: 27,
+    resizeMode: "cover",
+    borderWidth: 1,
+    borderColor: tema.borda,
+  },
+  avatarConversa: {
+    width: 34,
+    height: 34,
+    resizeMode: "contain",
+  },
+  conversaConteudo: {
+    flex: 1,
+    minWidth: 0,
+    paddingRight: 10,
+  },
+  nome: {
+    fontSize: tipografia.autor,
+    lineHeight: 24,
+    fontFamily: fontes.appSemiBold,
+    color: tema.texto,
+    marginBottom: 3,
+  },
+  mensagem: {
+    fontSize: tipografia.legenda,
+    lineHeight: 21,
+    fontFamily: fontes.appRegular,
+    color: tema.textoSecundario,
+  },
+  conversaMeta: {
+    alignSelf: "stretch",
+    justifyContent: "center",
+    alignItems: "flex-end",
+    gap: 9,
+    minWidth: 42,
+  },
+  horario: {
+    color: tema.textoSecundario,
+    fontSize: tipografia.legenda,
+    fontFamily: fontes.appRegular,
+  },
+  badge: {
+    minWidth: 24,
+    height: 24,
+    paddingHorizontal: 7,
+    borderRadius: 12,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: cores.douradoBotao,
+  },
+  txtBadge: {
+    color: cores.pretoPrincipal,
+    fontSize: 13,
+    fontFamily: fontes.appBold,
+  },
+  semResultados: {
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 20,
+    paddingVertical: 40,
+  },
+  txtSemResultados: {
+    textAlign: "center",
+    color: tema.textoSecundario,
+    fontSize: tipografia.corpo,
+    lineHeight: 24,
+    fontFamily: fontes.appRegular,
+  },
 });

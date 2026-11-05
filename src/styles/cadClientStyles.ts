@@ -1,435 +1,63 @@
-import {
-  StyleSheet,
-} from "react-native";
-
-import {
-  cores,
-  fontes,
-} from "./variaveis";
-
-import {
-  CoresTema,
-} from "./temas";
-
-
-export const criarCadClienteStyles = (
-  tema: CoresTema
-) =>
-  StyleSheet.create({
-
-    // =========================
-    // ESTRUTURA
-    // =========================
-
-    safeArea: {
-      flex: 1,
-    },
-
-
-    keyboard: {
-      flex: 1,
-    },
-
-
-    scroll: {
-      flex: 1,
-    },
-
-
-    scrollConteudo: {
-      flexGrow: 1,
-
-      paddingBottom:
-        35,
-    },
-
-
-    conteudo: {
-      flex: 1,
-
-      width:
-        "100%",
-
-      alignItems:
-        "center",
-
-      paddingHorizontal:
-        18,
-    },
-
-
-    // =========================
-    // TOPO
-    // =========================
-
-    conteudoTopo: {
-      width:
-        "100%",
-
-      marginTop:
-        30,
-
-      alignItems:
-        "flex-start",
-    },
-
-
-    subtitulo: {
-      color:
-        cores.douradoPrincipal,
-
-      fontSize:
-        fontes.subtitulo,
-
-      fontFamily:
-        fontes.normal,
-
-      marginTop:
-        10,
-
-      marginBottom:
-        6,
-    },
-
-
-    titulo: {
-      color:
-        tema.texto,
-
-      fontSize:
-        fontes.titulo,
-
-      marginBottom:
-        10,
-
-      fontFamily:
-        fontes.negrito,
-    },
-
-
-    tituloDourado: {
-      color:
-        cores.douradoPrincipal,
-    },
-
-
-    inf: {
-      color:
-        tema.texto,
-
-      lineHeight:
-        18,
-
-      opacity:
-        0.9,
-
-      fontFamily:
-        fontes.normalItalico,
-    },
-
-
-    // =========================
-    // CARD DOS INPUTS
-    // =========================
-
-    cardInput: {
-      width:
-        "100%",
-
-      marginTop:
-        24,
-
-      marginBottom:
-        14,
-
-      backgroundColor:
-        tema.card,
-
-      paddingHorizontal:
-        10,
-
-      paddingVertical:
-        5,
-
-      justifyContent:
-        "center",
-
-      borderRadius:
-        10,
-    },
-
-
-    // =========================
-    // INPUT
-    // =========================
-
-    input: {
-      width:
-        "100%",
-
-      height:
-        50,
-
-      flexDirection:
-        "row",
-
-      alignItems:
-        "center",
-
-      borderBottomColor:
-        cores.douradoPrincipal,
-
-      borderBottomWidth:
-        1,
-
-      paddingHorizontal:
-        8,
-
-      marginVertical:
-        2,
-    },
-
-
-    inputUltimo: {
-      borderBottomWidth:
-        0,
-    },
-
-
-    icon: {
-      width:
-        25,
-
-      height:
-        25,
-
-      marginRight:
-        12,
-
-      resizeMode:
-        "contain",
-    },
-
-
-    txtInput: {
-      flex:
-        1,
-
-      color:
-        tema.texto,
-
-      fontSize:
-        14,
-
-      fontFamily:
-        fontes.normal,
-
-      paddingVertical:
-        0,
-    },
-
-
-    // =========================
-    // TERMOS
-    // =========================
-
-    areaTermos: {
-      width:
-        "100%",
-
-      flexDirection:
-        "row",
-
-      alignItems:
-        "center",
-
-      marginBottom:
-        18,
-
-      paddingHorizontal:
-        4,
-    },
-
-
-    areaTermosPressed: {
-      opacity:
-        0.7,
-    },
-
-
-    checkbox: {
-      width:
-        22,
-
-      height:
-        22,
-
-      borderRadius:
-        5,
-
-      borderWidth:
-        1,
-
-      borderColor:
-        cores.douradoPrincipal,
-
-      alignItems:
-        "center",
-
-      justifyContent:
-        "center",
-
-      marginRight:
-        10,
-    },
-
-
-    checkboxAtivo: {
-      backgroundColor:
-        cores.douradoPrincipal,
-    },
-
-
-    checkboxMarca: {
-      fontSize:
-        15,
-
-      fontFamily:
-        fontes.extraNegrito,
-
-      color:
-        tema.textoSobreDestaque,
-    },
-
-
-    txtTermos: {
-      flex:
-        1,
-
-      color:
-        tema.texto,
-
-      fontSize:
-        12,
-
-      lineHeight:
-        17,
-
-      fontFamily:
-        fontes.normal,
-
-      opacity:
-        0.9,
-    },
-
-
-    // =========================
-    // CRIAR CONTA
-    // =========================
-
-    btnCriar: {
-      width:
-        "75%",
-
-      height:
-        50,
-
-      backgroundColor:
-        cores.douradoPrincipal,
-
-      alignItems:
-        "center",
-
-      justifyContent:
-        "center",
-
-      borderRadius:
-        8,
-
-      marginTop:
-        5,
-    },
-
-
-    btnCriarPressed: {
-      backgroundColor:
-        cores.douradoPrincipalPressed,
-
-      transform:
-        cores.btnPress,
-    },
-
-
-    btnCriarDesabilitado: {
-      opacity:
-        0.6,
-    },
-
-
-    txtCriar: {
-      fontSize:
-        fontes.btn,
-
-      color:
-        tema.textoSobreDestaque,
-
-      fontFamily:
-        fontes.extraNegrito,
-    },
-
-
-    // =========================
-    // VOLTAR
-    // =========================
-
-    btnVoltar: {
-      width:
-        "75%",
-
-      height:
-        50,
-
-      borderWidth:
-        1,
-
-      borderColor:
-        cores.douradoPrincipal,
-
-      alignItems:
-        "center",
-
-      justifyContent:
-        "center",
-
-      borderRadius:
-        8,
-
-      marginTop:
-        10,
-
-      marginBottom:
-        20,
-    },
-
-
-    btnVoltarPressed: {
-      backgroundColor:
-        tema.cardSecundario,
-
-      transform:
-        cores.btnPress,
-    },
-
-
-    txtVoltar: {
-      fontSize:
-        fontes.btn,
-
-      color:
-        cores.douradoPrincipal,
-
-      fontFamily:
-        fontes.extraNegrito,
-    },
-
-  });
+import { StyleSheet } from "react-native";
+import { CoresTema } from "./temas";
+import { fontes } from "./variaveis";
+
+/** Tela de cadastro usa deliberadamente fundo escuro da arte original nos dois temas. */
+export const criarCadClienteStyles = (_tema: CoresTema) => StyleSheet.create({
+  container: { flex: 1, backgroundColor: "#0D1015", alignItems: "center" },
+  background: { flex: 1, width: "100%", maxWidth: 440 },
+  overlay: { flex: 1, backgroundColor: "rgba(6,8,12,0.28)" },
+  safeArea: { flex: 1 },
+  keyboard: { flex: 1 },
+  scroll: { flex: 1 },
+  scrollConteudo: { flexGrow: 1, paddingBottom: 36, paddingTop: 16, paddingHorizontal: 24 },
+  conteudo: { width: "100%", flexGrow: 1, alignItems: "stretch" },
+  back: { minHeight: 44, flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 10 },
+  backTap: { width: 44, height: 44, justifyContent: "center" },
+  appTitle: { color: "#FFFFFF", fontFamily: fontes.appBold, fontSize: 19 },
+  appTitleGold: { color: "#F0C247" },
+  backSpacer: { width: 44 },
+  conteudoTopo: { width: "100%", alignItems: "center" },
+  heroIcon: { marginTop: 3, marginBottom: 8 },
+  subtitulo: { color: "#FFFFFF", fontSize: 25, fontFamily: fontes.appBold, textAlign: "center" },
+  titulo: { fontSize: 19, color: "#FFFFFF", fontFamily: fontes.appSemiBold, textAlign: "center", marginTop: 3 },
+  tituloDourado: { color: "#F0C247" },
+  inf: {
+    fontSize: 14, lineHeight: 21, color: "#F1EEEE", fontFamily: fontes.appRegular,
+    textAlign: "center", marginTop: 8, marginBottom: 19,
+  },
+  cardInput: { width: "100%", gap: 10 },
+  input: {
+    width: "100%", minHeight: 52, flexDirection: "row", alignItems: "center",
+    backgroundColor: "rgba(24,25,30,0.9)", borderWidth: 1, borderColor: "rgba(234,231,224,0.42)",
+    borderRadius: 12, paddingHorizontal: 13,
+  },
+  inputUltimo: {},
+  icon: { width: 21, height: 21, marginRight: 12, resizeMode: "contain" },
+  txtInput: { flex: 1, color: "#FFFFFF", fontSize: 16, fontFamily: fontes.appRegular, paddingVertical: 10 },
+  eyeTap: { padding: 10, marginRight: -7 },
+  passwordInfo: {
+    width: "100%", marginTop: 16, marginBottom: 10, padding: 14,
+    backgroundColor: "rgba(30,28,24,0.9)", borderColor: "#D4AF37", borderWidth: 1,
+    borderRadius: 12,
+  },
+  passwordTitle: { fontFamily: fontes.appSemiBold, fontSize: 15, color: "#F0C247" },
+  passwordBody: { fontFamily: fontes.appRegular, fontSize: 14, lineHeight: 20, color: "#F4EEE2", marginTop: 4 },
+  termsBox: { padding: 14, borderRadius: 12, backgroundColor: "rgba(24,25,30,0.90)", marginBottom: 12 },
+  btnCriar: {
+    width: "100%", minHeight: 56, backgroundColor: "#F0C247", alignItems: "center",
+    justifyContent: "center", borderRadius: 13, marginTop: 8,
+  },
+  btnCriarPressed: { opacity: 0.86 },
+  btnCriarDesabilitado: { opacity: 0.65 },
+  txtCriar: { fontFamily: fontes.appBold, fontSize: 16, color: "#1B1C21", textAlign: "center" },
+  btnVoltar: { paddingVertical: 16, marginTop: 10, alignItems: "center", justifyContent: "center" },
+  btnVoltarPressed: { opacity: 0.72 },
+  txtVoltar: { fontSize: 15, color: "#F0C247", fontFamily: fontes.appSemiBold },
+  feedback: { marginTop: 12, paddingVertical: 12, paddingHorizontal: 14, borderRadius: 10, borderWidth: 1 },
+  feedbackText: { fontSize: 14, lineHeight: 20, fontFamily: fontes.appRegular },
+  slogan: { alignItems: "center", marginTop: 20, marginBottom: 5 },
+  sloganTitle: { color: "#F0C247", fontFamily: fontes.appMedium, fontSize: 13, letterSpacing: 0.4 },
+  sloganSubtitle: { color: "#FFFFFF", fontFamily: fontes.appBold, fontSize: 17, marginTop: 4 },
+  sloganGold: { color: "#F0C247" },
+});

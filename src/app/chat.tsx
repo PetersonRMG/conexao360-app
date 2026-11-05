@@ -23,6 +23,7 @@ import {
 } from "react-native-safe-area-context";
 
 import globalStyle from "@/styles/globalStyles";
+import { Ionicons } from "@expo/vector-icons";
 
 import {
     criarChatStyles,
@@ -539,6 +540,10 @@ export default function ChatScreen() {
                             Chat
                         </Text>
 
+                        <Text style={chatStyles.subtitulo}>
+                            Converse com outros membros da comunidade
+                        </Text>
+
                     </View>
 
 
@@ -556,15 +561,10 @@ export default function ChatScreen() {
                             }
                         >
 
-                            <Image
-                                source={
-                                    require(
-                                        "@/assets/images/img/search.png"
-                                    )
-                                }
-                                style={
-                                    chatStyles.iconeBusca
-                                }
+                            <Ionicons
+                                name="search-outline"
+                                size={22}
+                                color={coresTema.textoSecundario}
                             />
 
                             <TextInput
@@ -578,7 +578,7 @@ export default function ChatScreen() {
                                     chatStyles.inputBusca
                                 }
                                 placeholder="Buscar conversas"
-                                placeholderTextColor="#777777"
+                                placeholderTextColor={coresTema.textoSecundario}
                                 autoCapitalize="none"
                             />
 

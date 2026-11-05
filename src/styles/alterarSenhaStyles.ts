@@ -1,330 +1,200 @@
 import { StyleSheet } from "react-native";
-import { cores, fontes } from "./variaveis";
+import { cores, fontes, tipografia } from "./variaveis";
+import { CoresTema, temaEscuro } from "./temas";
 
-import { CoresTema } from "./temas";
-export const criarAlterarSenhaStyles = (tema: CoresTema) => StyleSheet.create({
+/** Estilos da tela Alterar senha — identidade visual Conexão 360°. */
+export const criarAlterarSenhaStyles = (tema: CoresTema) => {
+  const escuro = tema.fundo === temaEscuro.fundo;
+  const acento = tema.destaque;
 
-    // =========================
-    // ESTRUTURA
-    // =========================
-
+  return StyleSheet.create({
     container: {
-        flex: 1,
-        backgroundColor: tema.fundo,
+      flex: 1,
+      backgroundColor: tema.fundo,
     },
-
-    background: {
-        flex: 1,
-        width: "100%",
-        height: "100%",
+    areaSegura: {
+      flex: 1,
     },
-
-    overlay: {
-        flex: 1,
-        backgroundColor: tema.overlay,
+    areaFlexivel: {
+      flex: 1,
     },
-
-    keyboard: {
-        flex: 1,
+    rolagem: {
+      flex: 1,
     },
-
-    scroll: {
-        flex: 1,
+    conteudo: {
+      paddingHorizontal: 20,
+      paddingTop: 14,
+      paddingBottom: 116, // Espaço para o footer compartilhado.
+      gap: 20,
     },
-
-    scrollConteudo: {
-        flexGrow: 1,
-
-        paddingHorizontal: 16,
-        paddingBottom: 110,
+    linhaTitulo: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 14,
+      minHeight: 46,
     },
-
-
-    // =========================
-    // TOPO
-    // =========================
-
-    topo: {
-        width: "100%",
-        height: 75,
-
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-between",
-
-        marginTop: 8,
+    botaoVoltar: {
+      width: 42,
+      height: 42,
+      alignItems: "center",
+      justifyContent: "center",
+      borderRadius: 21,
     },
-
-    btnVoltar: {
-        width: 45,
-        height: 45,
-
-        alignItems: "center",
-        justifyContent: "center",
-
-        borderRadius: 23,
-
-      
+    tituloPagina: {
+      color: tema.texto,
+      fontSize: tipografia.secao,
+      fontFamily: fontes.appSemiBold,
+      includeFontPadding: false,
     },
-
-    btnVoltarPressed: {
-        backgroundColor: tema.cardSecundario,
-        transform: cores.btnPress,
-    },
-
-    voltarImagem: {
-        width: 45,
-        height: 45,
-
-        resizeMode: "contain",
-    },
-
-    logo: {
-        width: 52,
-        height: 52,
-
-        resizeMode: "contain",
-    },
-
-    espacoTopo: {
-        width: 45,
-        height: 45,
-    },
-
-
-    // =========================
-    // APRESENTAÇÃO
-    // =========================
-
     apresentacao: {
-        width: "100%",
-
-        alignItems: "center",
-
-        marginBottom: 45,
+      alignItems: "center",
+      paddingTop: 7,
+      paddingBottom: 5,
+      gap: 7,
     },
-
-    titulo: {
-        color: tema.texto,
-
-        fontSize: fontes.titulo,
-        fontFamily: fontes.negrito,
+    emblemaSeguranca: {
+      width: 96,
+      height: 96,
+      alignItems: "center",
+      justifyContent: "center",
+      borderRadius: 48,
+      backgroundColor: escuro ? "#2C2A25" : "#F4EADB",
+      marginBottom: 4,
     },
-
-    tituloDourado: {
-        color: cores.douradoPrincipal,
+    tituloApresentacao: {
+      color: tema.texto,
+      fontSize: 26,
+      lineHeight: 32,
+      fontFamily: fontes.appBold,
+      textAlign: "center",
+      includeFontPadding: false,
     },
-
-    aviso: {
-        color: cores.douradoPrincipal,
-
-        fontSize: fontes.subtitulo,
-        fontFamily: fontes.normal,
-
-        marginTop: 5,
-
-        opacity: 0.8,
+    subtitulo: {
+      color: tema.textoSecundario,
+      fontSize: tipografia.corpo,
+      lineHeight: 24,
+      fontFamily: fontes.appRegular,
+      textAlign: "center",
+      maxWidth: 310,
     },
-
-
-    // =========================
-    // CARD
-    // =========================
-
-    card: {
-        width: "100%",
-
-        backgroundColor: tema.card,
-
-        borderRadius: 14,
-
-        paddingHorizontal: 12,
-        paddingVertical: 12,
+    formulario: {
+      gap: 14,
     },
-
-
-    // =========================
-    // CAMPOS
-    // =========================
-
-    campo: {
-        width: "100%",
-        minHeight: 65,
-
-        flexDirection: "row",
-        alignItems: "center",
-
-        borderBottomWidth: 1,
-        borderBottomColor: tema.linha,
-
-        paddingHorizontal: 4,
-        paddingVertical: 6,
+    grupoCampo: {
+      gap: 7,
     },
-
-    iconeCampo: {
-        width: 21,
-        height: 21,
-
-        resizeMode: "contain",
-
-        marginRight: 10,
+    rotuloCampo: {
+      color: tema.texto,
+      fontSize: tipografia.label,
+      fontFamily: fontes.appMedium,
+      paddingLeft: 2,
     },
-
-    areaInput: {
-        flex: 1,
+    linhaCampo: {
+      minHeight: 56,
+      flexDirection: "row",
+      alignItems: "center",
+      paddingLeft: 15,
+      paddingRight: 4,
+      borderRadius: 13,
+      borderWidth: 1,
+      borderColor: tema.borda,
+      backgroundColor: tema.input,
+      gap: 12,
     },
-
-    label: {
-        color: cores.douradoPrincipal,
-
-        fontSize: 11,
-        fontFamily: fontes.normal,
-
-        marginBottom: 2,
-    },
-
     input: {
-        width: "100%",
-
-        color: tema.texto,
-
-        fontSize: 12,
-        fontFamily: fontes.normal,
-
-        paddingHorizontal: 0,
-        paddingVertical: 2,
+      flex: 1,
+      minWidth: 0,
+      height: 54,
+      color: tema.texto,
+      fontSize: tipografia.corpo,
+      fontFamily: fontes.appRegular,
+      paddingVertical: 0,
     },
-
-    iconeOlho: {
-        width: 20,
-        height: 20,
-
-        resizeMode: "contain",
-
-        opacity: 0.8,
+    botaoOlho: {
+      width: 45,
+      height: 48,
+      alignItems: "center",
+      justifyContent: "center",
     },
-
-
-    // =========================
-    // INFORMAÇÃO
-    // =========================
-
-    cardInfo: {
-        width: "100%",
-
-        flexDirection: "row",
-        alignItems: "center",
-
-        backgroundColor: tema.card,
-
-        borderWidth: 1,
-        borderColor: cores.douradoPrincipal,
-
-        borderRadius: 10,
-
-        paddingHorizontal: 10,
-        paddingVertical: 10,
-
-        marginTop: 12,
+    caixaRequisitos: {
+      borderColor: escuro ? "#87702E" : "#BE9C30",
+      borderWidth: 1,
+      borderRadius: 15,
+      backgroundColor: escuro ? "#282725" : "#FFF9EC",
+      paddingVertical: 15,
+      paddingHorizontal: 16,
+      gap: 11,
     },
-
-    iconeInfo: {
-        width: 32,
-        height: 32,
-
-        resizeMode: "contain",
-
-        marginRight: 10,
+    requisitosCabecalho: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 9,
+      marginBottom: 2,
     },
-
-    areaInfo: {
-        flex: 1,
+    tituloRequisitos: {
+      color: acento,
+      fontSize: 16,
+      fontFamily: fontes.appSemiBold,
+      flexShrink: 1,
     },
-
-    tituloInfo: {
-        color: tema.texto,
-
-        fontSize: 10,
-        fontFamily: fontes.negrito,
-
-        marginBottom: 3,
+    linhaRequisito: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 10,
+      paddingLeft: 3,
     },
-
-    txtInfo: {
-        color: tema.texto,
-
-        fontSize: 8,
-        lineHeight: 12,
-
-        fontFamily: fontes.normal,
-
-        opacity: 0.8,
+    textoRequisito: {
+      color: tema.texto,
+      fontSize: tipografia.legenda,
+      fontFamily: fontes.appRegular,
+      lineHeight: 21,
+      flexShrink: 1,
     },
-
-
-    // =========================
-    // BOTÕES
-    // =========================
-
-    areaBotoes: {
-        width: "75%",
-
-        alignSelf: "center",
-
-        marginTop: 70,
-
-        gap: 10,
+    caixaErro: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 10,
+      borderRadius: 12,
+      padding: 13,
+      backgroundColor: escuro ? "#3D252A" : "#FDEBEC",
     },
-
-    btnSalvar: {
-        width: "100%",
-        height: 45,
-
-        backgroundColor: tema.cardSecundario,
-
-        borderWidth: 1,
-        borderColor: cores.douradoPrincipal,
-
-        borderRadius: 22,
-
-        alignItems: "center",
-        justifyContent: "center",
+    textoErro: {
+      flex: 1,
+      color: escuro ? "#FFD8D8" : "#982F39",
+      fontSize: tipografia.legenda,
+      fontFamily: fontes.appRegular,
+      lineHeight: 21,
     },
-
-    btnSalvarPressed: {
-        backgroundColor: tema.cardSecundario,
-        transform: cores.btnPress,
+    botaoPrincipal: {
+      minHeight: 56,
+      borderRadius: 14,
+      backgroundColor: escuro ? cores.douradoBotao : cores.douradoPrincipal,
+      alignItems: "center",
+      justifyContent: "center",
+      flexDirection: "row",
+      gap: 9,
+      paddingHorizontal: 12,
+      marginTop: 6,
     },
-
-    txtSalvar: {
-        color: cores.douradoPrincipal,
-
-        fontSize: fontes.btn,
-        fontFamily: fontes.extraNegrito,
+    botaoPressionado: {
+      opacity: 0.85,
     },
-
-    btnCancelar: {
-        width: "100%",
-        height: 45,
-
-        backgroundColor: cores.douradoPrincipal,
-
-        borderRadius: 22,
-
-        alignItems: "center",
-        justifyContent: "center",
+    botaoDesabilitado: {
+      opacity: 0.58,
     },
-
-    btnCancelarPressed: {
-        backgroundColor: cores.douradoPrincipalPressed,
-        transform: cores.btnPress,
+    textoBotaoPrincipal: {
+      color: "#1B1C21",
+      fontSize: tipografia.botao,
+      fontFamily: fontes.appBold,
+      textAlign: "center",
     },
-
-    txtCancelar: {
-        color: tema.textoSobreDestaque,
-
-        fontSize: fontes.btn,
-        fontFamily: fontes.extraNegrito,
+    avisoConfirmacao: {
+      color: tema.textoSecundario,
+      fontFamily: fontes.appRegular,
+      fontSize: tipografia.legenda,
+      textAlign: "center",
+      lineHeight: 21,
+      paddingHorizontal: 8,
     },
-
-});
+  });
+};

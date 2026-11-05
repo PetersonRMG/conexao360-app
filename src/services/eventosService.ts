@@ -11,7 +11,7 @@ type EventoDaApi = {
   data_termino_evento: string;
   hora_termino_evento: string;
   endereco_evento: string;
-  banner_url: string | null;
+  
 };
 
 type EventosResponse = {
@@ -46,7 +46,7 @@ export async function buscarEventos(token: string): Promise<EventoApp[]> {
     inicio: dataHoraLocal(evento.data_inicial_evento, evento.hora_inicial_evento),
     termino: dataHoraLocal(evento.data_termino_evento, evento.hora_termino_evento),
     local: evento.endereco_evento ?? "",
-    imagem: evento.banner_url ? { uri: evento.banner_url } : undefined,
+     
     // Etapa 1: nunca misturar conteúdos demonstrativos com eventos reais.
     // A vinculação de programação, enquetes e galeria será feita por id_evento.
     programacao: [],

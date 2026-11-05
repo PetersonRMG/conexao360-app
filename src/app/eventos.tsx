@@ -12,6 +12,7 @@ import {
     View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { Ionicons } from "@expo/vector-icons";
 
 import HeaderScreen from "@/app/header";
 import MenuScreen from "@/app/menu";
@@ -31,9 +32,9 @@ type SituacaoEvento = "andamento" | "proximos" | "encerrados";
 
 const FILTROS: { id: FiltroEventos; titulo: string }[] = [
     { id: "todos", titulo: "Todos" },
-    { id: "andamento", titulo: "Em andamento" },
     { id: "proximos", titulo: "Próximos" },
-    { id: "encerrados", titulo: "Encerrados" },
+    { id: "andamento", titulo: "Em andamento" },
+    { id: "encerrados", titulo: "Realizados" },
 ];
 
 const ABAS: { id: AbaEvento; titulo: string }[] = [
@@ -70,6 +71,20 @@ function dataLegivel(iso: string) {
     }).format(data);
 }
 
+function diaMesEvento(iso: string): { dia: string; mes: string } {
+    const data = new Date(iso);
+    if (Number.isNaN(data.getTime())) return { dia: "--", mes: "---" };
+    const mes = new Intl.DateTimeFormat("pt-BR", { month: "short" })
+        .format(data).replace(".", "");
+    return { dia: String(data.getDate()).padStart(2, "0"), mes };
+}
+
+function horaEvento(iso: string) {
+    const data = new Date(iso);
+    if (Number.isNaN(data.getTime())) return "Horário a confirmar";
+    return new Intl.DateTimeFormat("pt-BR", { hour: "2-digit", minute: "2-digit" }).format(data);
+}
+
 function correspondeBusca(evento: EventoApp, busca: string) {
     const alvo = `${evento.titulo} ${evento.edicao ?? ""} ${evento.local} ${evento.descricao}`
         .normalize("NFD")
@@ -90,6 +105,7 @@ export default function EventosScreen() {
     const [erroEventos, setErroEventos] = useState("");
     const [tentativa, setTentativa] = useState(0);
     const [busca, setBusca] = useState("");
+    const [buscaVisivel, setBuscaVisivel] = useState(false);
     const [filtro, setFiltro] = useState<FiltroEventos>("todos");
     const [eventoSelecionado, setEventoSelecionado] = useState<EventoApp | null>(null);
     const [aba, setAba] = useState<AbaEvento>("programacao");
@@ -240,38 +256,60 @@ export default function EventosScreen() {
                     >
                         {!eventoSelecionado ? (
                             <>
-                                <Text style={styles.titulo} accessibilityRole="header">Eventos</Text>
-                                <Text style={styles.subtitulo}>
-                                    Palestras, enquetes e registros de cada edição em um só lugar.
-                                </Text>
-
-                                <View style={styles.barraBusca}>
-                                    <Text style={styles.iconeBusca} accessible={false}>⌕</Text>
-                                    <TextInput
-                                        value={busca}
-                                        onChangeText={setBusca}
-                                        placeholder="Buscar eventos"
-                                        placeholderTextColor={coresTema.textoSecundario}
-                                        accessibilityLabel="Buscar eventos por nome ou local"
-                                        style={styles.campoBusca}
-                                        returnKeyType="search"
-                                    />
-                                    {busca.length > 0 ? (
-                                        <Pressable
-                                            onPress={() => setBusca("")}
-                                            style={styles.limparBusca}
-                                            accessibilityRole="button"
-                                            accessibilityLabel="Limpar busca"
-                                        >
-                                            <Text style={styles.limparTexto}>×</Text>
-                                        </Pressable>
-                                    ) : null}
+                                <View style={styles.cabecalhoPagina}>
+                                    <View style={styles.cabecalhoTexto}>
+                                        <Text style={styles.titulo} accessibilityRole="header">Eventos</Text>
+                                        <Text style={styles.subtitulo}>
+                                            Confira os eventos da comunidade.
+                                        </Text>
+                                    </View>
+                                    <Pressable
+                                        onPress={() => {
+                                            if (buscaVisivel) setBusca("");
+                                            setBuscaVisivel(!buscaVisivel);
+                                        }}
+                                        style={styles.acaoBusca}
+                                        accessibilityRole="button"
+                                        accessibilityLabel={buscaVisivel ? "Fechar busca de eventos" : "Buscar eventos"}
+                                    >
+                                        <Ionicons
+                                            name={buscaVisivel ? "close-outline" : "search-outline"}
+                                            size={24}
+                                            color={coresTema.destaque}
+                                        />
+                                    </Pressable>
                                 </View>
+
+                                {buscaVisivel && (
+                                    <View style={styles.barraBusca}>
+                                        <Ionicons name="search-outline" size={20} color={coresTema.textoSecundario} />
+                                        <TextInput
+                                            value={busca}
+                                            onChangeText={setBusca}
+                                            placeholder="Buscar eventos"
+                                            placeholderTextColor={coresTema.textoSecundario}
+                                            accessibilityLabel="Buscar eventos por nome ou local"
+                                            style={styles.campoBusca}
+                                            returnKeyType="search"
+                                        />
+                                        {busca.length > 0 && (
+                                            <Pressable
+                                                onPress={() => setBusca("")}
+                                                style={styles.limparBusca}
+                                                accessibilityRole="button"
+                                                accessibilityLabel="Limpar busca"
+                                            >
+                                                <Ionicons name="close-circle" size={20} color={coresTema.textoSecundario} />
+                                            </Pressable>
+                                        )}
+                                    </View>
+                                )}
 
                                 <ScrollView
                                     horizontal
                                     showsHorizontalScrollIndicator={false}
                                     contentContainerStyle={styles.filtros}
+                                    style={styles.filtrosScroll}
                                     accessibilityLabel="Filtrar eventos por situação"
                                 >
                                     {FILTROS.map(item => (
@@ -290,9 +328,6 @@ export default function EventosScreen() {
                                     ))}
                                 </ScrollView>
 
-                                <Text style={styles.tituloSecao} accessibilityRole="header">
-                                    {filtro === "todos" ? "Edições do evento" : FILTROS.find(item => item.id === filtro)?.titulo}
-                                </Text>
                                 {carregandoSessao || carregandoEventos ? (
                                     <View style={styles.vazio}>
                                         <ActivityIndicator color={coresTema.destaque} size="small" />
@@ -315,53 +350,41 @@ export default function EventosScreen() {
                                     <View style={styles.vazio}>
                                         <Text style={styles.vazioTitulo}>Nenhum evento encontrado</Text>
                                         <Text style={styles.vazioTexto}>
-                                            Ajuste sua busca ou selecione outra categoria.
+                                            Selecione outro filtro ou ajuste sua busca.
                                         </Text>
                                     </View>
                                 ) : eventosVisiveis.map(evento => {
+                                    const data = diaMesEvento(evento.inicio);
                                     const situacao = situacaoEvento(evento);
                                     return (
                                         <Pressable
                                             key={evento.id}
-                                            style={({ pressed }) => [styles.cartaoEvento, pressed && { opacity: 0.93 }]}
+                                            style={({ pressed }) => [styles.cartaoEvento, pressed && styles.cartaoEventoPressed]}
                                             onPress={() => abrirEvento(evento)}
                                             accessibilityRole="button"
                                             accessibilityLabel={`Ver detalhes de ${evento.titulo}`}
                                         >
-                                            {evento.imagem ? (
-                                                <ImageBackground
-                                                    source={evento.imagem}
-                                                    style={styles.imagemEvento}
-                                                    resizeMode="cover"
-                                                    imageStyle={{ opacity: 0.94 }}
-                                                >
-                                                    <View style={styles.imagemSombra} pointerEvents="none" />
-                                                    <View style={styles.selo}>
-                                                        <Text style={styles.seloTexto}>{descricaoSituacao(situacao)}</Text>
-                                                    </View>
-                                                    <Text style={styles.capaTexto}>{evento.titulo}</Text>
-                                                </ImageBackground>
-                                            ) : (
-                                                <View style={styles.semImagem}>
-                                                    <Text style={styles.semImagemTexto}>Imagem do evento</Text>
-                                                </View>
-                                            )}
-                                            <View style={styles.cartaoInfo}>
-                                                <Text numberOfLines={3} style={styles.resumo}>{evento.descricao}</Text>
-                                                <View style={styles.linhaMeta}>
-                                                    <Text style={styles.ponto} accessible={false}>•</Text>
-                                                    <Text style={styles.meta}>{dataLegivel(evento.inicio)}</Text>
-                                                </View>
-                                                <View style={styles.linhaMeta}>
-                                                    <Text style={styles.ponto} accessible={false}>•</Text>
-                                                    <Text style={styles.meta}>{evento.local}</Text>
-                                                </View>
-                                                <View style={styles.botaoPrincipal}>
-                                                    <Text style={styles.botaoPrincipalTexto}>
-                                                        {situacao === "encerrados" ? "Reviver edição" : "Ver detalhes"}
-                                                    </Text>
-                                                </View>
+                                            <View style={styles.dataSelo}>
+                                                <Text style={styles.dataDia}>{data.dia}</Text>
+                                                <Text style={styles.dataMes}>{data.mes}</Text>
                                             </View>
+                                            <View style={styles.cardCorpo}>
+                                                <Text style={styles.cardTitulo} numberOfLines={2}>{evento.titulo}</Text>
+                                                <View style={styles.cardMetas}>
+                                                    <View style={styles.cardMetaLinha}>
+                                                        <Ionicons name="time-outline" size={17} color={coresTema.textoSecundario} />
+                                                        <Text style={styles.cardMetaTexto}>{horaEvento(evento.inicio)}</Text>
+                                                    </View>
+                                                    <View style={styles.cardMetaLinha}>
+                                                        <Ionicons name="location-outline" size={17} color={coresTema.textoSecundario} />
+                                                        <Text style={styles.cardMetaTexto} numberOfLines={1}>{evento.local || "Local a confirmar"}</Text>
+                                                    </View>
+                                                </View>
+                                                {situacao === "andamento" && (
+                                                    <Text style={styles.cardAndamento}>Em andamento</Text>
+                                                )}
+                                            </View>
+                                            <Ionicons name="chevron-forward" size={22} color={coresTema.textoSecundario} />
                                         </Pressable>
                                     );
                                 })}
@@ -374,15 +397,50 @@ export default function EventosScreen() {
                                     accessibilityRole="button"
                                     accessibilityLabel="Voltar à lista de eventos"
                                 >
-                                    <Text style={styles.voltarTexto}>‹  Todos os eventos</Text>
+                                    <Ionicons name="arrow-back-outline" size={24} color={coresTema.texto} />
+                                    <Text style={styles.voltarTexto}>Detalhes do Evento</Text>
                                 </Pressable>
 
+                                {eventoSelecionado.imagem ? (
+                                    <ImageBackground
+                                        source={eventoSelecionado.imagem}
+                                        style={styles.imagemDetalhe}
+                                        imageStyle={styles.imagemDetalheBordas}
+                                        resizeMode="cover"
+                                    >
+                                        <View style={styles.selo}>
+                                            <Text style={styles.seloTexto}>
+                                                {descricaoSituacao(situacaoSelecionado ?? "encerrados")}
+                                            </Text>
+                                        </View>
+                                    </ImageBackground>
+                                ) : (
+                                    <View style={styles.semImagemDetalhe}>
+                                        <Ionicons name="calendar-outline" size={48} color={coresTema.destaque} />
+                                        <Text style={styles.semImagemTexto}>Conexão 360°</Text>
+                                    </View>
+                                )}
+
                                 <Text style={styles.detalheTitulo} accessibilityRole="header">{eventoSelecionado.titulo}</Text>
-                                <Text style={styles.detalheSubtitulo}>{eventoSelecionado.descricao}</Text>
-                                <View style={styles.miniMeta}>
-                                    <Text style={styles.metaBloco}>{dataLegivel(eventoSelecionado.inicio)}</Text>
-                                    <Text style={styles.metaBloco}>{eventoSelecionado.local}</Text>
+                                <View style={styles.detalheMetas}>
+                                    <View style={styles.detalheMetaLinha}>
+                                        <Ionicons name="calendar-outline" size={20} color={coresTema.textoSecundario} />
+                                        <Text style={styles.metaBloco}>{dataLegivel(eventoSelecionado.inicio)}</Text>
+                                    </View>
+                                    <View style={styles.detalheMetaLinha}>
+                                        <Ionicons name="time-outline" size={20} color={coresTema.textoSecundario} />
+                                        <Text style={styles.metaBloco}>
+                                            {horaEvento(eventoSelecionado.inicio)} às {horaEvento(eventoSelecionado.termino)}
+                                        </Text>
+                                    </View>
+                                    <View style={styles.detalheMetaLinha}>
+                                        <Ionicons name="location-outline" size={20} color={coresTema.textoSecundario} />
+                                        <Text style={styles.metaBloco}>{eventoSelecionado.local || "Local a confirmar"}</Text>
+                                    </View>
                                 </View>
+                                <View style={styles.separadorDetalhe} />
+                                <Text style={styles.tituloSecao}>Sobre o evento</Text>
+                                <Text style={styles.detalheSubtitulo}>{eventoSelecionado.descricao}</Text>
 
                                 <View style={styles.abas}>
                                     {ABAS.map(item => (

@@ -1,453 +1,184 @@
 import { StyleSheet } from "react-native";
+import { cores, fontes, tipografia } from "./variaveis";
+import type { CoresTema } from "./temas";
 
-import { cores, fontes } from "./variaveis";
-
-
-import { CoresTema } from "./temas";
+/** Conversa privada — balões com contraste, tipografia acessível e navegação intacta. */
 export const criarConversaStyles = (tema: CoresTema) => StyleSheet.create({
-
-    // =========================
-    // ESTRUTURA
-    // =========================
-
-    container: {
-        flex: 1,
-
-        backgroundColor: tema.fundo,
-    },
-
-    keyboard: {
-        flex: 1,
-    },
-
-
-    // =========================
-    // HEADER
-    // =========================
-
-    header: {
-        width: "100%",
-        height: 80,
-
-        flexDirection: "row",
-        alignItems: "center",
-
-        paddingHorizontal: 14,
-
-        backgroundColor: tema.header,
-
-        borderBottomWidth: 1,
-        borderBottomColor: tema.linha,
-    },
-
-    btnVoltar: {
-        width: 38,
-        height: 38,
-
-        alignItems: "center",
-        justifyContent: "center",
-
-        marginRight: 8,
-
-        borderRadius: 19,
-    },
-
-    btnVoltarPressed: {
-        backgroundColor: tema.cardSecundario,
-
-        transform: cores.btnPress,
-    },
-
-    iconeVoltar: {
-        width: 30,
-        height: 30,
-
-        resizeMode: "contain",
-    },
-
-
-    // =========================
-    // PERFIL
-    // =========================
-
-    perfil: {
-        flex: 1,
-
-        flexDirection: "row",
-        alignItems: "center",
-    },
-
-    avatarContainer: {
-        position: "relative",
-
-        marginRight: 10,
-    },
-
-    avatar: {
-        width: 42,
-        height: 42,
-
-        borderRadius: 21,
-
-        resizeMode: "cover",
-
-        borderWidth: 1,
-        borderColor: cores.douradoPrincipal,
-    },
-
-    online: {
-        width: 10,
-        height: 10,
-
-        borderRadius: 5,
-
-        position: "absolute",
-
-        right: 0,
-        bottom: 0,
-
-        backgroundColor: cores.verdeOnline,
-
-        borderWidth: 1,
-        borderColor: tema.fundo,
-    },
-
-    nome: {
-        color: tema.texto,
-
-        fontSize: 14,
-        fontFamily: fontes.negrito,
-    },
-
-    status: {
-        color: tema.texto,
-
-        fontSize: 9,
-        fontFamily: fontes.normal,
-
-        opacity: 0.7,
-
-        marginTop: 1,
-    },
-
-
-    // =========================
-    // MAIS
-    // =========================
-
-    btnMais: {
-        width: 40,
-        height: 40,
-
-        alignItems: "center",
-        justifyContent: "center",
-    },
-
-    mais: {
-        color: cores.douradoPrincipal,
-
-        fontSize: 30,
-        lineHeight: 30,
-
-        fontFamily: fontes.negrito,
-    },
-
-
-    // =========================
-    // SEGURANÇA
-    // =========================
-
-    areaSeguranca: {
-        width: "100%",
-
-        alignItems: "center",
-
-        paddingVertical: 16,
-        paddingHorizontal: 16,
-    },
-
-    avisoSeguranca: {
-        flexDirection: "row",
-        alignItems: "center",
-
-        backgroundColor: tema.card,
-
-        borderWidth: 1,
-        borderColor: cores.douradoPrincipal,
-
-        borderRadius: 10,
-
-        paddingHorizontal: 12,
-        paddingVertical: 7,
-    },
-
-    iconeSeguranca: {
-        width: 17,
-        height: 17,
-
-        resizeMode: "contain",
-
-        marginRight: 7,
-    },
-
-    txtSeguranca: {
-        flexShrink: 1,
-
-        color: tema.texto,
-
-        fontSize: 8,
-        lineHeight: 11,
-
-        fontFamily: fontes.normal,
-
-        textAlign: "center",
-
-        opacity: 0.85,
-    },
-
-
-    // =========================
-    // DATA
-    // =========================
-
-    divisorData: {
-        width: "100%",
-
-        flexDirection: "row",
-        alignItems: "center",
-
-        paddingHorizontal: 16,
-
-        marginBottom: 8,
-    },
-
-    linha: {
-        flex: 1,
-
-        height: 1,
-
-        backgroundColor:
-            cores.douradoPrincipal,
-
-        opacity: 0.7,
-    },
-
-    data: {
-        color: cores.douradoPrincipal,
-
-        fontSize: 9,
-        fontFamily: fontes.normal,
-
-        marginHorizontal: 12,
-    },
-
-
-    // =========================
-    // MENSAGENS
-    // =========================
-
-    scroll: {
-        flex: 1,
-    },
-
-    scrollConteudo: {
-        paddingHorizontal: 20,
-
-        paddingTop: 5,
-        paddingBottom: 20,
-    },
-
-    linhaMensagem: {
-        width: "100%",
-
-        marginVertical: 8,
-    },
-
-    linhaMensagemRecebida: {
-        alignItems: "flex-start",
-    },
-
-    linhaMinhaMensagem: {
-        alignItems: "flex-end",
-    },
-
-    balao: {
-        maxWidth: "78%",
-        minWidth: 90,
-
-        borderRadius: 15,
-
-        paddingHorizontal: 12,
-        paddingVertical: 9,
-    },
-
-    balaoRecebido: {
-        backgroundColor: tema.card,
-
-        borderBottomLeftRadius: 3,
-    },
-
-    balaoMeu: {
-        backgroundColor:
-            cores.douradoPrincipal,
-
-        borderBottomRightRadius: 3,
-    },
-
-    txtMensagem: {
-        color: tema.texto,
-
-        fontSize: 11,
-        lineHeight: 15,
-
-        fontFamily: fontes.normal,
-    },
-
-    txtMinhaMensagem: {
-        color: tema.textoSobreDestaque,
-    },
-
-    horario: {
-        color: tema.texto,
-
-        fontSize: 7,
-        fontFamily: fontes.normal,
-
-        opacity: 0.5,
-
-        textAlign: "right",
-
-        marginTop: 4,
-    },
-
-    horarioMeu: {
-        color: tema.textoSobreDestaque,
-    },
-
-
-    // =========================
-    // ÁREA DE ENVIO
-    // =========================
-
-    areaEnviar: {
-        width: "100%",
-        minHeight: 70,
-
-        flexDirection: "row",
-        alignItems: "center",
-
-        gap: 8,
-
-        paddingHorizontal: 12,
-        paddingVertical: 10,
-
-        backgroundColor: tema.footer,
-
-        borderTopWidth: 1,
-        borderTopColor: tema.linha,
-    },
-
-
-    // =========================
-    // ANEXO
-    // =========================
-
-    btnAnexo: {
-        width: 38,
-        height: 38,
-
-        alignItems: "center",
-        justifyContent: "center",
-
-        borderRadius: 19,
-
-        backgroundColor: tema.card,
-    },
-
-    btnAnexoPressed: {
-        backgroundColor: tema.cardSecundario,
-
-        transform: cores.btnPress,
-    },
-
-    iconeAnexo: {
-        width: 22,
-        height: 22,
-
-        resizeMode: "contain",
-    },
-
-
-    // =========================
-    // INPUT MENSAGEM
-    // =========================
-
-    inputContainer: {
-        flex: 1,
-
-        minHeight: 42,
-        maxHeight: 100,
-
-        flexDirection: "row",
-        alignItems: "center",
-
-        backgroundColor: tema.input,
-
-        borderWidth: 1,
-        borderColor:
-            cores.douradoPrincipal,
-
-        borderRadius: 22,
-
-        paddingHorizontal: 14,
-    },
-
-    input: {
-        flex: 1,
-
-        maxHeight: 90,
-
-        color: tema.texto,
-
-        fontSize: 11,
-        fontFamily: fontes.normal,
-
-        paddingVertical: 8,
-    },
-
-    iconeEmoji: {
-        width: 19,
-        height: 19,
-
-        resizeMode: "contain",
-
-        marginLeft: 7,
-    },
-
-
-    // =========================
-    // ENVIAR
-    // =========================
-
-    btnEnviar: {
-        width: 42,
-        height: 42,
-
-        alignItems: "center",
-        justifyContent: "center",
-
-        borderRadius: 21,
-    },
-
-    btnEnviarPressed: {
-        transform: cores.btnPress,
-    },
-
-    iconeEnviar: {
-        width: 32,
-        height: 32,
-
-        resizeMode: "contain",
-    },
-
+  container: { flex: 1, backgroundColor: tema.fundo },
+  conteudoComRodape: {
+    flex: 1,
+    marginBottom: 76, // O menu inferior original ocupa os últimos 76px.
+  },
+  keyboard: { flex: 1 },
+  header: {
+    minHeight: 77,
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 14,
+    backgroundColor: tema.fundo,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: tema.linha,
+  },
+  btnVoltar: {
+    width: 42,
+    height: 44,
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: 8,
+    borderRadius: 12,
+  },
+  btnVoltarPressed: { backgroundColor: tema.cardSecundario },
+  perfil: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    minWidth: 0,
+    minHeight: 58,
+  },
+  avatarContainer: { marginRight: 11 },
+  avatar: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    borderWidth: 1,
+    borderColor: tema.borda,
+    resizeMode: "cover",
+  },
+  nome: {
+    color: tema.texto,
+    fontSize: tipografia.autor,
+    lineHeight: 23,
+    fontFamily: fontes.appSemiBold,
+  },
+  status: {
+    color: tema.textoSecundario,
+    fontSize: tipografia.legenda,
+    lineHeight: 20,
+    fontFamily: fontes.appRegular,
+    marginTop: 2,
+  },
+  areaSeguranca: {
+    width: "100%",
+    alignItems: "center",
+    paddingHorizontal: 20,
+    paddingVertical: 14,
+  },
+  txtSeguranca: {
+    textAlign: "center",
+    color: tema.textoSecundario,
+    fontSize: tipografia.legenda,
+    lineHeight: 20,
+    fontFamily: fontes.appRegular,
+  },
+  divisorData: {
+    alignSelf: "center",
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 16,
+    marginBottom: 18,
+    paddingHorizontal: 14,
+    paddingVertical: 6,
+    borderRadius: 16,
+    backgroundColor: tema.cardSecundario,
+  },
+  data: {
+    color: tema.textoSecundario,
+    fontSize: tipografia.legenda,
+    fontFamily: fontes.appMedium,
+  },
+  scroll: { flex: 1 },
+  scrollConteudo: {
+    paddingHorizontal: 18,
+    paddingTop: 8,
+    paddingBottom: 24,
+  },
+  linhaMensagem: { width: "100%", marginVertical: 7 },
+  linhaMensagemRecebida: { alignItems: "flex-start" },
+  linhaMinhaMensagem: { alignItems: "flex-end" },
+  balao: {
+    maxWidth: "86%",
+    minWidth: 94,
+    borderRadius: 18,
+    paddingHorizontal: 15,
+    paddingTop: 12,
+    paddingBottom: 8,
+  },
+  balaoRecebido: {
+    backgroundColor: tema.card,
+    borderBottomLeftRadius: 5,
+  },
+  balaoMeu: {
+    backgroundColor: cores.douradoBotao,
+    borderBottomRightRadius: 5,
+  },
+  txtMensagem: {
+    color: tema.texto,
+    fontSize: tipografia.corpo,
+    lineHeight: 23,
+    fontFamily: fontes.appRegular,
+  },
+  txtMinhaMensagem: { color: cores.pretoPrincipal },
+  horario: {
+    marginTop: 7,
+    textAlign: "right",
+    color: tema.textoSecundario,
+    fontSize: 13,
+    fontFamily: fontes.appRegular,
+  },
+  horarioMeu: { color: cores.pretoPrincipal, opacity: 0.75 },
+  txtEnviando: {
+    color: cores.pretoPrincipal,
+    fontSize: tipografia.legenda,
+    fontFamily: fontes.appMedium,
+  },
+  areaEnviar: {
+    minHeight: 78,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+    paddingHorizontal: 15,
+    paddingVertical: 11,
+    backgroundColor: tema.fundo,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: tema.linha,
+  },
+  inputContainer: {
+    flex: 1,
+    minHeight: 50,
+    maxHeight: 130,
+    flexDirection: "row",
+    alignItems: "center",
+    borderRadius: 25,
+    borderWidth: 1,
+    borderColor: tema.borda,
+    backgroundColor: tema.input,
+    paddingLeft: 4,
+    paddingRight: 14,
+  },
+  btnEmoji: {
+    width: 43,
+    minHeight: 46,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  input: {
+    flex: 1,
+    minWidth: 0,
+    maxHeight: 108,
+    color: tema.texto,
+    fontSize: tipografia.corpo,
+    lineHeight: 23,
+    fontFamily: fontes.appRegular,
+    paddingVertical: 9,
+  },
+  btnEnviar: {
+    width: 50,
+    height: 50,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 25,
+    backgroundColor: cores.douradoBotao,
+  },
+  btnEnviarPressed: { opacity: 0.75 },
+  btnEnviarDesabilitado: { opacity: 0.48 },
 });

@@ -8,6 +8,7 @@ type Props = {
   onChangeTermos: (valor: boolean) => void;
   onChangePrivacidade: (valor: boolean) => void;
   desabilitado?: boolean;
+  darkOnImage?: boolean;
 };
 
 /** O componente não envia dados. A tela de cadastro controla os estados e a API valida o aceite. */
@@ -17,6 +18,7 @@ export default function AceiteDocumentosCadastro({
   onChangeTermos,
   onChangePrivacidade,
   desabilitado = false,
+  darkOnImage = false,
 }: Props) {
   const { coresTema } = useTema();
 
@@ -34,7 +36,7 @@ export default function AceiteDocumentosCadastro({
           {aceitouTermos ? <Text style={styles.check}>✓</Text> : null}
         </Pressable>
         <View style={styles.textos}>
-          <Text style={[styles.explicacao, { color: coresTema.texto }]}>Li e aceito os Termos de Uso.</Text>
+          <Text style={[styles.explicacao, { color: darkOnImage ? "#F8F8FA" : coresTema.texto }]}>Li e aceito os Termos de Uso.</Text>
           <Pressable onPress={() => router.push('/termosUso')} accessibilityRole="link">
             <Text style={[styles.link, { color: coresTema.destaque }]}>Ler Termos de Uso</Text>
           </Pressable>
@@ -52,13 +54,13 @@ export default function AceiteDocumentosCadastro({
           {confirmouPrivacidade ? <Text style={styles.check}>✓</Text> : null}
         </Pressable>
         <View style={styles.textos}>
-          <Text style={[styles.explicacao, { color: coresTema.texto }]}>Declaro que tive acesso à Política de Privacidade.</Text>
+          <Text style={[styles.explicacao, { color: darkOnImage ? "#F8F8FA" : coresTema.texto }]}>Declaro que tive acesso à Política de Privacidade.</Text>
           <Pressable onPress={() => router.push('/politicaPrivacidade')} accessibilityRole="link">
             <Text style={[styles.link, { color: coresTema.destaque }]}>Ler Política de Privacidade (LGPD)</Text>
           </Pressable>
         </View>
       </View>
-      <Text style={[styles.nota, { color: coresTema.textoSecundario }]}>
+      <Text style={[styles.nota, { color: darkOnImage ? "#C4C5CC" : coresTema.textoSecundario }]}>
         A ciência da política não equivale a um consentimento genérico para o uso dos seus dados.
       </Text>
     </View>

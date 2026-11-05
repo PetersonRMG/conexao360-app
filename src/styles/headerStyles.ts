@@ -1,124 +1,64 @@
 import { Platform, StyleSheet } from "react-native";
-import { cores, fontes } from "./variaveis";
+import { cores, fontes, tipografia } from "./variaveis";
 import { CoresTema, temaEscuro } from "./temas";
 export const criarHeaderStyles = (tema: CoresTema) =>
   StyleSheet.create({
-    // =========================
-    // CONTAINER
-    // =========================
-    container: {
-      backgroundColor: tema.header,
-    },
-    // =========================
-    // HEADER
-    // =========================
+    container: { backgroundColor: tema.header },
     header: {
       width: "100%",
-      height: 88,
+      minHeight: 70,
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "space-between",
-      paddingHorizontal: 18,
+      paddingHorizontal: 16,
       backgroundColor: tema.header,
-      borderBottomWidth: 1,
-      borderBottomColor: tema.destaque,
+      // Sem borda: header e feed formam uma única superfície.
     },
-    // Mantém a largura da esquerda igual à
-    // área de ações da direita. Assim o logo
-    // permanece realmente centralizado.
-    ladoHeader: {
-      width: 90,
-      alignItems: "flex-start",
-      justifyContent: "center",
-    },
-    perfil: {
-      width: 42,
-      height: 42,
+    marcaContainer: {
+      flex: 1,
+      minWidth: 0,
+      flexDirection: "row",
       alignItems: "center",
       justifyContent: "center",
-      borderRadius: 21,
+      gap: 8,
     },
-    fotoPerfil: {
+    logoMarca: {
       width: 40,
       height: 40,
       borderRadius: 20,
-      borderWidth: 1.2,
-      borderColor: tema.destaque,
-      resizeMode: "cover",
-    },
-    // =========================
-    // LOGO
-    // =========================
-    logoContainer: {
-      position: "absolute",
-      left: "50%",
-      top: 5,
-      width: 200,
       alignItems: "center",
       justifyContent: "center",
-      transform: [{ translateX: -100 }],
-    },
-    logo: {
-      width: 40,
-      height: 40,
-      resizeMode: "contain",
+      backgroundColor: tema.card,
+      borderWidth: 1,
+      borderColor: tema.borda,
     },
     nomeProjeto: {
-      color: tema.destaque,
-      fontSize: 17,
-      lineHeight: 21,
-      fontFamily: fontes.negrito,
-      marginTop: -1,
-      textAlign: "center",
+      color: tema.texto,
+      fontSize: 19,
+      lineHeight: 25,
+      fontFamily: fontes.appBold,
     },
-    sloganProjeto: {
-      color: tema.textoSecundario,
-      fontSize: 6,
-      lineHeight: 10,
-      letterSpacing: 0.65,
-      fontFamily: fontes.semiNegrito,
-      textAlign: "center",
-      marginTop: 0,
-    },
-    // =========================
-    // AÇÕES DO HEADER
-    // =========================
+    nomeDestaque: { color: tema.destaque },
     acoesHeader: {
-      width: 90,
+      width: 43,
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "flex-end",
-      gap: 4,
-      marginLeft: "auto",
     },
     btnHeader: {
       position: "relative",
-      width: 42,
-      height: 42,
+      width: 43,
+      height: 43,
       alignItems: "center",
       justifyContent: "center",
-      borderRadius: 10,
+      borderRadius: 12,
     },
-    btnPressed: {
-      backgroundColor: tema.cardSecundario,
-      transform: cores.btnPress,
-    },
-    textoPressed: {
-      opacity: 0.65,
-    },
-    iconeHeader: {
-      width: 25,
-      height: 25,
-      resizeMode: "contain",
-      tintColor: tema.destaque,
-    },
-    // =========================
-    // BADGE
-    // =========================
+    btnPressed: { backgroundColor: tema.cardSecundario, transform: cores.btnPress },
+    textoPressed: { opacity: 0.7 },
     badgeNotificacao: {
       position: "absolute",
-      top: 2,
-      right: 1,
+      top: 1,
+      right: 0,
       minWidth: 17,
       height: 17,
       alignItems: "center",
@@ -131,9 +71,9 @@ export const criarHeaderStyles = (tema: CoresTema) =>
     },
     badgeNotificacaoTexto: {
       color: "#FFFFFF",
-      fontSize: 9,
-      lineHeight: 11,
-      fontFamily: fontes.negrito,
+      fontSize: 10,
+      lineHeight: 12,
+      fontFamily: fontes.appBold,
     },
     // =========================
     // OFFCANVAS
@@ -141,7 +81,7 @@ export const criarHeaderStyles = (tema: CoresTema) =>
     offcanvasOverlay: {
       flex: 1,
       flexDirection: "row",
-      justifyContent: "flex-end",
+      justifyContent: "flex-start",
       backgroundColor: "transparent",
     },
     offcanvasBackdrop: {
@@ -155,13 +95,13 @@ export const criarHeaderStyles = (tema: CoresTema) =>
     offcanvas: {
       height: "100%",
       backgroundColor: tema.fundo,
-      borderLeftWidth: 1,
-      borderLeftColor: tema.borda,
+      borderRightWidth: 1,
+      borderRightColor: tema.borda,
       ...Platform.select({
         ios: {
           shadowColor: "#000",
           shadowOffset: {
-            width: -5,
+            width: 5,
             height: 0,
           },
           shadowOpacity: 0.28,
@@ -171,7 +111,7 @@ export const criarHeaderStyles = (tema: CoresTema) =>
           elevation: 16,
         },
         web: {
-          boxShadow: "-10px 0 30px rgba(0,0,0,0.28)",
+          boxShadow: "10px 0 30px rgba(0,0,0,0.28)",
         },
       }),
     },
@@ -197,8 +137,8 @@ export const criarHeaderStyles = (tema: CoresTema) =>
     },
     offcanvasTitulo: {
       color: tema.texto,
-      fontSize: fontes.secao,
-      fontFamily: fontes.negrito,
+      fontSize: tipografia.secao,
+      fontFamily: fontes.appBold,
     },
     contadorNotificacoes: {
       minWidth: 27,
@@ -211,8 +151,8 @@ export const criarHeaderStyles = (tema: CoresTema) =>
     },
     contadorNotificacoesTexto: {
       color: tema.textoSobreDestaque,
-      fontSize: fontes.textoPequeno,
-      fontFamily: fontes.negrito,
+      fontSize: tipografia.legenda,
+      fontFamily: fontes.appBold,
     },
     btnFechar: {
       width: 40,
@@ -225,7 +165,7 @@ export const criarHeaderStyles = (tema: CoresTema) =>
       color: tema.texto,
       fontSize: 31,
       lineHeight: 32,
-      fontFamily: fontes.normal,
+      fontFamily: fontes.appRegular,
     },
     // =========================
     // FILTROS
@@ -260,18 +200,18 @@ export const criarHeaderStyles = (tema: CoresTema) =>
     },
     filtroTexto: {
       color: tema.textoSecundario,
-      fontSize: fontes.textoPequeno,
-      fontFamily: fontes.normal,
+      fontSize: tipografia.legenda,
+      fontFamily: fontes.appRegular,
     },
     filtroTextoAtivo: {
       color: tema.destaque,
-      fontFamily: fontes.negrito,
+      fontFamily: fontes.appBold,
     },
     marcarTodasTexto: {
       color: tema.destaque,
-      fontSize: 10,
-      lineHeight: 14,
-      fontFamily: fontes.semiNegrito,
+      fontSize: 13,
+      lineHeight: 18,
+      fontFamily: fontes.appSemiBold,
       textAlign: "right",
       paddingBottom: 9,
     },
@@ -321,24 +261,24 @@ export const criarHeaderStyles = (tema: CoresTema) =>
     },
     notificacaoTitulo: {
       color: tema.texto,
-      fontSize: fontes.textoPequeno,
-      lineHeight: 16,
-      fontFamily: fontes.semiNegrito,
+      fontSize: tipografia.corpo,
+      lineHeight: 22,
+      fontFamily: fontes.appSemiBold,
     },
     notificacaoTituloNaoLida: {
-      fontFamily: fontes.negrito,
+      fontFamily: fontes.appBold,
     },
     notificacaoDescricao: {
       color: tema.textoSecundario,
-      fontSize: fontes.meta,
-      lineHeight: 14,
-      fontFamily: fontes.normal,
+      fontSize: tipografia.legenda,
+      lineHeight: 20,
+      fontFamily: fontes.appRegular,
       marginTop: 3,
     },
     notificacaoTempo: {
       color: tema.textoSecundario,
-      fontSize: fontes.meta,
-      fontFamily: fontes.normal,
+      fontSize: tipografia.legenda,
+      fontFamily: fontes.appRegular,
       marginTop: 7,
     },
     notificacaoStatusArea: {
@@ -368,15 +308,15 @@ export const criarHeaderStyles = (tema: CoresTema) =>
     },
     notificacoesVazioTitulo: {
       color: tema.texto,
-      fontSize: fontes.cardTitulo,
-      fontFamily: fontes.negrito,
+      fontSize: 18,
+      fontFamily: fontes.appBold,
       marginTop: 12,
     },
     notificacoesVazioTexto: {
       color: tema.textoSecundario,
       fontSize: fontes.textoPequeno,
       lineHeight: 16,
-      fontFamily: fontes.normal,
+      fontFamily: fontes.appRegular,
       textAlign: "center",
       marginTop: 5,
     },

@@ -5,7 +5,6 @@ import { Ionicons } from "@expo/vector-icons";
 import {
     ActivityIndicator,
     Image,
-    ImageBackground,
     Linking,
     Modal,
     Pressable,
@@ -18,7 +17,6 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useTema } from "@/contexts/TemaContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { criarPerfilStyles } from "@/styles/perfilStyles";
-import { temaEscuro } from "@/styles/temas";
 import globalStyle from "@/styles/globalStyles";
 import { buscarPerfilUsuario, type PerfilData } from "@/services/perfilService";
 import { buscarUsuario, getUrlFotoUsuario } from "@/services/usuarioService";
@@ -28,7 +26,9 @@ import {
     solicitarConexao,
 } from "@/services/conexaoesService";
 import { abrirConversa } from "@/services/conversaService";
+import HeaderScreen from "./header";
 import MenuSreen from "./menu";
+import { fontes, tipografia } from "@/styles/variaveis";
 type Rede = "instagram" | "linkedin" | "youtube" | "tiktok" | "facebook" | "site";
 type Icone = ComponentProps<typeof Ionicons>["name"];
 const REDES: { campo: Rede; rotulo: string; icone: Icone }[] = [
@@ -96,11 +96,6 @@ function rotuloPerfil(perfil: string): string {
 export default function PerfilScreen() {
     const { coresTema } = useTema();
     const perfilStyles = criarPerfilStyles(coresTema);
-    // O fundo fotográfico escuro é exclusivo do tema escuro.
-    const temaEhEscuro = coresTema.fundo === temaEscuro.fundo;
-    const fundoPerfilClaro = "#F8F5EF";
-    const textoPrincipalClaro = "#26211B";
-    const textoSecundarioClaro = "#655D52";
     const { token, usuario, carregandoSessao } = useAuth();
     const params = useLocalSearchParams<{ idUsuario?: string | string[] }>();
     const idParam = Array.isArray(params.idUsuario) ? params.idUsuario[0] : params.idUsuario;
@@ -115,13 +110,10 @@ export default function PerfilScreen() {
     const [fotoAmpliada, setFotoAmpliada] = useState(false);
     const detalhes = useMemo(() => StyleSheet.create({
         secao: {
-            backgroundColor: temaEhEscuro ? coresTema.card : "#FFFFFF",
-            borderColor: temaEhEscuro ? coresTema.borda : "#E5DCD0",
-            borderWidth: 1,
-            borderRadius: 16,
-            paddingVertical: 16,
-            paddingHorizontal: 17,
-            marginTop: 14,
+            borderBottomWidth: StyleSheet.hairlineWidth,
+            borderColor: coresTema.linha,
+            paddingVertical: 20,
+            marginHorizontal: 20,
         },
         secaoCabecalho: {
             flexDirection: "row",
@@ -130,19 +122,20 @@ export default function PerfilScreen() {
             marginBottom: 12,
         },
         tituloSecao: {
-            color: temaEhEscuro ? coresTema.texto : textoPrincipalClaro,
-            fontSize: 17,
-            fontWeight: "700",
+            color: coresTema.texto,
+            fontSize: tipografia.secao,
+            fontFamily: fontes.appSemiBold,
         },
         texto: {
-            color: temaEhEscuro ? coresTema.texto : textoPrincipalClaro,
-            fontSize: 14,
-            lineHeight: 21,
+            color: coresTema.texto,
+            fontSize: tipografia.corpo,
+            lineHeight: 25,
+            fontFamily: fontes.appRegular,
         },
         linha: {
             paddingVertical: 11,
             borderBottomWidth: StyleSheet.hairlineWidth,
-            borderColor: coresTema.borda,
+            borderColor: coresTema.linha,
             flexDirection: "row",
             alignItems: "flex-start",
             gap: 11,
@@ -150,34 +143,38 @@ export default function PerfilScreen() {
         linhaFinal: { borderBottomWidth: 0 },
         conteudoLinha: { flex: 1, gap: 4 },
         rotulo: {
-            color: temaEhEscuro ? coresTema.textoSecundario : textoSecundarioClaro,
-            fontSize: 12,
-            fontWeight: "600",
+            color: coresTema.textoSecundario,
+            fontSize: tipografia.legenda,
+            fontFamily: fontes.appMedium,
         },
         valor: {
-            color: temaEhEscuro ? coresTema.texto : textoPrincipalClaro,
-            fontSize: 14,
-            lineHeight: 21,
+            color: coresTema.texto,
+            fontSize: tipografia.corpo,
+            lineHeight: 23,
+            fontFamily: fontes.appRegular,
         },
-        link: { color: temaEhEscuro ? coresTema.destaque : "#876023" },
-        semValor: { color: temaEhEscuro ? coresTema.textoSecundario : textoSecundarioClaro, fontStyle: "italic" },
+        link: { color: coresTema.destaque },
+        semValor: { color: coresTema.textoSecundario, fontStyle: "italic" },
         aviso: {
-            color: temaEhEscuro ? coresTema.textoSecundario : textoSecundarioClaro,
+            color: coresTema.textoSecundario,
             textAlign: "center",
+            fontSize: tipografia.legenda,
             paddingVertical: 18,
         },
         erro: {
-            color: temaEhEscuro ? coresTema.texto : textoPrincipalClaro,
-            backgroundColor: temaEhEscuro ? coresTema.cardSecundario : "#FFF4E9",
-            borderColor: temaEhEscuro ? coresTema.borda : "#E7CDB1",
+            color: coresTema.texto,
+            backgroundColor: coresTema.cardSecundario,
+            borderColor: coresTema.borda,
             borderWidth: 1,
             borderRadius: 12,
-            padding: 12,
-            marginTop: 12,
-            lineHeight: 20,
+            padding: 14,
+            marginHorizontal: 20,
+            marginVertical: 12,
+            fontSize: tipografia.legenda,
+            lineHeight: 21,
         },
-        rodape: { height: 22 },
-    }), [coresTema, temaEhEscuro]);
+        rodape: { height: 18 },
+    }), [coresTema]);
     // Ao voltar de Editar perfil, recarrega os dados sem precisar reiniciar o app.
     useFocusEffect(useCallback(() => {
         if (carregandoSessao) return;
@@ -305,7 +302,6 @@ export default function PerfilScreen() {
     }
     const meuPerfil = ehProprioId || perfil?.status_conexao === "PROPRIO_PERFIL";
     const dados = perfil?.usuario;
-    const primeiroNome = dados?.nome_usuario?.trim().split(" ")[0] || "Usuário";
     const foto = getUrlFotoUsuario(dados?.foto_usuario ?? null);
     function linhaInformacao(
         rotulo: string,
@@ -378,183 +374,152 @@ export default function PerfilScreen() {
         }
         return null;
     }
-    const redesDisponiveisNaApi = !!dados && REDES.some(
-        (rede) => Object.prototype.hasOwnProperty.call(dados, `${rede.campo}_usuario`)
-    );
     const sociais = dados ? REDES.map(({ campo, rotulo, icone }) => ({
         campo, rotulo, icone,
         valor: dados[`${campo}_usuario` as keyof typeof dados] as string | null | undefined,
     })) : [];
     return (
         <View style={globalStyle.container}>
-            <View style={[globalStyle.background, perfilStyles.container, !temaEhEscuro && { backgroundColor: fundoPerfilClaro }]}>
-                <ImageBackground
-                    source={temaEhEscuro ? require("@/assets/images/img/fundoLogin.png") : undefined}
-                    style={[perfilStyles.background, !temaEhEscuro && { backgroundColor: fundoPerfilClaro }]}
-                    resizeMode="cover"
-                >
-                    <SafeAreaView style={globalStyle.areaConteudo}>
-                        <View style={[perfilStyles.overlay, !temaEhEscuro && { backgroundColor: "transparent" }]}>
-                            <ScrollView
-                                style={perfilStyles.scroll}
-                                contentContainerStyle={perfilStyles.scrollConteudo}
-                                showsVerticalScrollIndicator={false}
+            <View style={[globalStyle.background, perfilStyles.container]}>
+                <SafeAreaView style={globalStyle.areaConteudo}>
+                    <HeaderScreen />
+                    <ScrollView
+                        style={perfilStyles.scroll}
+                        contentContainerStyle={perfilStyles.scrollConteudo}
+                        showsVerticalScrollIndicator={false}
+                    >
+                        <View style={perfilStyles.topo}>
+                            <Pressable
+                                style={({ pressed }) => [perfilStyles.btnVoltar, pressed && perfilStyles.btnVoltarPressed]}
+                                onPress={() => router.back()}
+                                accessibilityRole="button"
+                                accessibilityLabel="Voltar"
                             >
-                                <View style={perfilStyles.topo}>
-                                    <Pressable
-                                        style={({ pressed }) => [perfilStyles.btnVoltar, pressed && perfilStyles.btnVoltarPressed]}
-                                        onPress={() => router.back()}
-                                        accessibilityRole="button"
-                                        accessibilityLabel="Voltar"
-                                    >
-                                        <Image
-                                            style={perfilStyles.voltarImagem}
-                                            source={require("@/assets/images/img/left.png")}
-                                        />
-                                    </Pressable>
+                                <Ionicons name="arrow-back" size={24} color={coresTema.texto} />
+                            </Pressable>
+                            <Text style={perfilStyles.tituloPagina}>Perfil</Text>
+                        </View>
+
+                        {(carregando || carregandoSessao) && (
+                            <View style={perfilStyles.centroEstado}>
+                                <ActivityIndicator color={coresTema.destaque} size="large" />
+                                <Text style={detalhes.valor}>Carregando perfil...</Text>
+                            </View>
+                        )}
+                        {!carregando && !carregandoSessao && !perfil && (
+                            <View style={detalhes.secao}>
+                                <Text style={detalhes.texto}>{erro || "Perfil não encontrado."}</Text>
+                            </View>
+                        )}
+                        {!carregando && !carregandoSessao && perfil && dados && (<>
+                            <View style={perfilStyles.capa}>
+                                <View style={perfilStyles.capaCirculo} />
+                                <Ionicons name="scale-outline" size={64} color={coresTema.destaque} style={perfilStyles.capaIcone} />
+                            </View>
+                            <View style={perfilStyles.identidade}>
+                                <Pressable
+                                    style={perfilStyles.avatarContainer}
+                                    onPress={() => setFotoAmpliada(true)}
+                                    hitSlop={12}
+                                    accessibilityRole="button"
+                                    accessibilityLabel={`Visualizar foto de ${dados.nome_usuario}`}
+                                    accessibilityHint="Abre a foto de perfil ampliada"
+                                >
                                     <Image
-                                        source={require("@/assets/images/img/logo.svg")}
-                                        style={perfilStyles.logo}
+                                        source={foto ? { uri: foto } : require("@/assets/images/img/avatar.png")}
+                                        style={perfilStyles.avatar}
+                                        resizeMode="cover"
                                     />
-                                    <View style={perfilStyles.espacoTopo} />
-                                </View>
-                                {(carregando || carregandoSessao) && (
-                                    <View style={{ alignItems: "center", paddingVertical: 35, gap: 12 }}>
-                                        <ActivityIndicator color={coresTema.destaque} size="large" />
-                                        <Text style={detalhes.valor}>Carregando perfil...</Text>
-                                    </View>
-                                )}
-                                {!carregando && !carregandoSessao && !perfil && (
-                                    <View style={detalhes.secao}>
-                                        <Text style={detalhes.texto}>{erro || "Perfil não encontrado."}</Text>
-                                    </View>
-                                )}
-                                {!carregando && !carregandoSessao && perfil && dados && (<>
-                                    <View style={[perfilStyles.apresentacao, !temaEhEscuro && { backgroundColor: "transparent" }]}>
-                                        <Text style={[perfilStyles.titulo, !temaEhEscuro && { color: textoPrincipalClaro }]}>
-                                            {meuPerfil ? "Olá, " : "Perfil de "}
-                                            <Text style={[perfilStyles.tituloDourado, !temaEhEscuro && { color: "#8E641F" }]}>
-                                                {primeiroNome}{meuPerfil ? "!" : ""}
-                                            </Text>
-                                        </Text>
-                                        <Text style={[perfilStyles.aviso, !temaEhEscuro && { color: textoSecundarioClaro }]}>
-                                            {meuPerfil
-                                                ? "Suas informações, conexões e redes sociais."
-                                                : "Conheça o perfil e amplie sua rede de conexões."}
-                                        </Text>
-                                    </View>
-                                    <View style={[perfilStyles.cardPerfil, !temaEhEscuro && { backgroundColor: "#FFFFFF", borderColor: "#E5DCD0" }]}>
-                                        <Pressable
-                                            style={perfilStyles.avatarContainer}
-                                            onPress={() => setFotoAmpliada(true)}
-                                            hitSlop={12}
-                                            accessibilityRole="button"
-                                            accessibilityLabel={`Visualizar foto de ${dados.nome_usuario}`}
-                                            accessibilityHint="Abre a foto de perfil ampliada, somente para visualização"
-                                        >
-                                            <Image
-                                                source={foto
-                                                    ? { uri: foto }
-                                                    : require("@/assets/images/img/avatar.png")}
-                                                style={perfilStyles.avatar}
-                                                resizeMode="cover"
-                                            />
-                                        </Pressable>
-                                        <Text style={[perfilStyles.nome, !temaEhEscuro && { color: "#936621" }]}>{dados.nome_usuario}</Text>
-                                        {!!dados.area_atuacao_usuario && (
-                                            <Text style={[perfilStyles.descricao, !temaEhEscuro && { color: textoSecundarioClaro }]}>{dados.area_atuacao_usuario}</Text>
-                                        )}
-                                        <View style={perfilStyles.informacoes}>
-                                            {!!dados.estado_usuario && (
-                                                <View style={perfilStyles.informacaoItem}>
-                                                    <Ionicons name="location-outline" color={coresTema.destaque} size={17} />
-                                                    <Text style={[perfilStyles.txtInfo, !temaEhEscuro && { color: textoSecundarioClaro }]}>{dados.estado_usuario}</Text>
-                                                </View>
-                                            )}
-                                            <View style={perfilStyles.informacaoItem}>
-                                                <Ionicons name="people-outline" color={coresTema.destaque} size={17} />
-                                                <Text style={[perfilStyles.txtInfo, !temaEhEscuro && { color: textoSecundarioClaro }]}>{perfil.conexoes_count} conexões</Text>
-                                            </View>
-                                        </View>
-                                        <View style={perfilStyles.areaBotoes}>{renderizarAcoes()}</View>
-                                    </View>
-                                    <View style={detalhes.secao}>
-                                        <View style={detalhes.secaoCabecalho}>
-                                            <Ionicons name="person-circle-outline" size={22} color={coresTema.destaque} />
-                                            <Text style={detalhes.tituloSecao}>Dados do perfil</Text>
-                                        </View>
-                                        {linhaInformacao("Nome completo", dados.nome_usuario, "person-outline")}
-                                        {linhaInformacao("Área de atuação", dados.area_atuacao_usuario, "briefcase-outline")}
-                                        {linhaInformacao("Estado", nomeEstado(dados.estado_usuario), "location-outline")}
-                                        {linhaInformacao("Tipo de perfil", rotuloPerfil(dados.perfil_usuario), "id-card-outline", true)}
-                                    </View>
-                                    <View style={detalhes.secao}>
-                                        <View style={detalhes.secaoCabecalho}>
-                                            <Ionicons name="document-text-outline" size={22} color={coresTema.destaque} />
-                                            <Text style={detalhes.tituloSecao}>Sobre mim</Text>
-                                        </View>
-                                        <Text style={[detalhes.texto, !dados.sobre_usuario?.trim() && detalhes.semValor]}>
-                                            {apresentarValor(dados.sobre_usuario)}
-                                        </Text>
-                                    </View>
-                                    <View style={detalhes.secao}>
-                                        <View style={detalhes.secaoCabecalho}>
-                                            <Ionicons name="share-social-outline" size={22} color={coresTema.destaque} />
-                                            <Text style={detalhes.tituloSecao}>Redes sociais e site</Text>
-                                        </View>
-                                        {sociais.map((rede, i) => {
-                                            const informado = !!rede.valor?.trim();
-                                            // O próprio usuário pode ver o que falta preencher;
-                                            // para outros usuários mostramos apenas redes informadas.
-                                            if (!meuPerfil && !informado) return null;
-                                            return (
-                                                <Pressable
-                                                    key={rede.campo}
-                                                    style={[detalhes.linha, i === sociais.length - 1 && detalhes.linhaFinal]}
-                                                    onPress={() => informado && abrirRede(rede.campo, rede.valor!)}
-                                                    disabled={!informado}
-                                                    accessibilityRole={informado ? "link" : undefined}
-                                                    accessibilityLabel={informado ? `Abrir ${rede.rotulo}` : undefined}
-                                                >
-                                                    <Ionicons name={rede.icone} color={coresTema.destaque} size={20} style={{ marginTop: 2 }} />
-                                                    <View style={detalhes.conteudoLinha}>
-                                                        <Text style={detalhes.rotulo}>{rede.rotulo}</Text>
-                                                        <Text style={[detalhes.valor, informado ? detalhes.link : detalhes.semValor]}>
-                                                            {apresentarValor(rede.valor)}
-                                                        </Text>
-                                                    </View>
-                                                    {informado && <Ionicons name="open-outline" color={coresTema.textoSecundario} size={17} />}
-                                                </Pressable>
-                                            );
-                                        })}
-                                        {!meuPerfil && !sociais.some((rede) => !!rede.valor?.trim()) && (
-                                            <Text style={detalhes.semValor}>
-                                                {redesDisponiveisNaApi
-                                                    ? "Nenhuma rede social cadastrada."
-                                                    : "As redes sociais ainda não são disponibilizadas pela API deste perfil."}
-                                            </Text>
-                                        )}
-                                    </View>
-                                    {meuPerfil && (
-                                        <View style={detalhes.secao}>
-                                            <View style={detalhes.secaoCabecalho}>
-                                                <Ionicons name="shield-checkmark-outline" size={22} color={coresTema.destaque} />
-                                                <Text style={detalhes.tituloSecao}>Minha conta</Text>
-                                            </View>
-                                            {linhaInformacao("E-mail", dados.email_usuario, "mail-outline", true)}
-                                            <Text style={[detalhes.rotulo, { marginTop: 8 }]}>
-                                                O e-mail é exibido apenas para você. Dados de acesso e senha não são públicos.
-                                            </Text>
+                                </Pressable>
+                                <Text style={perfilStyles.nome}>{dados.nome_usuario}</Text>
+                                <Text style={perfilStyles.descricao}>
+                                    {dados.area_atuacao_usuario?.trim() || rotuloPerfil(dados.perfil_usuario)}
+                                </Text>
+                                <View style={perfilStyles.informacoes}>
+                                    {!!dados.estado_usuario && (
+                                        <View style={perfilStyles.informacaoItem}>
+                                            <Ionicons name="location-outline" color={coresTema.destaque} size={20} />
+                                            <Text style={perfilStyles.txtInfo}>{nomeEstado(dados.estado_usuario)}</Text>
                                         </View>
                                     )}
-                                    {!!erro && <Text style={detalhes.erro}>{erro}</Text>}
-                                    <View style={detalhes.rodape} />
-                                </>)}
-                            </ScrollView>
-                            <MenuSreen />
-                        </View>
-                    </SafeAreaView>
-                </ImageBackground>
+                                    <View style={perfilStyles.informacaoItem}>
+                                        <Ionicons name="people-outline" color={coresTema.destaque} size={20} />
+                                        <Text style={perfilStyles.txtInfo}>{perfil.conexoes_count} conexões</Text>
+                                    </View>
+                                </View>
+                                <View style={perfilStyles.areaBotoes}>{renderizarAcoes()}</View>
+                            </View>
+
+                            <View style={detalhes.secao}>
+                                <View style={detalhes.secaoCabecalho}>
+                                    <Ionicons name="document-text-outline" size={22} color={coresTema.destaque} />
+                                    <Text style={detalhes.tituloSecao}>Sobre mim</Text>
+                                </View>
+                                <Text style={[detalhes.texto, !dados.sobre_usuario?.trim() && detalhes.semValor]}>
+                                    {apresentarValor(dados.sobre_usuario)}
+                                </Text>
+                            </View>
+
+                            <View style={detalhes.secao}>
+                                <View style={detalhes.secaoCabecalho}>
+                                    <Ionicons name="briefcase-outline" size={22} color={coresTema.destaque} />
+                                    <Text style={detalhes.tituloSecao}>Informações profissionais</Text>
+                                </View>
+                                {linhaInformacao("Área de atuação", dados.area_atuacao_usuario, "briefcase-outline")}
+                                {linhaInformacao("Estado", nomeEstado(dados.estado_usuario), "location-outline")}
+                                {linhaInformacao("Tipo de perfil", rotuloPerfil(dados.perfil_usuario), "id-card-outline", true)}
+                            </View>
+
+                            {(meuPerfil || sociais.some((rede) => !!rede.valor?.trim())) && (
+                                <View style={detalhes.secao}>
+                                    <View style={detalhes.secaoCabecalho}>
+                                        <Ionicons name="share-social-outline" size={22} color={coresTema.destaque} />
+                                        <Text style={detalhes.tituloSecao}>Redes sociais e site</Text>
+                                    </View>
+                                    {sociais.map((rede) => {
+                                        const informado = !!rede.valor?.trim();
+                                        if (!meuPerfil && !informado) return null;
+                                        return (
+                                            <Pressable
+                                                key={rede.campo}
+                                                style={detalhes.linha}
+                                                onPress={() => informado && abrirRede(rede.campo, rede.valor!)}
+                                                disabled={!informado}
+                                                accessibilityRole={informado ? "link" : undefined}
+                                                accessibilityLabel={informado ? `Abrir ${rede.rotulo}` : undefined}
+                                            >
+                                                <Ionicons name={rede.icone} color={coresTema.destaque} size={22} style={{ marginTop: 2 }} />
+                                                <View style={detalhes.conteudoLinha}>
+                                                    <Text style={detalhes.rotulo}>{rede.rotulo}</Text>
+                                                    <Text style={[detalhes.valor, informado ? detalhes.link : detalhes.semValor]}>
+                                                        {apresentarValor(rede.valor)}
+                                                    </Text>
+                                                </View>
+                                                {informado && <Ionicons name="open-outline" color={coresTema.textoSecundario} size={18} />}
+                                            </Pressable>
+                                        );
+                                    })}
+                                </View>
+                            )}
+                            {meuPerfil && (
+                                <View style={detalhes.secao}>
+                                    <View style={detalhes.secaoCabecalho}>
+                                        <Ionicons name="shield-checkmark-outline" size={22} color={coresTema.destaque} />
+                                        <Text style={detalhes.tituloSecao}>Minha conta</Text>
+                                    </View>
+                                    {linhaInformacao("Nome completo", dados.nome_usuario, "person-outline")}
+                                    {linhaInformacao("E-mail", dados.email_usuario, "mail-outline", true)}
+                                    <Text style={[detalhes.rotulo, { marginTop: 12 }]}>
+                                        O e-mail é visível somente para você.
+                                    </Text>
+                                </View>
+                            )}
+                            {!!erro && <Text style={detalhes.erro}>{erro}</Text>}
+                            <View style={detalhes.rodape} />
+                        </>)}
+                    </ScrollView>
+                    <MenuSreen />
+                </SafeAreaView>
             </View>
 
             {/* Visualização da foto do perfil: sem controles de edição. */}

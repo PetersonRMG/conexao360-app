@@ -1,5 +1,6 @@
 import {
     Fragment,
+    type ReactNode,
     useCallback,
     useRef,
     useState,
@@ -18,11 +19,17 @@ import {
     ScrollView,
     KeyboardAvoidingView,
     Platform,
+    Linking,
+    Alert,
 } from "react-native";
 import {
     SafeAreaView,
 } from "react-native-safe-area-context";
 import globalStyle from "@/styles/globalStyles";
+import { Ionicons } from "@expo/vector-icons";
+import { cores } from "@/styles/variaveis";
+import HeaderScreen from "./header";
+import MenuSreen from "./menu";
 import SeletorEmojis from "@/components/SeletorEmojis";
 import PontinhosEnviando from "@/components/PontinhosEnviando";
 import { Keyboard } from "react-native";
@@ -44,6 +51,56 @@ import {
 import {
     getUrlFotoUsuario,
 } from "@/services/usuarioService";
+/** Torna links HTTP(S) clicáveis sem alterar a mensagem original. */
+function renderizarTextoComLinks(texto: string, corLink: string): ReactNode[] {
+    const partes: ReactNode[] = [];
+    const expressao = /(?:https?:\/\/|www\.)[^\s<>"']+/gi;
+    let inicio = 0;
+    let ocorrencia: RegExpExecArray | null;
+
+    while ((ocorrencia = expressao.exec(texto)) !== null) {
+        const bruto = ocorrencia[0];
+        const endereco = bruto.replace(/[.,!?;:)\]}>]+$/g, "");
+        const inicioLink = ocorrencia.index;
+        const fimLink = inicioLink + endereco.length;
+
+        if (inicioLink > inicio) {
+            partes.push(texto.slice(inicio, inicioLink));
+        }
+
+        if (endereco) {
+            const url = /^www\./i.test(endereco) ? `https://${endereco}` : endereco;
+            partes.push(
+                <Text
+                    key={`link-${inicioLink}`}
+                    accessibilityRole="link"
+                    style={{ color: corLink, textDecorationLine: "underline" }}
+                    onPress={() => {
+                        Linking.openURL(url).catch(() => {
+                            Alert.alert(
+                                "Não foi possível abrir o link",
+                                "Verifique o endereço e tente novamente."
+                            );
+                        });
+                    }}
+                >
+                    {endereco}
+                </Text>
+            );
+        }
+
+        if (fimLink < inicioLink + bruto.length) {
+            partes.push(texto.slice(fimLink, inicioLink + bruto.length));
+        }
+        inicio = inicioLink + bruto.length;
+    }
+
+    if (inicio < texto.length) {
+        partes.push(texto.slice(inicio));
+    }
+    return partes.length > 0 ? partes : [texto];
+}
+
 export default function ConversaScreen() {
     // =============================================================
     // TEMA
@@ -464,6 +521,8 @@ export default function ConversaScreen() {
                         globalStyle.areaConteudo
                     }
                 >
+                    <HeaderScreen fotoUsuario={getUrlFotoUsuario(usuario?.foto_usuario ?? null)} />
+                    <View style={conversaStyles.conteudoComRodape}>
                     <KeyboardAvoidingView
                         style={
                             conversaStyles.keyboard
@@ -494,15 +553,10 @@ export default function ConversaScreen() {
                                         router.back()
                                 }
                             >
-                                <Image
-                                    source={
-                                        require(
-                                            "@/assets/images/img/left.png"
-                                        )
-                                    }
-                                    style={
-                                        conversaStyles.iconeVoltar
-                                    }
+                                <Ionicons
+                                    name="arrow-back"
+                                    size={24}
+                                    color={coresTema.texto}
                                 />
                             </Pressable>
                             <Pressable
@@ -537,7 +591,7 @@ export default function ConversaScreen() {
                                         }
                                     />
                                 </View>
-                                <View>
+                                <View style={{ flex: 1, minWidth: 0 }}>
                                     <Text
                                         style={
                                             conversaStyles.nome
@@ -562,41 +616,7 @@ export default function ConversaScreen() {
                                     </Text>
                                 </View>
                             </Pressable>
-                            <View
-                                style={
-                                    conversaStyles.btnMais
-                                }
-                            />
-                        </View>
-                        {/* ================= SEGURANÇA ================= */}
-                        <View
-                            style={
-                                conversaStyles.areaSeguranca
-                            }
-                        >
-                            <View
-                                style={
-                                    conversaStyles.avisoSeguranca
-                                }
-                            >
-                                <Image
-                                    source={
-                                        require(
-                                            "@/assets/images/img/trancar.png"
-                                        )
-                                    }
-                                    style={
-                                        conversaStyles.iconeSeguranca
-                                    }
-                                />
-                                <Text
-                                    style={
-                                        conversaStyles.txtSeguranca
-                                    }
-                                >
-                                    Suas mensagens permanecem protegidas dentro da plataforma
-                                </Text>
-                            </View>
+
                         </View>
                         {/* ================= MENSAGENS ================= */}
                         <ScrollView
@@ -702,11 +722,7 @@ export default function ConversaScreen() {
                                                         conversaStyles.divisorData
                                                     }
                                                 >
-                                                    <View
-                                                        style={
-                                                            conversaStyles.linha
-                                                        }
-                                                    />
+
                                                     <Text
                                                         style={
                                                             conversaStyles.data
@@ -719,11 +735,7 @@ export default function ConversaScreen() {
                                                             )
                                                         }
                                                     </Text>
-                                                    <View
-                                                        style={
-                                                            conversaStyles.linha
-                                                        }
-                                                    />
+
                                                 </View>
                                             )}
                                             <View
@@ -749,10 +761,10 @@ export default function ConversaScreen() {
                                                             conversaStyles.txtMinhaMensagem,
                                                         ]}
                                                     >
-                                                        {
-                                                            item
-                                                                .texto_mensagem
-                                                        }
+                                                        {renderizarTextoComLinks(
+                                                            item.texto_mensagem,
+                                                            minha ? "#674B10" : coresTema.destaque
+                                                        )}
                                                     </Text>
                                                     <Text
                                                         style={[
@@ -779,10 +791,10 @@ export default function ConversaScreen() {
                                 <View style={[conversaStyles.linhaMensagem, conversaStyles.linhaMinhaMensagem]}>
                                     <View style={[conversaStyles.balao, conversaStyles.balaoMeu, { opacity: 0.9 }]}>
                                         <Text style={[conversaStyles.txtMensagem, conversaStyles.txtMinhaMensagem]}>
-                                            {mensagemPendente}
+                                            {renderizarTextoComLinks(mensagemPendente, "#674B10")}
                                         </Text>
                                         <View style={{ flexDirection: "row", justifyContent: "flex-end", alignItems: "center", gap: 7, marginTop: 6 }}>
-                                            <Text style={{ fontSize: 11, color: coresTema.textoSecundario }}>Enviando</Text>
+                                            <Text style={conversaStyles.txtEnviando}>Enviando</Text>
                                             <PontinhosEnviando cor={coresTema.destaque} />
                                         </View>
                                     </View>
@@ -832,9 +844,13 @@ export default function ConversaScreen() {
                                     disabled={enviando}
                                     accessibilityRole="button"
                                     accessibilityLabel={emojiAberto ? "Fechar emojis" : "Abrir emojis"}
-                                    style={{ width: 38, minHeight: 42, alignItems: "center", justifyContent: "center" }}
+                                    style={conversaStyles.btnEmoji}
                                 >
-                                    <Text style={{ color: coresTema.destaque, fontSize: 27 }}>☺</Text>
+                                    <Ionicons
+                                        name={emojiAberto ? "close-circle-outline" : "happy-outline"}
+                                        size={24}
+                                        color={coresTema.destaque}
+                                    />
                                 </Pressable>
                                 <TextInput
                                     value={
@@ -843,11 +859,9 @@ export default function ConversaScreen() {
                                     onChangeText={
                                         setMensagem
                                     }
-                                    style={
-                                        [conversaStyles.input, { flex: 1, minWidth: 0 }]
-                                    }
+                                    style={conversaStyles.input}
                                     placeholder="Digite uma mensagem..."
-                                    placeholderTextColor="#777777"
+                                    placeholderTextColor={coresTema.textoSecundario}
                                     multiline
                                     maxLength={
                                         5000
@@ -863,6 +877,7 @@ export default function ConversaScreen() {
                                     pressed,
                                 }) => [
                                         conversaStyles.btnEnviar,
+                                        (enviando || !mensagem.trim()) && conversaStyles.btnEnviarDesabilitado,
                                         pressed &&
                                         conversaStyles.btnEnviarPressed,
                                     ]}
@@ -874,19 +889,16 @@ export default function ConversaScreen() {
                                     !mensagem.trim()
                                 }
                             >
-                                <Image
-                                    source={
-                                        require(
-                                            "@/assets/images/img/send.png"
-                                        )
-                                    }
-                                    style={
-                                        conversaStyles.iconeEnviar
-                                    }
+                                <Ionicons
+                                    name="send"
+                                    size={23}
+                                    color={cores.pretoPrincipal}
                                 />
                             </Pressable>
                         </View>
                     </KeyboardAvoidingView>
+                    </View>
+                    <MenuSreen />
                 </SafeAreaView>
             </View>
         </View>

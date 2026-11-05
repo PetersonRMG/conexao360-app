@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import { router } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import * as FileSystem from "expo-file-system/legacy";
 import {
     ActivityIndicator,
     Alert,
     Image,
-    ImageBackground,
     KeyboardAvoidingView,
     Modal,
     Platform,
@@ -25,6 +25,8 @@ import globalStyle from "@/styles/globalStyles";
 import { buscarUsuario, getUrlFotoUsuario } from "@/services/usuarioService";
 import { atualizarMeuPerfil, type DadosEdicaoPerfil } from "@/services/edicaoPerfilService";
 import AjustarFotoPerfilModal from "@/components/AjustarFotoPerfilModal";
+import HeaderScreen from "./header";
+import MenuSreen from "./menu";
 
 const ESTADOS_BRASIL = [
     { uf: "AC", nome: "Acre" },
@@ -335,7 +337,7 @@ export default function EditarPerfilScreen() {
     ) {
         const multiline = opcoes?.multiline ?? false;
         return (
-            <View style={multiline ? styles.cardDescricao : styles.cardCampo}>
+            <View style={styles.campoGrupo}>
                 <Text style={styles.label}>{titulo}</Text>
                 <TextInput
                     style={multiline ? styles.inputDescricao : styles.input}
@@ -359,12 +361,9 @@ export default function EditarPerfilScreen() {
     return (
         <View style={globalStyle.container}>
             <View style={[globalStyle.background, styles.container]}>
-                <ImageBackground
-                    source={require("@/assets/images/img/fundoLogin.png")}
-                    style={styles.background}
-                    resizeMode="cover"
-                >
+                <View style={styles.background}>
                     <SafeAreaView style={globalStyle.areaConteudo}>
+                        <HeaderScreen />
                         <View style={styles.overlay}>
                             <KeyboardAvoidingView
                                 style={styles.keyboard}
@@ -378,33 +377,20 @@ export default function EditarPerfilScreen() {
                                 >
                                     <View style={styles.topo}>
                                         <Pressable
-                                            style={({ pressed }) => [
-                                                styles.btnVoltar,
-                                                pressed && styles.btnVoltarPressed,
-                                            ]}
+                                            style={({ pressed }) => [styles.btnVoltar, pressed && styles.btnVoltarPressed]}
                                             onPress={() => router.back()}
                                             disabled={salvando}
                                             accessibilityRole="button"
                                             accessibilityLabel="Voltar ao perfil"
                                         >
-                                            <Image
-                                                source={require("@/assets/images/img/left.png")}
-                                                style={styles.voltarImagem}
-                                            />
+                                            <Ionicons name="arrow-back" size={24} color={coresTema.texto} />
                                         </Pressable>
-                                        <Image
-                                            source={require("@/assets/images/img/logo.svg")}
-                                            style={styles.logo}
-                                        />
-                                        <View style={styles.espacoTopo} />
+                                        <Text style={styles.tituloPagina}>Editar Perfil</Text>
                                     </View>
 
                                     <View style={styles.apresentacao}>
-                                        <Text style={styles.titulo}>
-                                            Editar <Text style={styles.tituloDourado}>perfil</Text>
-                                        </Text>
                                         <Text style={styles.aviso}>
-                                            Atualize suas informações no Conexão 360°.
+                                            Atualize seus dados e a sua apresentação na comunidade.
                                         </Text>
                                     </View>
 
@@ -434,13 +420,11 @@ export default function EditarPerfilScreen() {
                                                         accessibilityRole="button"
                                                         accessibilityLabel="Selecionar foto do perfil"
                                                     >
-                                                        <Text style={{ color: "#161616", fontWeight: "700", fontSize: 19 }}>+</Text>
+                                                        <Ionicons name="camera-outline" color="#1B1C21" size={19} />
                                                     </Pressable>
                                                 </View>
                                                 <Pressable onPress={escolherFoto} disabled={salvando}>
-                                                    <Text style={{ color: coresTema.destaque, marginTop: 10 }}>
-                                                        Trocar foto
-                                                    </Text>
+                                                    <Text style={styles.textoFoto}>Trocar foto</Text>
                                                 </Pressable>
                                                 {fotoExibida ? (
                                                     <Pressable
@@ -453,9 +437,7 @@ export default function EditarPerfilScreen() {
                                                         {preparandoFoto ? (
                                                             <ActivityIndicator color={coresTema.destaque} size="small" />
                                                         ) : (
-                                                            <Text style={{ color: coresTema.destaque, fontSize: 15, textAlign: "center" }}>
-                                                                Ajustar foto atual
-                                                            </Text>
+                                                            <Text style={styles.textoFoto}>Ajustar foto atual</Text>
                                                         )}
                                                     </Pressable>
                                                 ) : null}
@@ -464,22 +446,23 @@ export default function EditarPerfilScreen() {
                                             <Text style={styles.tituloGrupo}>Informações pessoais</Text>
                                             {campo("Nome completo", nome, setNome, { maxLength: 100, autoCapitalize: "words" })}
                                             {campo("Área de atuação", area, setArea, { maxLength: 150 })}
-                                            <Pressable
-                                                style={styles.cardCampo}
-                                                onPress={() => setSelecionandoEstado(true)}
-                                                disabled={salvando}
-                                                accessibilityRole="button"
-                                                accessibilityLabel="Selecionar estado"
-                                            >
+                                            <View style={styles.campoGrupo}>
                                                 <Text style={styles.label}>Estado (UF)</Text>
-                                                <Text style={[
-                                                    styles.input,
-                                                    !estado && { color: coresTema.textoSecundario },
-                                                ]}>
-                                                    {estado || "Selecione seu estado"}  ▾
-                                                </Text>
-                                            </Pressable>
+                                                <Pressable
+                                                    style={styles.seletorEstado}
+                                                    onPress={() => setSelecionandoEstado(true)}
+                                                    disabled={salvando}
+                                                    accessibilityRole="button"
+                                                    accessibilityLabel="Selecionar estado"
+                                                >
+                                                    <Text style={[styles.valorEstado, !estado && { color: coresTema.textoSecundario }]}>
+                                                        {estado || "Selecione seu estado"}
+                                                    </Text>
+                                                    <Ionicons name="chevron-down-outline" size={20} color={coresTema.textoSecundario} />
+                                                </Pressable>
+                                            </View>
                                             {campo("Sobre mim", sobre, setSobre, { multiline: true, maxLength: 200 })}
+                                            <Text style={styles.contadorBio}>{sobre.length}/200 caracteres</Text>
 
                                             <Text style={styles.tituloGrupo}>Redes sociais e site</Text>
                                             {campo("Instagram", instagram, setInstagram, {
@@ -508,11 +491,11 @@ export default function EditarPerfilScreen() {
                                             })}
 
                                             <Text style={styles.tituloGrupo}>Conta</Text>
-                                            <View style={styles.cardCampo}>
+                                            <View style={styles.campoGrupo}>
                                                 <Text style={styles.label}>E-mail (somente leitura)</Text>
-                                                <Text style={[styles.input, { color: coresTema.textoSecundario }]}>
-                                                    {email}
-                                                </Text>
+                                                <View style={styles.campoSomenteLeitura}>
+                                                    <Text style={styles.textoSomenteLeitura}>{email}</Text>
+                                                </View>
                                             </View>
 
                                             {erro ? (
@@ -522,15 +505,10 @@ export default function EditarPerfilScreen() {
                                             ) : null}
 
                                             <Pressable
-                                                style={({ pressed }) => ({
-                                                    backgroundColor: coresTema.destaque,
-                                                    borderRadius: 13,
-                                                    minHeight: 50,
-                                                    alignItems: "center",
-                                                    justifyContent: "center",
-                                                    marginTop: 8,
-                                                    opacity: (pressed || salvando) ? 0.75 : 1,
-                                                })}
+                                                style={({ pressed }) => [
+                                                    styles.btnSalvar,
+                                                    (pressed || salvando) && styles.btnSalvarPressed,
+                                                ]}
                                                 onPress={salvar}
                                                 disabled={salvando || !token}
                                                 accessibilityRole="button"
@@ -538,9 +516,7 @@ export default function EditarPerfilScreen() {
                                                 {salvando ? (
                                                     <ActivityIndicator color="#161616" />
                                                 ) : (
-                                                    <Text style={{ color: "#161616", fontWeight: "700", fontSize: 16 }}>
-                                                        Salvar alterações
-                                                    </Text>
+                                                    <Text style={styles.txtSalvar}>Salvar alterações</Text>
                                                 )}
                                             </Pressable>
                                         </>
@@ -552,8 +528,9 @@ export default function EditarPerfilScreen() {
                                 </ScrollView>
                             </KeyboardAvoidingView>
                         </View>
+                        <MenuSreen />
                     </SafeAreaView>
-                </ImageBackground>
+                </View>
             </View>
             <Modal
                 visible={selecionandoEstado}

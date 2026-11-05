@@ -414,35 +414,20 @@ export default function HomeScreen() {
     const filtros = ["Todas", "Recentes", "Em alta", "Meus posts", "Enquetes"] as const;
 
     return (
-        <View style={globalStyle.container}>
+        <View style={[globalStyle.container, { backgroundColor: coresTema.fundo }]}>
             <View style={[globalStyle.background, homeStyle.container]}>
                 <SafeAreaView style={globalStyle.areaConteudo}>
-                    {/* Header original preservado: sino e notificações continuam ativos. */}
+                    {/* Header integrado ao fundo, mantendo menu e notificações. */}
                     <HeaderScreen />
 
-                    {/* Busca e filtro seguem a referência. */}
-                    <View style={homeStyle.areaBusca}>
-                        <Pressable
-                            style={({ pressed }) => [homeStyle.inputBusca, pressed && homeStyle.botaoPressionado]}
-                            onPress={() => router.push("/explorar")}
-                            accessibilityRole="button"
-                            accessibilityLabel="Buscar pessoas e conexões"
-                        >
-                            <Ionicons name="search-outline" size={19} color={coresTema.destaque} />
-                            <Text style={homeStyle.txtBusca}>Buscar</Text>
-                        </Pressable>
-                        <Pressable
-                            style={({ pressed }) => [homeStyle.btnFiltrosBusca, pressed && homeStyle.botaoPressionado]}
-                            onPress={() => router.push("/explorar")}
-                            accessibilityRole="button"
-                            accessibilityLabel="Abrir filtros de busca"
-                        >
-                            <Ionicons name="options-outline" size={20} color={coresTema.texto} />
-                        </Pressable>
-                    </View>
+                    {/* Título leve e separado do header por espaçamento, sem borda. */}
+                    {/* <View style={homeStyle.cabecalhoFeed}>
+                        <Text style={homeStyle.tituloFeed}>Feed</Text>
+                        <Text style={homeStyle.subtituloFeed}>Publicações da comunidade</Text>
+                    </View> */}
 
                     {/* Enquetes volta a ficar visível junto dos filtros, como antes. */}
-                    <View style={homeStyle.filtros}>
+                    {/* <ScrollView horizontal showsHorizontalScrollIndicator={false} style={homeStyle.filtros} contentContainerStyle={homeStyle.filtrosConteudo}>
                         {filtros.map((item) => {
                             const ativo = item !== "Enquetes" && filtro === item;
                             return (
@@ -463,15 +448,13 @@ export default function HomeScreen() {
                                     <Text
                                         style={[homeStyle.txtFiltro, ativo && homeStyle.txtFiltroAtivo]}
                                         numberOfLines={1}
-                                        adjustsFontSizeToFit
-                                        minimumFontScale={0.85}
                                     >
                                         {item}
                                     </Text>
                                 </Pressable>
                             );
                         })}
-                    </View>
+                    </ScrollView> */}
 
                     <ScrollView
                         style={homeStyle.scroll}
@@ -479,23 +462,9 @@ export default function HomeScreen() {
                         showsVerticalScrollIndicator={false}
                         keyboardShouldPersistTaps="handled"
                     >
-                        {/* Banner reservado para integração posterior. */}
-                        <View style={homeStyle.secaoTopo}>
-                            <Text style={homeStyle.tituloSecao}>Publicações</Text>
-                            <Pressable
-                                style={homeStyle.verTodas}
-                                onPress={() => setFiltro("Todas")}
-                                accessibilityRole="button"
-                            >
-                                <Text style={homeStyle.verTodasTexto}>Ver todas</Text>
-                                <Ionicons name="chevron-forward" size={14} color={coresTema.destaque} />
-                            </Pressable>
-                        </View>
-
-                        {/* Placeholders com o mesmo relevo dos posts reais. */}
+                        {/* Indicadores discretos durante a atualização do feed. */}
                         {carregando && [1, 2, 3].map((item) => (
                             <View key={item} style={homeStyle.cardCamada}>
-                                <View pointerEvents="none" style={homeStyle.cardBase3d} />
                                 <View style={homeStyle.cardPublicacao}>
                                     <Animated.View style={{ opacity: placeholderOpacity }}>
                                         <View style={homeStyle.skeletonHeader}>
@@ -538,10 +507,7 @@ export default function HomeScreen() {
                             const denunciaIndisponivel = !proprioPost && (jaDenunciou || totalDenuncias >= 3);
                             return (
                                 <View key={publicacao.id_publicacao} style={homeStyle.cardCamada}>
-                                    <View pointerEvents="none" style={homeStyle.cardBase3d} />
-                                    <CardEntrada style={homeStyle.cardPublicacao} delay={Math.min(indice * 70, 280)}>
-                                        {/* Fio de luz superior para profundidade, sem simular efeitos pesados. */}
-                                        <View pointerEvents="none" style={homeStyle.cardReflexo} />
+                                        <CardEntrada style={homeStyle.cardPublicacao} delay={Math.min(indice * 70, 280)}>
                                         <View style={homeStyle.publicacaoHeader}>
                                             <Pressable
                                                 onPress={() => abrirPerfilUsuario(publicacao.usuario?.id_usuario)}
@@ -615,49 +581,25 @@ export default function HomeScreen() {
                                                 <Image source={{ uri: midia }} style={homeStyle.imagemPublicacao} resizeMode="cover" />
                                             </Pressable>
                                         )}
-                                        <View style={homeStyle.areaContadores}>
-                                            <View style={homeStyle.contadorComIcone}>
-                                                <Ionicons name="heart" size={13} color="#E84D62" />
-                                                <Text style={homeStyle.txtContador}>
-                                                    {quantidadeCurtidas} {quantidadeCurtidas === 1 ? "curtida" : "curtidas"}
-                                                </Text>
-                                            </View>
-                                            <Pressable
-                                                style={homeStyle.contadorComIcone}
-                                                onPress={() => abrirComentarios(publicacao.id_publicacao)}
-                                                accessibilityRole="button"
-                                            >
-                                                <Ionicons name="chatbubble-outline" size={13} color={coresTema.textoSecundario} />
-                                                <Text style={homeStyle.txtContador}>
-                                                    {quantidadeComentarios} {quantidadeComentarios === 1 ? "comentário" : "comentários"}
-                                                </Text>
-                                            </Pressable>
-                                        </View>
                                         <View style={homeStyle.acoesPublicacao}>
                                             <Pressable
                                                 style={({ pressed }) => [homeStyle.acao, pressed && homeStyle.acaoPressionada]}
                                                 disabled={processandoCurtida === publicacao.id_publicacao}
                                                 onPress={() => alternarCurtida(publicacao)}
                                                 accessibilityRole="button"
-                                                accessibilityLabel={curtido ? "Descurtir publicação" : "Curtir publicação"}
+                                                accessibilityLabel={`${curtido ? "Descurtir" : "Curtir"}, ${quantidadeCurtidas} curtidas`}
                                             >
-                                                <Ionicons
-                                                    name={curtido ? "heart" : "heart-outline"}
-                                                    size={18}
-                                                    color={curtido ? coresTema.destaque : coresTema.textoSecundario}
-                                                />
-                                                <Text style={[homeStyle.txtAcao, curtido && homeStyle.txtAcaoAtivo]}>
-                                                    {curtido ? "Curtido" : "Curtir"}
-                                                </Text>
+                                                <Ionicons name={curtido ? "heart" : "heart-outline"} size={21} color={curtido ? coresTema.destaque : coresTema.textoSecundario} />
+                                                <Text style={[homeStyle.txtAcao, curtido && homeStyle.txtAcaoAtivo]}>{quantidadeCurtidas}</Text>
                                             </Pressable>
                                             <Pressable
                                                 style={({ pressed }) => [homeStyle.acao, pressed && homeStyle.acaoPressionada]}
                                                 onPress={() => abrirComentarios(publicacao.id_publicacao)}
                                                 accessibilityRole="button"
-                                                accessibilityLabel="Comentar publicação"
+                                                accessibilityLabel={`${quantidadeComentarios} comentários`}
                                             >
-                                                <Ionicons name="chatbubble-outline" size={17} color={coresTema.textoSecundario} />
-                                                <Text style={homeStyle.txtAcao}>Comentar</Text>
+                                                <Ionicons name="chatbubble-outline" size={20} color={coresTema.textoSecundario} />
+                                                <Text style={homeStyle.txtAcao}>{quantidadeComentarios}</Text>
                                             </Pressable>
                                             <Pressable
                                                 style={({ pressed }) => [homeStyle.acao, pressed && homeStyle.acaoPressionada]}
@@ -665,8 +607,7 @@ export default function HomeScreen() {
                                                 accessibilityRole="button"
                                                 accessibilityLabel="Compartilhar publicação"
                                             >
-                                                <Ionicons name="paper-plane-outline" size={18} color={coresTema.textoSecundario} />
-                                                <Text style={homeStyle.txtAcao}>Compartilhar</Text>
+                                                <Ionicons name="paper-plane-outline" size={20} color={coresTema.textoSecundario} />
                                             </Pressable>
                                         </View>
                                     </CardEntrada>

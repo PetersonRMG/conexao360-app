@@ -1,453 +1,107 @@
 import { StyleSheet } from "react-native";
-
-import { fontes } from "./variaveis";
+import { fontes, tipografia, cores } from "./variaveis";
 import { CoresTema, temaEscuro } from "./temas";
 
-
-export const criarEditarPerfilStyles = (
-    tema: CoresTema
-) => StyleSheet.create({
-
-    // =========================
-    // ESTRUTURA
-    // =========================
-
-    container: {
-        flex: 1,
-        backgroundColor: tema.fundo,
-    },
-
-    background: {
-        flex: 1,
-        width: "100%",
-        height: "100%",
-    },
-
-    overlay: {
-        flex: 1,
-        backgroundColor: tema.fundo,
-    },
-
-    keyboard: {
-        flex: 1,
-    },
-
-    scroll: {
-        flex: 1,
-    },
-
-    scrollConteudo: {
-        paddingHorizontal: 16,
-        paddingBottom: 110,
-    },
-
-
-    // =========================
-    // TOPO
-    // =========================
-
-    topo: {
-        width: "100%",
-        height: 75,
-
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-between",
-
-        marginTop: 8,
-    },
-
-    btnVoltar: {
-        width: 45,
-        height: 45,
-
-        alignItems: "center",
-        justifyContent: "center",
-
-        borderRadius: 23,
-
-        backgroundColor: tema.cardSecundario,
-    },
-
-    btnVoltarPressed: {
-        backgroundColor: tema.card,
-        transform: [{ scale: 0.97 }],
-    },
-
-    voltarImagem: {
-        width: 45,
-        height: 45,
-
-        resizeMode: "contain",
-    },
-
-    logo: {
-        width: 52,
-        height: 52,
-
-        resizeMode: "contain",
-    },
-
-    espacoTopo: {
-        width: 45,
-        height: 45,
-    },
-
-
-    // =========================
-    // TÍTULO PRINCIPAL
-    // =========================
-
-    apresentacao: {
-        width: "100%",
-
-        alignItems: "center",
-
-        marginTop: 2,
-        marginBottom: 12,
-    },
-
-    titulo: {
-        color: tema.texto,
-
-        fontSize: fontes.titulo,
-        fontFamily: fontes.negrito,
-    },
-
-    tituloDourado: {
-        color: tema.destaque,
-    },
-
-    aviso: {
-        color: tema.destaque,
-
-        fontSize: fontes.subtitulo,
-        fontFamily: fontes.normal,
-
-        marginTop: 4,
-
-        opacity: 0.8,
-    },
-
-
-    // =========================
-    // AVATAR
-    // =========================
-
-    areaAvatar: {
-        width: "100%",
-
-        alignItems: "center",
-
-        marginBottom: 18,
-    },
-
-    avatarContainer: {
-        width: 92,
-        height: 92,
-
-        position: "relative",
-    },
-
-    avatar: {
-        width: 92,
-        height: 92,
-
-        borderRadius: 46,
-
-        resizeMode: "cover",
-
-        borderWidth: 2,
-        borderColor: tema.destaque,
-    },
-
-    btnEditarFoto: {
-        width: 30,
-        height: 30,
-
-        position: "absolute",
-
-        right: -2,
-        bottom: 0,
-
-        borderRadius: 15,
-
-        alignItems: "center",
-        justifyContent: "center",
-
-        backgroundColor: tema.destaque,
-
-        borderWidth: 2,
-        borderColor: tema.card,
-    },
-
-    iconeEditarFoto: {
-        width: 15,
-        height: 15,
-
-        resizeMode: "contain",
-    },
-
-
-    // =========================
-    // TÍTULO DAS SEÇÕES
-    // =========================
-
-    tituloGrupo: {
-        width: "100%",
-
-        color: tema.texto,
-
-        fontSize: fontes.subtitulo,
-        fontFamily: fontes.negrito,
-
-        marginTop: 6,
-        marginBottom: 8,
-    },
-
-
-    // =========================
-    // CARD INDIVIDUAL
-    // =========================
-
-    cardCampo: {
-        width: "100%",
-
-        minHeight: 68,
-
-        backgroundColor: tema.card,
-
-        borderWidth: 1,
-        borderColor: tema.borda,
-
-        borderRadius: 12,
-
-        paddingHorizontal: 12,
-        paddingVertical: 8,
-
-        marginBottom: 8,
-    },
-
-    campoTopo: {
-        width: "100%",
-
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-between",
-    },
-
-    label: {
-        color: tema.texto,
-
-        fontSize: fontes.subtitulo,
-        fontFamily: fontes.negrito,
-    },
-
-
-    // =========================
-    // PRIVACIDADE
-    // =========================
-
-    status: {
-        minWidth: 88,
-        height: 28,
-
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "center",
-
-        gap: 6,
-
-        paddingHorizontal: 10,
-
-        borderRadius: 14,
-
-        backgroundColor: tema.cardSecundario,
-
-        borderWidth: 1,
-    },
-
-    statusPublico: {
-        borderColor: tema.destaque,
-    },
-
-    statusPrivado: {
-        borderColor: tema.borda,
-    },
-
-    statusPressed: {
-        opacity: 0.72,
-        transform: [{ scale: 0.97 }],
-    },
-
-    statusIndicador: {
-        width: 7,
-        height: 7,
-
-        borderRadius: 4,
-    },
-
-    statusIndicadorPublico: {
-        backgroundColor: tema.destaque,
-    },
-
-    statusIndicadorPrivado: {
-        backgroundColor: tema.textoSecundario,
-    },
-
-    txtStatus: {
-        fontSize: 9,
-        fontFamily: fontes.negrito,
-    },
-
-    txtStatusPublico: {
-        color: tema.destaque,
-    },
-
-    txtStatusPrivado: {
-        color: tema.textoSecundario,
-    },
-
-
-    // =========================
-    // INPUT
-    // =========================
-
-    input: {
-        width: "100%",
-
-        color: tema.texto,
-
-        fontSize: 13,
-        fontFamily: fontes.normal,
-
-        opacity: 0.9,
-
-        paddingHorizontal: 0,
-        paddingVertical: 4,
-
-        marginTop: 2,
-    },
-
-
-    // =========================
-    // DESCRIÇÃO
-    // =========================
-
-    cardDescricao: {
-        width: "100%",
-
-        minHeight: 120,
-
-        backgroundColor: tema.card,
-
-        borderWidth: 1,
-        borderColor: tema.borda,
-
-        borderRadius: 12,
-
-        paddingHorizontal: 12,
-        paddingVertical: 10,
-
-        marginBottom: 12,
-    },
-
-    inputDescricao: {
-        width: "100%",
-        minHeight: 75,
-
-        color: tema.texto,
-
-        fontSize: 13,
-        fontFamily: fontes.normal,
-
-        opacity: 0.9,
-
-        paddingHorizontal: 0,
-        paddingTop: 8,
-    },
-
-
-    // =========================
-    // SEGURANÇA
-    // =========================
-
-    cardSeguranca: {
-        width: "100%",
-
-        minHeight: 68,
-
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-between",
-
-        backgroundColor: tema.card,
-
-        borderWidth: 1,
-        borderColor: tema.borda,
-
-        borderRadius: 12,
-
-        paddingHorizontal: 12,
-        paddingVertical: 10,
-
-        marginBottom: 8,
-    },
-
-    txtDadoSeguranca: {
-        color: tema.textoSecundario,
-
-        fontSize: 12,
-        fontFamily: fontes.normal,
-
-        opacity: 0.9,
-
-        marginTop: 4,
-    },
-
-    verificado: {
-        color: tema.destaque,
-
-        fontSize: 9,
-        fontFamily: fontes.negrito,
-    },
-
-
-    // =========================
-    // ALTERAR SENHA
-    // =========================
-
-    alterarSenha: {
-        flexDirection: "row",
-        alignItems: "center",
-
-        gap: 5,
-    },
-
-    iconeSenha: {
-        width: 14,
-        height: 14,
-
-        resizeMode: "contain",
-    },
-
-    txtAlterarSenha: {
-        color: tema.destaque,
-
-        fontSize: 9,
-        fontFamily: fontes.negrito,
-    },
-
+/** Editar perfil — padrão unificado com o feed e o perfil público. */
+export const criarEditarPerfilStyles = (tema: CoresTema) => StyleSheet.create({
+  container: { flex: 1, backgroundColor: tema.fundo },
+  background: { flex: 1, backgroundColor: tema.fundo },
+  overlay: { flex: 1, backgroundColor: tema.fundo },
+  keyboard: { flex: 1 },
+  scroll: { flex: 1 },
+  scrollConteudo: { paddingHorizontal: 20, paddingBottom: 32 },
+
+  topo: {
+    minHeight: 60, flexDirection: "row", alignItems: "center", gap: 12,
+    paddingTop: 8,
+  },
+  btnVoltar: { width: 42, minHeight: 44, alignItems: "flex-start", justifyContent: "center" },
+  btnVoltarPressed: { opacity: 0.7 },
+  tituloPagina: {
+    color: tema.texto, fontSize: tipografia.secao,
+    fontFamily: fontes.appBold,
+  },
+  apresentacao: { marginTop: 1, marginBottom: 14 },
+  aviso: {
+    color: tema.textoSecundario, fontSize: tipografia.legenda,
+    lineHeight: 21, fontFamily: fontes.appRegular,
+  },
+
+  areaAvatar: { alignItems: "center", marginTop: 6, marginBottom: 21 },
+  avatarContainer: { width: 112, height: 112, position: "relative" },
+  avatar: {
+    width: 112, height: 112, borderRadius: 56,
+    backgroundColor: tema.card, borderWidth: 3, borderColor: tema.destaque,
+  },
+  btnEditarFoto: {
+    position: "absolute", bottom: 0, right: -3,
+    width: 38, height: 38, borderRadius: 19,
+    backgroundColor: cores.douradoBotao, borderWidth: 3, borderColor: tema.fundo,
+    alignItems: "center", justifyContent: "center",
+  },
+  textoFoto: {
+    fontSize: tipografia.legenda, fontFamily: fontes.appSemiBold,
+    color: tema.destaque, marginTop: 8, textAlign: "center",
+  },
+  tituloGrupo: {
+    color: tema.texto, fontSize: tipografia.secao,
+    fontFamily: fontes.appSemiBold, marginTop: 16, marginBottom: 16,
+  },
+
+  campoGrupo: { marginBottom: 16 },
+  label: {
+    fontSize: tipografia.label, fontFamily: fontes.appMedium,
+    color: tema.texto, marginBottom: 8,
+  },
+  // Cada campo é uma superfície única, sem cartões adicionais à sua volta.
+  input: {
+    width: "100%", height: 52, paddingHorizontal: 15, paddingVertical: 12,
+    borderRadius: 13, borderWidth: 1, borderColor: tema.borda,
+    backgroundColor: tema.input, color: tema.texto,
+    fontSize: tipografia.corpo, fontFamily: fontes.appRegular,
+  },
+  inputDescricao: {
+    width: "100%", minHeight: 116, paddingHorizontal: 15, paddingVertical: 13,
+    borderRadius: 13, borderWidth: 1, borderColor: tema.borda,
+    backgroundColor: tema.input, color: tema.texto,
+    fontSize: tipografia.corpo, lineHeight: 24, fontFamily: fontes.appRegular,
+  },
+  seletorEstado: {
+    minHeight: 52, paddingHorizontal: 15, borderRadius: 13,
+    borderWidth: 1, borderColor: tema.borda,
+    backgroundColor: tema.input, flexDirection: "row",
+    alignItems: "center", justifyContent: "space-between",
+  },
+  valorEstado: { fontSize: tipografia.corpo, fontFamily: fontes.appRegular, color: tema.texto },
+  contadorBio: {
+    fontSize: tipografia.legenda, fontFamily: fontes.appRegular,
+    color: tema.textoSecundario, textAlign: "right", marginTop: -10, marginBottom: 10,
+  },
+  campoSomenteLeitura: {
+    minHeight: 52, justifyContent: "center", paddingHorizontal: 15,
+    borderRadius: 13, borderWidth: 1, borderColor: tema.borda,
+    backgroundColor: tema.cardSecundario,
+  },
+  textoSomenteLeitura: {
+    color: tema.textoSecundario, fontSize: tipografia.corpo,
+    fontFamily: fontes.appRegular,
+  },
+  // Usado no estado de falha de carregamento.
+  cardCampo: {
+    backgroundColor: tema.card, borderWidth: 1,
+    borderColor: tema.borda, borderRadius: 13,
+    padding: 16,
+  },
+  btnSalvar: {
+    minHeight: 54, alignItems: "center", justifyContent: "center",
+    borderRadius: 13, backgroundColor: cores.douradoBotao,
+    marginTop: 14, marginBottom: 12,
+  },
+  btnSalvarPressed: { opacity: 0.75 },
+  txtSalvar: {
+    color: cores.pretoPrincipal, fontSize: tipografia.botao,
+    fontFamily: fontes.appBold,
+  },
 });
 
-
-// =====================================================
-// COMPATIBILIDADE
-// =====================================================
-// Mantém o import antigo funcionando no tema escuro.
-// Para tema dinâmico, use:
-// const { coresTema } = useTema();
-// const editarPerfilStyles = criarEditarPerfilStyles(coresTema);
-
-export const editarPerfilStyles =
-    criarEditarPerfilStyles(temaEscuro);
+export const editarPerfilStyles = criarEditarPerfilStyles(temaEscuro);

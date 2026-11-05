@@ -57,24 +57,24 @@ export const criarEnquetesStyles = (tema: CoresTema) =>
     titulo: {
       color: tema.texto,
 
-      fontSize: 22,
+      fontSize: 28,
 
-      fontFamily: fontes.negrito,
+      fontFamily: fontes.appBold,
     },
 
     subtitulo: {
       color: tema.textoSecundario,
 
-      fontSize: 12,
+      fontSize: 15,
 
-      fontFamily: fontes.normal,
+      fontFamily: fontes.appRegular,
 
       marginTop: 3,
     },
 
     filtros: {
       width: "100%",
-      height: 45,
+      minHeight: 54,
 
       flexDirection: "row",
       alignItems: "center",
@@ -106,11 +106,12 @@ export const criarEnquetesStyles = (tema: CoresTema) =>
     },
 
     textoFiltro: {
+      flexShrink: 1,
       color: tema.textoSecundario,
 
-      fontSize: 11,
+      fontSize: 14,
 
-      fontFamily: fontes.negrito,
+      fontFamily: fontes.appSemiBold,
 
       textAlign: "center",
     },
@@ -188,17 +189,17 @@ export const criarEnquetesStyles = (tema: CoresTema) =>
     nomeAutor: {
       color: tema.texto,
 
-      fontSize: 12,
+      fontSize: 17,
 
-      fontFamily: fontes.negrito,
+      fontFamily: fontes.appSemiBold,
     },
 
     tempo: {
       color: tema.textoSecundario,
 
-      fontSize: 10,
+      fontSize: 14,
 
-      fontFamily: fontes.normal,
+      fontFamily: fontes.appRegular,
 
       marginTop: 2,
     },
@@ -222,19 +223,19 @@ export const criarEnquetesStyles = (tema: CoresTema) =>
     badgeRespondidaTexto: {
       color: tema.destaque,
 
-      fontSize: 9,
+      fontSize: 13,
 
-      fontFamily: fontes.negrito,
+      fontFamily: fontes.appSemiBold,
     },
 
     pergunta: {
       color: tema.texto,
 
-      fontSize: 16,
+      fontSize: 18,
 
       lineHeight: 22,
 
-      fontFamily: fontes.negrito,
+      fontFamily: fontes.appSemiBold,
 
       marginBottom: 14,
     },
@@ -264,9 +265,9 @@ export const criarEnquetesStyles = (tema: CoresTema) =>
     totalVotosTexto: {
       color: tema.textoSecundario,
 
-      fontSize: 11,
+      fontSize: 14,
 
-      fontFamily: fontes.normal,
+      fontFamily: fontes.appRegular,
     },
 
     btnParticipar: {
@@ -276,9 +277,9 @@ export const criarEnquetesStyles = (tema: CoresTema) =>
 
       gap: 5,
 
-      paddingHorizontal: 12,
+      paddingHorizontal: 14,
 
-      paddingVertical: 8,
+      paddingVertical: 11,
 
       borderRadius: 18,
 
@@ -286,11 +287,11 @@ export const criarEnquetesStyles = (tema: CoresTema) =>
     },
 
     btnParticiparTexto: {
-      color: tema.fundo,
+      color: tema.textoSobreDestaque,
 
-      fontSize: 11,
+      fontSize: 15,
 
-      fontFamily: fontes.negrito,
+      fontFamily: fontes.appSemiBold,
     },
 
     // =====================================
@@ -310,9 +311,9 @@ export const criarEnquetesStyles = (tema: CoresTema) =>
     tituloVotacao: {
       color: tema.texto,
 
-      fontSize: 12,
+      fontSize: 16,
 
-      fontFamily: fontes.negrito,
+      fontFamily: fontes.appSemiBold,
 
       marginBottom: 10,
     },
@@ -322,7 +323,7 @@ export const criarEnquetesStyles = (tema: CoresTema) =>
     },
 
     opcao: {
-      minHeight: 42,
+      minHeight: 48,
 
       flexDirection: "row",
 
@@ -375,11 +376,12 @@ export const criarEnquetesStyles = (tema: CoresTema) =>
     },
 
     textoOpcao: {
+      flexShrink: 1,
       color: tema.texto,
 
-      fontSize: 12,
+      fontSize: 16,
 
-      fontFamily: fontes.normal,
+      fontFamily: fontes.appRegular,
     },
 
     botoesVotacao: {
@@ -393,7 +395,7 @@ export const criarEnquetesStyles = (tema: CoresTema) =>
     btnCancelar: {
       flex: 1,
 
-      minHeight: 40,
+      minHeight: 48,
 
       alignItems: "center",
       justifyContent: "center",
@@ -408,15 +410,15 @@ export const criarEnquetesStyles = (tema: CoresTema) =>
     btnCancelarTexto: {
       color: tema.textoSecundario,
 
-      fontSize: 11,
+      fontSize: 15,
 
-      fontFamily: fontes.negrito,
+      fontFamily: fontes.appSemiBold,
     },
 
     btnConfirmar: {
       flex: 1,
 
-      minHeight: 40,
+      minHeight: 48,
 
       alignItems: "center",
       justifyContent: "center",
@@ -431,11 +433,11 @@ export const criarEnquetesStyles = (tema: CoresTema) =>
     },
 
     btnConfirmarTexto: {
-      color: tema.fundo,
+      color: tema.textoSobreDestaque,
 
-      fontSize: 11,
+      fontSize: 15,
 
-      fontFamily: fontes.negrito,
+      fontFamily: fontes.appSemiBold,
     },
 
     // =====================================
@@ -455,9 +457,9 @@ export const criarEnquetesStyles = (tema: CoresTema) =>
     minhaResposta: {
       color: tema.destaque,
 
-      fontSize: 11,
+      fontSize: 14,
 
-      fontFamily: fontes.negrito,
+      fontFamily: fontes.appSemiBold,
 
       marginBottom: 12,
     },
@@ -479,17 +481,17 @@ export const criarEnquetesStyles = (tema: CoresTema) =>
     resultadoNome: {
       color: tema.texto,
 
-      fontSize: 11,
+      fontSize: 15,
 
-      fontFamily: fontes.negrito,
+      fontFamily: fontes.appSemiBold,
     },
 
     resultadoPercentual: {
       color: tema.textoSecundario,
 
-      fontSize: 10,
+      fontSize: 14,
 
-      fontFamily: fontes.normal,
+      fontFamily: fontes.appRegular,
     },
 
     barra: {
@@ -526,9 +528,9 @@ export const criarEnquetesStyles = (tema: CoresTema) =>
     mensagem: {
       color: tema.textoSecundario,
 
-      fontSize: 12,
+      fontSize: 15,
 
-      fontFamily: fontes.normal,
+      fontFamily: fontes.appRegular,
 
       textAlign: "center",
 
@@ -550,9 +552,9 @@ export const criarEnquetesStyles = (tema: CoresTema) =>
 
       color: tema.texto,
 
-      fontSize: 11,
+      fontSize: 14,
 
-      fontFamily: fontes.normal,
+      fontFamily: fontes.appRegular,
     },
 
     carregandoMais: {

@@ -13,11 +13,11 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { SymbolView } from "expo-symbols";
+import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useTema } from "@/contexts/TemaContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { criarHeaderStyles } from "@/styles/headerStyles";
-import { getUrlFotoUsuario } from "@/services/usuarioService";
 import {
   buscarNotificacoes,
   marcarNotificacaoComoLida,
@@ -97,20 +97,18 @@ function adaptarNotificacao(item: NotificacaoApi): Notificacao {
     tipoReferencia: item.tipo_referencia,
   };
 }
-export default function HeaderScreen({ fotoUsuario }: HeaderProps) {
+export default function HeaderScreen(_props: HeaderProps) {
   const { coresTema } = useTema();
-  const { token, usuario } = useAuth();
+  const { token } = useAuth();
   const { width: larguraTela } = useWindowDimensions();
   const headerStyles = criarHeaderStyles(coresTema);
-  const fotoUsuarioContexto = getUrlFotoUsuario(usuario?.foto_usuario ?? null);
-  const fotoExibida = fotoUsuario ?? fotoUsuarioContexto;
   const [modalLinkSenha, setModalLinkSenha] = useState(false);
   const [notificacoesVisiveis, setNotificacoesVisiveis] = useState(false);
   const [notificacoes, setNotificacoes] = useState<Notificacao[]>([]);
   const [filtroNotificacao, setFiltroNotificacao] =
     useState<FiltroNotificacao>("todas");
   const larguraOffcanvas = Math.min(larguraTela * 0.88, 380);
-  const translateX = useRef(new Animated.Value(larguraOffcanvas)).current;
+  const translateX = useRef(new Animated.Value(-larguraOffcanvas)).current;
   // =====================================
   // CARREGAR NOTIFICAÇÕES
   // =====================================
@@ -152,7 +150,7 @@ export default function HeaderScreen({ fotoUsuario }: HeaderProps) {
   // =====================================
   function abrirNotificacoes() {
     carregarNotificacoes();
-    translateX.setValue(larguraOffcanvas);
+    translateX.setValue(-larguraOffcanvas);
     setNotificacoesVisiveis(true);
     requestAnimationFrame(() => {
       Animated.timing(translateX, {
@@ -167,7 +165,7 @@ export default function HeaderScreen({ fotoUsuario }: HeaderProps) {
   // =====================================
   function fecharNotificacoes() {
     Animated.timing(translateX, {
-      toValue: larguraOffcanvas,
+      toValue: -larguraOffcanvas,
       duration: 220,
       useNativeDriver: Platform.OS !== "web",
     }).start(() => {
@@ -219,7 +217,7 @@ export default function HeaderScreen({ fotoUsuario }: HeaderProps) {
       await marcarComoLida(notificacao.id);
     }
     setNotificacoesVisiveis(false);
-    translateX.setValue(larguraOffcanvas);
+    translateX.setValue(-larguraOffcanvas);
     // =================================
     // SOLICITAÇÃO DE CONEXÃO
     // CONEXÃO ACEITA
@@ -291,81 +289,50 @@ export default function HeaderScreen({ fotoUsuario }: HeaderProps) {
   }
   return (
     <View style={headerStyles.header}>
-      {/* =========================
-                LADO ESQUERDO
-            ========================= */}
-      <View style={headerStyles.ladoHeader}>
-        <Pressable
-          style={({ pressed }) => [
-            headerStyles.perfil,
-            pressed && headerStyles.btnPressed,
-          ]}
-          onPress={() => router.push("/perfil")}
-          accessibilityRole="button"
-          accessibilityLabel="Abrir meu perfil"
-        >
-          <Image
-            source={
-              fotoExibida
-                ? {
-                  uri: fotoExibida,
-                }
-                : require("@/assets/images/img/avatar.png")
-            }
-            style={headerStyles.fotoPerfil}
-            resizeMode="cover"
-          />
-        </Pressable>
-      </View>
-      {/* =========================
-                LOGO
-            ========================= */}
-      <View style={headerStyles.logoContainer} pointerEvents="none">
-        <Image
-          source={require("@/assets/images/img/logo.svg")}
-          style={headerStyles.logo}
+      {/* Notificações na extremidade esquerda. */}
+      <Pressable
+        style={({ pressed }) => [
+          headerStyles.btnHeader,
+          pressed && headerStyles.btnPressed,
+        ]}
+        onPress={abrirNotificacoes}
+        accessibilityRole="button"
+        accessibilityLabel={
+          quantidadeNaoLidas > 0
+            ? `Notificações, ${quantidadeNaoLidas} não lidas`
+            : "Notificações"
+        }
+      >
+        <SymbolView
+          name={{
+            ios: "bell",
+            android: "notifications_none",
+            web: "notifications_none",
+          }}
+          size={24}
+          tintColor={coresTema.destaque}
         />
-        <Text style={headerStyles.nomeProjeto}>Conexão 360°</Text>
-        <Text style={headerStyles.sloganProjeto} numberOfLines={1}>
-          PESSOAS • CONHECIMENTO • OPORTUNIDADES
+        {quantidadeNaoLidas > 0 && (
+          <View style={headerStyles.badgeNotificacao}>
+            <Text style={headerStyles.badgeNotificacaoTexto}>
+              {quantidadeNaoLidas > 9 ? "9+" : quantidadeNaoLidas}
+            </Text>
+          </View>
+        )}
+      </Pressable>
+
+      {/* Marca contínua com o fundo da tela. */}
+      <View style={headerStyles.marcaContainer}>
+        {/* <View style={headerStyles.logoMarca}>
+          <Ionicons name="scale-outline" size={24} color={coresTema.destaque} />
+        </View> */}
+        <Text style={headerStyles.nomeProjeto} numberOfLines={1}>
+          Conexão <Text style={headerStyles.nomeDestaque}>360°</Text>
         </Text>
       </View>
-      {/* =========================
-                AÇÕES
-            ========================= */}
+
+      {/* Menu lateral na extremidade direita. */}
       <View style={headerStyles.acoesHeader}>
-        {/* NOTIFICAÇÕES */}
-        <Pressable
-          style={({ pressed }) => [
-            headerStyles.btnHeader,
-            pressed && headerStyles.btnPressed,
-          ]}
-          onPress={abrirNotificacoes}
-          accessibilityRole="button"
-          accessibilityLabel={
-            quantidadeNaoLidas > 0
-              ? `Notificações, ${quantidadeNaoLidas} não lidas`
-              : "Notificações"
-          }
-        >
-          <SymbolView
-            name={{
-              ios: "bell",
-              android: "notifications_none",
-              web: "notifications_none",
-            }}
-            size={24}
-            tintColor={coresTema.destaque}
-          />
-          {quantidadeNaoLidas > 0 && (
-            <View style={headerStyles.badgeNotificacao}>
-              <Text style={headerStyles.badgeNotificacaoTexto}>
-                {quantidadeNaoLidas > 9 ? "9+" : quantidadeNaoLidas}
-              </Text>
-            </View>
-          )}
-        </Pressable>
-        {/* MENU */}
         <Pressable
           style={({ pressed }) => [
             headerStyles.btnHeader,
@@ -375,10 +342,7 @@ export default function HeaderScreen({ fotoUsuario }: HeaderProps) {
           accessibilityRole="button"
           accessibilityLabel="Abrir menu"
         >
-          <Image
-            source={require("@/assets/images/img/menu.png")}
-            style={headerStyles.iconeHeader}
-          />
+          <Ionicons name="menu-outline" size={28} color={coresTema.destaque} />
         </Pressable>
       </View>
       {/* =========================

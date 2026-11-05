@@ -1,14 +1,15 @@
 import { useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
-import { Alert, Image, ImageBackground, KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, TextInput, View } from "react-native";
+import { Alert, ImageBackground, KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import globalStyle from "@/styles/globalStyles";
+import AuthBrand from "@/components/AuthBrand";
 import { criarCadClienteStyles } from "@/styles/cadClientStyles";
 import { useTema } from "@/contexts/TemaContext";
 import { solicitarCodigoCadastro } from "@/services/verificacaoEmailService";
 import { salvarCadastroPendente } from "@/services/cadastroPendente";
 import AceiteDocumentosCadastro from "@/components/AceiteDocumentosCadastro";
+
 export default function CadClienteScreen() {
     // =====================================
     // TEMA
@@ -119,203 +120,99 @@ export default function CadClienteScreen() {
     // =====================================
     // TELA
     // =====================================
-    return (<View style={globalStyle.container}>
-
-      <ImageBackground source={require("@/assets/images/img/fundoLogin.png")} style={globalStyle.background} resizeMode="stretch">
-
-        <SafeAreaView style={cadClienteStyle.safeArea}>
-
-          <KeyboardAvoidingView style={cadClienteStyle.keyboard} behavior={Platform.OS === "ios" ? "padding" : undefined}>
-
-            <ScrollView style={cadClienteStyle.scroll} contentContainerStyle={cadClienteStyle.scrollConteudo} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
-
-              <View style={cadClienteStyle.conteudo}>
-
-                {/* ================================
-
-                            CONTEÚDO SUPERIOR
-
-                        ================================= */}
-
-                <View style={cadClienteStyle.conteudoTopo}>
-
-                  <Image style={globalStyle.logoMenor} source={require("@/assets/images/img/logo.svg")}/>
-
-                  <Text style={cadClienteStyle.subtitulo}>Criar Conta</Text>
-
-                  <Text style={cadClienteStyle.titulo}>
-
-                    Seja <Text style={cadClienteStyle.tituloDourado}>Exponencial</Text>
-
-                  </Text>
-
-                  <Text style={cadClienteStyle.inf}>Informe seus dados para fazer parte da Conexão 360°.</Text>
-
-                </View>
-
-                {/* ================================
-
-                            CAMPOS
-
-                        ================================= */}
-
-                <View style={cadClienteStyle.cardInput}>
-
-                  {/* NOME */}
-
-                  <View style={cadClienteStyle.input}>
-
-                    <Image style={cadClienteStyle.icon} source={require("@/assets/images/img/usuario.png")}/>
-
-                    <TextInput style={cadClienteStyle.txtInput} placeholder="Nome completo" placeholderTextColor={coresPlaceholder} value={nome} onChangeText={setNome} autoCapitalize="words" autoCorrect={false} editable={!cadastrando} maxLength={100}/>
-
-                  </View>
-
-                  {/* E-MAIL */}
-
-                  <View style={cadClienteStyle.input}>
-
-                    <Image style={cadClienteStyle.icon} source={require("@/assets/images/img/e-mail.png")}/>
-
-                    <TextInput style={cadClienteStyle.txtInput} placeholder="E-mail" placeholderTextColor={coresPlaceholder} value={email} onChangeText={setEmail} keyboardType="email-address" autoCapitalize="none" autoCorrect={false} editable={!cadastrando} maxLength={80}/>
-
-                  </View>
-
-                  {/* ÁREA DE ATUAÇÃO */}
-
-                  <View style={cadClienteStyle.input}>
-
-                    <Image style={cadClienteStyle.icon} source={require("@/assets/images/img/usuario.png")}/>
-
-                    <TextInput style={cadClienteStyle.txtInput} placeholder="Área de atuação" placeholderTextColor={coresPlaceholder} value={areaAtuacao} onChangeText={setAreaAtuacao} autoCapitalize="sentences" editable={!cadastrando} maxLength={150}/>
-
-                  </View>
-
-                  {/* ESTADO */}
-
-                  <View style={cadClienteStyle.input}>
-
-                    <Image style={cadClienteStyle.icon} source={require("@/assets/images/img/usuario.png")}/>
-
-                    <TextInput style={cadClienteStyle.txtInput} placeholder="Estado - Ex.: SP" placeholderTextColor={coresPlaceholder} value={estado} onChangeText={(texto) => setEstado(texto
-            .replace(/[^a-zA-Z]/g, "")
-            .toUpperCase()
-            .slice(0, 2))} autoCapitalize="characters" autoCorrect={false} editable={!cadastrando} maxLength={2}/>
-
-                  </View>
-
-                  {/* SENHA */}
-
-                  <View style={cadClienteStyle.input}>
-
-                    <Image style={cadClienteStyle.icon} source={require("@/assets/images/img/trancar.png")}/>
-
-                    <TextInput style={cadClienteStyle.txtInput} placeholder="Senha" placeholderTextColor={coresPlaceholder} value={senha} onChangeText={setSenha} secureTextEntry={!mostrarSenha} autoCapitalize="none" autoCorrect={false} editable={!cadastrando} maxLength={255}/>
+    return (
+      <View style={cadClienteStyle.container}>
+        <ImageBackground source={require("@/assets/images/img/fundoLogin.png")} style={cadClienteStyle.background} resizeMode="stretch">
+          <View style={cadClienteStyle.overlay}>
+            <SafeAreaView style={cadClienteStyle.safeArea}>
+              <KeyboardAvoidingView style={cadClienteStyle.keyboard} behavior={Platform.OS === "ios" ? "padding" : undefined}>
+                <ScrollView style={cadClienteStyle.scroll} contentContainerStyle={cadClienteStyle.scrollConteudo} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
+                  <View style={cadClienteStyle.conteudo}>
+                    <View style={cadClienteStyle.back}>
+                      <Pressable style={cadClienteStyle.backTap} onPress={() => router.replace("/")} accessibilityLabel="Voltar">
+                        <Ionicons name="arrow-back" size={25} color="#FFFFFF" />
+                      </Pressable>
+                      <Text style={cadClienteStyle.appTitle}>Conexão <Text style={cadClienteStyle.appTitleGold}>360°</Text></Text>
+                      <View style={cadClienteStyle.backSpacer} />
+                    </View>
+                    <AuthBrand compact />
+                    <View style={cadClienteStyle.conteudoTopo}>
+                      <Ionicons name="person-add-outline" size={46} color="#F0C247" style={cadClienteStyle.heroIcon} />
+                      <Text style={cadClienteStyle.subtitulo}>Criar Conta</Text>
+                      <Text style={cadClienteStyle.titulo}>Seja <Text style={cadClienteStyle.tituloDourado}>Exponencial</Text></Text>
+                      <Text style={cadClienteStyle.inf}>Informe seus dados para fazer parte da Conexão 360°.</Text>
+                    </View>
+                    <View style={cadClienteStyle.cardInput}>
+                      <View style={cadClienteStyle.input}>
+                        <Ionicons name="person-outline" color="#F0C247" size={22} style={{ marginRight: 12 }} />
+                        <TextInput style={cadClienteStyle.txtInput} placeholder="Nome completo" placeholderTextColor="#BFC0C6" value={nome} onChangeText={setNome} autoCapitalize="words" autoCorrect={false} editable={!cadastrando} maxLength={100} />
+                      </View>
+                      <View style={cadClienteStyle.input}>
+                        <Ionicons name="mail-outline" color="#F0C247" size={22} style={{ marginRight: 12 }} />
+                        <TextInput style={cadClienteStyle.txtInput} placeholder="E-mail" placeholderTextColor="#BFC0C6" value={email} onChangeText={setEmail} keyboardType="email-address" autoCapitalize="none" autoCorrect={false} editable={!cadastrando} maxLength={80} />
+                      </View>
+                      <View style={cadClienteStyle.input}>
+                        <Ionicons name="briefcase-outline" color="#F0C247" size={22} style={{ marginRight: 12 }} />
+                        <TextInput style={cadClienteStyle.txtInput} placeholder="Área de atuação" placeholderTextColor="#BFC0C6" value={areaAtuacao} onChangeText={setAreaAtuacao} autoCapitalize="sentences" editable={!cadastrando} maxLength={150} />
+                      </View>
+                      <View style={cadClienteStyle.input}>
+                        <Ionicons name="location-outline" color="#F0C247" size={22} style={{ marginRight: 12 }} />
+                        <TextInput
+                          style={cadClienteStyle.txtInput} placeholder="Estado — ex.: SP" placeholderTextColor="#BFC0C6"
+                          value={estado} onChangeText={(valor) => setEstado(valor.replace(/[^a-zA-Z]/g, "").toUpperCase().slice(0, 2))}
+                          autoCapitalize="characters" autoCorrect={false} editable={!cadastrando} maxLength={2}
+                        />
+                      </View>
+                      <View style={cadClienteStyle.input}>
+                        <Ionicons name="lock-closed-outline" color="#F0C247" size={22} style={{ marginRight: 12 }} />
+                        <TextInput style={cadClienteStyle.txtInput} placeholder="Senha" placeholderTextColor="#BFC0C6" value={senha} onChangeText={setSenha} secureTextEntry={!mostrarSenha} autoCapitalize="none" autoCorrect={false} editable={!cadastrando} maxLength={255} />
+                        <Pressable style={cadClienteStyle.eyeTap} accessibilityLabel={mostrarSenha ? "Ocultar senha" : "Mostrar senha"} onPress={() => setMostrarSenha((anterior) => !anterior)}>
+                          <Ionicons name={mostrarSenha ? "eye-off-outline" : "eye-outline"} size={23} color="#D5D5D8" />
+                        </Pressable>
+                      </View>
+                      <View style={cadClienteStyle.input}>
+                        <Ionicons name="lock-closed-outline" color="#F0C247" size={22} style={{ marginRight: 12 }} />
+                        <TextInput style={cadClienteStyle.txtInput} placeholder="Confirmar senha" placeholderTextColor="#BFC0C6" value={confirmarSenha} onChangeText={setConfirmarSenha} secureTextEntry={!mostrarConfirmacao} autoCapitalize="none" autoCorrect={false} editable={!cadastrando} maxLength={255} onSubmitEditing={criarConta} />
+                        <Pressable style={cadClienteStyle.eyeTap} accessibilityLabel={mostrarConfirmacao ? "Ocultar confirmação da senha" : "Mostrar confirmação da senha"} onPress={() => setMostrarConfirmacao((anterior) => !anterior)}>
+                          <Ionicons name={mostrarConfirmacao ? "eye-off-outline" : "eye-outline"} size={23} color="#D5D5D8" />
+                        </Pressable>
+                      </View>
+                    </View>
+                    <View style={cadClienteStyle.passwordInfo}>
+                      <Text style={cadClienteStyle.passwordTitle}>Sua senha deve conter:</Text>
+                      <Text style={cadClienteStyle.passwordBody}>✓ No mínimo 8 caracteres</Text>
+                    </View>
+                    <View style={cadClienteStyle.termsBox}>
+                      <AceiteDocumentosCadastro
+                        aceitouTermos={termosAceitos} confirmouPrivacidade={confirmouPrivacidade}
+                        onChangeTermos={setTermosAceitos} onChangePrivacidade={setConfirmouPrivacidade}
+                        desabilitado={cadastrando} darkOnImage
+                      />
+                    </View>
                     <Pressable
-                      accessibilityRole="button"
-                      accessibilityLabel={mostrarSenha ? "Ocultar senha" : "Mostrar senha"}
-                      hitSlop={8}
-                      onPress={() => setMostrarSenha((anterior) => !anterior)}
-                      style={{ paddingHorizontal: 12, paddingVertical: 9 }}
+                      style={({ pressed }) => [cadClienteStyle.btnCriar, (cadastrando || !termosAceitos || !confirmouPrivacidade) && cadClienteStyle.btnCriarDesabilitado, pressed && !cadastrando && cadClienteStyle.btnCriarPressed]}
+                      onPress={criarConta} disabled={cadastrando || !termosAceitos || !confirmouPrivacidade}
                     >
-                      <Ionicons name={mostrarSenha ? "eye-off-outline" : "eye-outline"} size={22} color={coresTema.textoSecundario} />
+                      <Text style={cadClienteStyle.txtCriar}>{cadastrando ? "Enviando código..." : "Enviar código de verificação"}</Text>
                     </Pressable>
-
-                  </View>
-
-                  {/* CONFIRMAR SENHA */}
-
-                  <View style={[cadClienteStyle.input, cadClienteStyle.inputUltimo]}>
-
-                    <Image style={cadClienteStyle.icon} source={require("@/assets/images/img/trancar.png")}/>
-
-                    <TextInput style={cadClienteStyle.txtInput} placeholder="Confirmar senha" placeholderTextColor={coresPlaceholder} value={confirmarSenha} onChangeText={setConfirmarSenha} secureTextEntry={!mostrarConfirmacao} autoCapitalize="none" autoCorrect={false} editable={!cadastrando} maxLength={255} onSubmitEditing={criarConta}/>
-                    <Pressable
-                      accessibilityRole="button"
-                      accessibilityLabel={mostrarConfirmacao ? "Ocultar confirmação da senha" : "Mostrar confirmação da senha"}
-                      hitSlop={8}
-                      onPress={() => setMostrarConfirmacao((anterior) => !anterior)}
-                      style={{ paddingHorizontal: 12, paddingVertical: 9 }}
-                    >
-                      <Ionicons name={mostrarConfirmacao ? "eye-off-outline" : "eye-outline"} size={22} color={coresTema.textoSecundario} />
+                    {feedback && (
+                      <View accessibilityRole="alert" style={[cadClienteStyle.feedback, { borderColor: feedback.tipo === "erro" ? "#CA6868" : "#D4AF37", backgroundColor: feedback.tipo === "erro" ? "rgba(53,31,36,0.94)" : "rgba(44,42,29,0.94)" }]}>
+                        <Text style={[cadClienteStyle.feedbackText, { color: feedback.tipo === "erro" ? "#FFD8D8" : "#F6E6BD" }]}>{feedback.texto}</Text>
+                      </View>
+                    )}
+                    <Pressable style={({ pressed }) => [cadClienteStyle.btnVoltar, pressed && cadClienteStyle.btnVoltarPressed]} onPress={() => router.replace("/")} disabled={cadastrando}>
+                      <Text style={cadClienteStyle.txtVoltar}>Já tem uma conta? Entrar</Text>
                     </Pressable>
-
+                    <View style={cadClienteStyle.slogan}>
+                      <Text style={cadClienteStyle.sloganTitle}>NETWORKING DE ALTO NÍVEL</Text>
+                      <Text style={cadClienteStyle.sloganSubtitle}>Conhecimento <Text style={cadClienteStyle.sloganGold}>Exponencial</Text></Text>
+                    </View>
                   </View>
-
-                </View>
-
-                {/* ================================
-
-                            TERMOS E PRIVACIDADE
-
-                        ================================= */}
-
-
-
-                <AceiteDocumentosCadastro aceitouTermos={termosAceitos} confirmouPrivacidade={confirmouPrivacidade} onChangeTermos={setTermosAceitos} onChangePrivacidade={setConfirmouPrivacidade} desabilitado={cadastrando}/>
-
-
-
-                {/* ================================
-
-                            CRIAR CONTA
-
-                        ================================= */}
-
-                <Pressable style={({ pressed }) => [
-            cadClienteStyle.btnCriar,
-            (cadastrando || !termosAceitos || !confirmouPrivacidade) && cadClienteStyle.btnCriarDesabilitado,
-            pressed && !cadastrando && cadClienteStyle.btnCriarPressed,
-        ]} onPress={criarConta} disabled={cadastrando || !termosAceitos || !confirmouPrivacidade}>
-
-                  <Text style={cadClienteStyle.txtCriar}>{cadastrando ? "Enviando código..." : "Enviar código de verificação"}</Text>
-
-                </Pressable>
-
-                {feedback && (
-                  <View
-                    accessibilityRole="alert"
-                    style={{
-                      marginTop: 12,
-                      paddingVertical: 12,
-                      paddingHorizontal: 14,
-                      borderRadius: 10,
-                      borderWidth: 1,
-                      borderColor: feedback.tipo === "erro" ? "#CA6868" : coresTema.destaque,
-                      backgroundColor: feedback.tipo === "erro" ? "#351F24" : "#2C2A1D",
-                    }}
-                  >
-                    <Text style={{ color: feedback.tipo === "erro" ? "#FFD8D8" : "#F6E6BD", fontSize: 13, lineHeight: 19 }}>
-                      {feedback.texto}
-                    </Text>
-                  </View>
-                )}
-
-                {/* ================================
-
-                            VOLTAR AO LOGIN
-
-                        ================================= */}
-
-                <Pressable style={({ pressed }) => [
-            cadClienteStyle.btnVoltar,
-            pressed && !cadastrando && cadClienteStyle.btnVoltarPressed,
-        ]} onPress={() => router.back()} disabled={cadastrando}>
-
-                  <Text style={cadClienteStyle.txtVoltar}>Voltar ao login</Text>
-
-                </Pressable>
-
-              </View>
-
-            </ScrollView>
-
-          </KeyboardAvoidingView>
-
-        </SafeAreaView>
-
-      </ImageBackground>
-
-    </View>);
+                </ScrollView>
+              </KeyboardAvoidingView>
+            </SafeAreaView>
+          </View>
+        </ImageBackground>
+      </View>
+    );
 }
-const coresPlaceholder = "#888888";

@@ -1,109 +1,219 @@
 import { StyleSheet } from "react-native";
-import { cores } from "./variaveis";
-import { fontes } from "./variaveis";
+import { cores, fontes, tipografia } from "./variaveis";
+import { CoresTema, temaEscuro } from "./temas";
 
-export const enviarLinkStyle = StyleSheet.create({
-  conteudo: {
-    flex: 1,
-    alignItems: "center",
-    paddingHorizontal: 18,
-  },
+/** Verificação por e-mail — mesma identidade da tela Alterar senha. */
+export function criarEnviarLinkStyles(tema: CoresTema) {
+  const escuro = tema.fundo === temaEscuro.fundo;
+  const caixaInformativa = escuro ? "#282725" : "#FFF9EC";
 
-  conteudoTopo: {
-    width: "100%",
-    marginTop: 60,
-    alignItems: "flex-start",
-  },
-
-  subtitulo: {
-    color: cores.douradoPrincipal,
-    fontSize: fontes.subtitulo,
-    fontFamily: fontes.normal,
-    marginBottom: 6,
-  },
-
-  titulo: {
-    color: cores.branco,
-    fontSize: fontes.titulo,
-    fontFamily: fontes.extraNegrito,
-    marginBottom: 12,
-  },
-
-  tituloDourado: {
-    color: cores.douradoPrincipal,
-  },
-
-  inf: {
-    color: cores.branco,
-    lineHeight: 14,
-    opacity: 0.9,
-  },
-
-  codigoContainer: {
-    width: "100%",
-    flexDirection: "row",
-    justifyContent: "center",
-    gap: 14,
-    marginTop: 20,
-    marginBottom: 50,
-  },
-
-  codigoInput: {
-    width: 44,
-    height: 40,
-    borderWidth: 1,
-    borderColor: cores.douradoPrincipal,
-    borderRadius: 6,
-    backgroundColor: "rgba(0, 0, 0, 0.15)",
-    color: cores.branco,
-    fontSize: 20,
-    fontFamily: fontes.extraNegrito,
-  },
-
-  btnEnviar: {
-    width: "90%",
-    height: 50,
-    backgroundColor: cores.douradoPrincipal,
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: 8,
-    marginTop: 18,
-  },
-
-  btnEnviarPressed: {
-    backgroundColor: cores.douradoPrincipalPressed,
-    transform: cores.btnPress,
-  },
-
-  txtEnviar: {
-    fontSize: fontes.btn,
-    color: cores.roxoPrincipal,
-    fontFamily: fontes.extraNegrito,
-  },
-
-  btnVoltar: {
-    width: "90%",
-    height: 50,
-    backgroundColor: "rgba(0, 0, 0, 0.25)",
-    borderWidth: 1,
-    borderColor: cores.douradoPrincipal,
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: 8,
-
-    // posiciona próximo ao final da tela
-
-    marginVertical: 28,
-  },
-
-  btnVoltarPressed: {
-    backgroundColor: cores.roxoPrincipal80,
-    transform: cores.btnPress,
-  },
-
-  txtVoltar: {
-    fontSize: fontes.btn,
-    color: cores.douradoPrincipal,
-    fontFamily: fontes.extraNegrito,
-  },
-});
+  return StyleSheet.create({
+    container: { flex: 1, backgroundColor: tema.fundo },
+    areaSegura: { flex: 1 },
+    areaFlexivel: { flex: 1 },
+    rolagem: { flex: 1 },
+    conteudo: {
+      flexGrow: 1,
+      paddingHorizontal: 20,
+      paddingTop: 16,
+      paddingBottom: 46,
+      gap: 18,
+    },
+    linhaTitulo: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 12,
+      minHeight: 46,
+    },
+    botaoVoltar: {
+      width: 44,
+      height: 44,
+      justifyContent: "center",
+      alignItems: "center",
+      borderRadius: 22,
+    },
+    tituloPagina: {
+      fontFamily: fontes.appSemiBold,
+      fontSize: tipografia.secao,
+      color: tema.texto,
+      includeFontPadding: false,
+    },
+    apresentacao: {
+      alignItems: "center",
+      gap: 12,
+      marginTop: 10,
+      marginBottom: 4,
+    },
+    emblema: {
+      width: 104,
+      height: 104,
+      borderRadius: 52,
+      backgroundColor: escuro ? "#2D2920" : "#F5E9CF",
+      alignItems: "center",
+      justifyContent: "center",
+      marginBottom: 4,
+    },
+    tituloDestaque: {
+      fontSize: 26,
+      lineHeight: 32,
+      fontFamily: fontes.appBold,
+      color: tema.texto,
+      textAlign: "center",
+      includeFontPadding: false,
+    },
+    descricao: {
+      fontSize: tipografia.corpo,
+      lineHeight: 23,
+      fontFamily: fontes.appRegular,
+      color: tema.textoSecundario,
+      textAlign: "center",
+      maxWidth: 340,
+    },
+    caixaEmail: {
+      marginTop: 9,
+      width: "100%",
+      minHeight: 56,
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: 11,
+      paddingVertical: 10,
+      paddingHorizontal: 14,
+      borderRadius: 13,
+      borderWidth: 1,
+      borderColor: escuro ? "#9E802B" : "#D6B26A",
+      backgroundColor: caixaInformativa,
+    },
+    textoEmail: {
+      flexShrink: 1,
+      fontFamily: fontes.appSemiBold,
+      fontSize: tipografia.label,
+      lineHeight: 21,
+      color: tema.texto,
+      textAlign: "center",
+    },
+    labelCodigo: {
+      marginTop: 2,
+      fontFamily: fontes.appSemiBold,
+      fontSize: 17,
+      color: tema.texto,
+    },
+    linhaCodigo: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      gap: 7,
+      width: "100%",
+    },
+    caixaCodigo: {
+      flex: 1,
+      minWidth: 0,
+      maxWidth: 58,
+      height: 59,
+      paddingHorizontal: 0,
+      borderWidth: 1,
+      borderColor: tema.borda,
+      borderRadius: 13,
+      backgroundColor: tema.input,
+      color: tema.texto,
+      fontSize: 23,
+      fontFamily: fontes.appBold,
+      textAlign: "center",
+      includeFontPadding: false,
+    },
+    caixaAjuda: {
+      flexDirection: "row",
+      alignItems: "flex-start",
+      gap: 10,
+      paddingVertical: 14,
+      paddingHorizontal: 14,
+      borderRadius: 14,
+      borderWidth: 1,
+      borderColor: escuro ? "#90752A" : "#D0AE50",
+      backgroundColor: caixaInformativa,
+      marginTop: 7,
+    },
+    ajudaTextos: { flex: 1, gap: 5 },
+    ajudaTitulo: {
+      color: tema.destaque,
+      fontFamily: fontes.appSemiBold,
+      fontSize: tipografia.corpo,
+      lineHeight: 21,
+    },
+    ajudaDescricao: {
+      flex: 1,
+      color: tema.texto,
+      fontFamily: fontes.appRegular,
+      fontSize: tipografia.legenda,
+      lineHeight: 21,
+    },
+    tempoValidade: {
+      fontFamily: fontes.appRegular,
+      fontSize: tipografia.legenda,
+      color: tema.textoSecundario,
+      textAlign: "center",
+      marginTop: 4,
+    },
+    botaoReenviar: {
+      alignItems: "center",
+      justifyContent: "center",
+      minHeight: 40,
+      marginTop: -8,
+    },
+    textoReenviar: {
+      fontFamily: fontes.appSemiBold,
+      fontSize: tipografia.label,
+      color: tema.destaque,
+      textAlign: "center",
+    },
+    textoReenviarBloqueado: { color: tema.textoSecundario },
+    caixaErro: {
+      flexDirection: "row",
+      gap: 10,
+      alignItems: "center",
+      padding: 13,
+      borderRadius: 12,
+      backgroundColor: escuro ? "#40262C" : "#FBE9EC",
+    },
+    caixaSucesso: {
+      flexDirection: "row",
+      gap: 10,
+      alignItems: "center",
+      padding: 13,
+      borderRadius: 12,
+      backgroundColor: escuro ? "#28362D" : "#E5F4E9",
+    },
+    textoFeedback: {
+      flex: 1,
+      fontSize: tipografia.legenda,
+      fontFamily: fontes.appRegular,
+      lineHeight: 20,
+      color: tema.texto,
+    },
+    botaoPrincipal: {
+      minHeight: 56,
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: 9,
+      paddingHorizontal: 12,
+      marginTop: 12,
+      backgroundColor: escuro ? cores.douradoBotao : cores.douradoPrincipal,
+      borderRadius: 14,
+    },
+    botaoPressionado: { opacity: 0.85 },
+    botaoDesabilitado: { opacity: 0.55 },
+    textoBotaoPrincipal: {
+      fontFamily: fontes.appBold,
+      fontSize: tipografia.botao,
+      color: "#1B1C21",
+      textAlign: "center",
+    },
+    confirmacaoSucesso: {
+      flex: 1,
+      alignItems: "center",
+      gap: 24,
+      paddingTop: 38,
+    },
+  });
+}
