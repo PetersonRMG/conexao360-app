@@ -124,6 +124,8 @@ export default function CriarPostScreen() {
               style={styles.scroll}
               contentContainerStyle={styles.conteudo}
               keyboardShouldPersistTaps="handled"
+              keyboardDismissMode="on-drag"
+              nestedScrollEnabled
               showsVerticalScrollIndicator={false}
             >
               <View style={styles.tituloLinha}>
@@ -233,8 +235,14 @@ export default function CriarPostScreen() {
               </Pressable>
             </ScrollView>
           </KeyboardAvoidingView>
-          {/* O footer é o componente original, sem botões extras nesta tela. */}
-          <MenuSreen />
+          {/*
+            O menu original usa position: absolute. Mantê-lo dentro de uma área
+            de altura reservada impede que cubra o botão Publicar e deixa o
+            formulário inteiramente rolável, inclusive em telas menores.
+          */}
+          <View style={styles.areaMenu}>
+            <MenuSreen />
+          </View>
         </SafeAreaView>
       </View>
     </View>

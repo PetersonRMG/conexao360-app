@@ -176,10 +176,10 @@ export default function Index() {
                       <AuthBrand showAppName />
                     </View>
                     <View style={loginStyle.conteudoBtns}>
-                      <Text style={loginStyle.heading}>Acesse sua conta</Text>
+                      {/* <Text style={loginStyle.heading}>Acesse sua conta</Text>
                       <Text style={loginStyle.description}>
                         Entre com seu e-mail e senha para continuar no Conexão 360°.
-                      </Text>
+                      </Text> */}
                       <View style={loginStyle.form} nativeID="auth-login-form">
                         <View style={loginStyle.input}>
                           <Ionicons name="mail-outline" size={23} color="#F0C247" style={{ marginRight: 12 }} />

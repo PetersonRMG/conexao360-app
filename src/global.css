@@ -32,3 +32,28 @@
   caret-color: #f8f8fa !important;
   transition: background-color 99999s ease-in-out 0s;
 }
+
+/* Conexão 360° — Cadastro: estiliza os TextInput reais pelo ID do próprio
+   <input>, sem depender de um View pai (que pode ser otimizado no React Native Web).
+   Mantém o autofill do Chrome e evita a aparência branca nos campos preenchidos. */
+input[id^="auth-cadastro-input-"] {
+  color-scheme: dark;
+  background-color: transparent !important;
+  color: #f8f8fa !important;
+  -webkit-text-fill-color: #f8f8fa !important;
+  caret-color: #f8f8fa !important;
+}
+
+input[id^="auth-cadastro-input-"]:autofill,
+input[id^="auth-cadastro-input-"]:autofill:hover,
+input[id^="auth-cadastro-input-"]:autofill:focus,
+input[id^="auth-cadastro-input-"]:-webkit-autofill,
+input[id^="auth-cadastro-input-"]:-webkit-autofill:hover,
+input[id^="auth-cadastro-input-"]:-webkit-autofill:focus,
+input[id^="auth-cadastro-input-"]:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 1000px #18191e inset !important;
+  box-shadow: 0 0 0 1000px #18191e inset !important;
+  -webkit-text-fill-color: #f8f8fa !important;
+  caret-color: #f8f8fa !important;
+  transition: background-color 99999s ease-in-out 0s;
+}

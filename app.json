@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "conexao360-app",
+    "name": "Conexão 360°",
     "slug": "conexao360-app",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -8,7 +8,7 @@
     "scheme": "conexao360app",
     "userInterfaceStyle": "automatic",
     "ios": {
-      "icon": "./assets/expo.icon"
+      "icon": "./assets/images/icon.png"
     },
     "android": {
       "adaptiveIcon": {
@@ -20,8 +20,9 @@
       "predictiveBackGestureEnabled": false
     },
     "web": {
+      "name": "Conexão 360°",
       "output": "static",
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./assets/images/img/logo.png"
     },
     "plugins": [
       "expo-router",
