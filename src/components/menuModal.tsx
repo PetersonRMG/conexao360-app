@@ -8,6 +8,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { criarMenuModalStyles } from "@/styles/menuModalStyles";
 import { buscarUsuario, getUrlFotoUsuario, type Usuario } from "@/services/usuarioService";
 import SairModalScreen from "./modalSair";
+import { useInstalarApp } from "@/hooks/useInstalarApp";
 
 type ItemMenu = {
   label: string;
@@ -21,7 +22,7 @@ const comunidade: ItemMenu[] = [
   { label: "Publicações", icon: "reader-outline", rota: "/home" },
   { label: "Enquetes / Tópicos", icon: "bar-chart-outline", rota: "/enquetes" },
   { label: "Eventos", icon: "calendar-outline", rota: "/eventos" },
-  { label: "Galeria", icon: "images-outline", rota: "/galeria" },
+  // { label: "Galeria", icon: "images-outline", rota: "/galeria" },
 ];
 const minhaConta: ItemMenu[] = [
   { label: "Meu perfil", icon: "person-outline", rota: "/perfil" },
@@ -35,6 +36,7 @@ interface MenuModalProps { visible: boolean; onClose: () => void }
 export default function MenuModalScreen({ visible, onClose }: MenuModalProps) {
   const { tema, coresTema, alternarTema } = useTema();
   const styles = criarMenuModalStyles(coresTema);
+  const { instalar, instalado, mensagem: mensagemInstalacao } = useInstalarApp();
   const { token, usuario, definirSessao, limparSessao } = useAuth();
   const { width } = useWindowDimensions();
   const largura = Math.min(width * 0.86, 360);
@@ -120,6 +122,25 @@ export default function MenuModalScreen({ visible, onClose }: MenuModalProps) {
               <View style={styles.grupo}>{comunidade.map(renderItem)}</View>
               <Text style={styles.secaoTitulo}>Conta</Text>
               <View style={styles.grupo}>{minhaConta.map(renderItem)}</View>
+              {/* Um único botão de instalação. No app nativo não é necessário instalar novamente. */}
+              {Platform.OS === "web" && !instalado && (
+                <Pressable
+                  onPress={() => { void instalar(); }}
+                  style={({ pressed }) => [styles.item, pressed && styles.itemPressed]}
+                  accessibilityRole="button"
+                  accessibilityLabel="Instalar aplicativo"
+                  accessibilityHint="Abre a instalação ou mostra como adicionar o aplicativo à tela inicial"
+                >
+                  <Ionicons name="download-outline" size={22} color={coresTema.destaque} />
+                  <Text style={styles.itemTitulo}>Instalar aplicativo</Text>
+                  <Ionicons name="chevron-forward-outline" size={16} color={coresTema.textoSecundario} />
+                </Pressable>
+              )}
+              {Platform.OS === "web" && !instalado && Boolean(mensagemInstalacao) && (
+                <Text style={[styles.perfilAcao, { marginHorizontal: 10, marginBottom: 12, lineHeight: 19 }]} accessibilityRole="text">
+                  {mensagemInstalacao}
+                </Text>
+              )}
               <Text style={styles.secaoTitulo}>Aparência</Text>
               <Pressable onPress={alternarTema} style={styles.item} accessibilityRole="switch" accessibilityState={{ checked: tema === "escuro" }}>
                 <Ionicons name={tema === "escuro" ? "moon-outline" : "sunny-outline"} size={22} color={coresTema.textoSecundario} />
